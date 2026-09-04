@@ -252,3 +252,10 @@
 - **なぜ**: 公開履歴の再現性よりprivacyとpublication provenanceの明確さを優先するというuserの意図に沿うため。
 - **検証結果**: 正しい2つのdocumentation linkを要求するtestでREDを確認後、画面・Pages fixture・publication config／docsを更新し、影響す27 testsをGREEN化した。README英語版・日本語版とworkflowの現在地もpublication工程へ更新した。
 - **関連パス**: `web/components/crime-atlas-dashboard.tsx`, `web/tests/dashboard.test.tsx`, `web/tests/pages-artifact.test.ts`, `web/tests/publication-config.test.ts`, `README.md`, `README.ja.md`, `docs/workflow.md`
+
+## 2026-09-05 clean checkoutでのVite hosting config欠落を修正
+- **何が**: 再作成後のGitHub Actionsでfrontend testはpassしたが、typecheckがVite hosting configを解決できず失敗した。localにはfileがあったが、directory全体のignoreによりclean checkoutに含まれていなかった。
+- **どう判断**: Viteがdirect importする`hosting.json`だけを追跡し、同じdirectoryの他fileはignoreする。追跡する値は`d1: null`と`r2: null`だけで、secretやdeployment IDは含めない。
+- **なぜ**: localに偶然存在するignored fileへbuildが依存すると、GitHub Actionsや新規cloneで再現できないため。
+- **検証結果**: GitHub Actionsのtypecheck failureをREDとし、対象fileのtracked化とlocal typecheckのGREENを確認。さらに`git archive HEAD`から作ったclean checkout相当環境でtypecheckを実行し、passを確認した。
+- **関連パス**: `web/.gitignore`, `web/.openai/hosting.json`, `web/vite.config.ts`, `.github/workflows/pages.yml`
