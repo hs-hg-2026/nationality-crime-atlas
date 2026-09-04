@@ -32,7 +32,9 @@ yarn-error.log*
 
 # deployment and generated files
 .vercel
-/.openai/
+# Vite imports this non-secret binding shape in clean checkouts.
+/.openai/*
+!/.openai/hosting.json
 next-env.d.ts
 /dist/
 /.wrangler/
