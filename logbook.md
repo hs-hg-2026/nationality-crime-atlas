@@ -259,3 +259,16 @@
 - **なぜ**: localに偶然存在するignored fileへbuildが依存すると、GitHub Actionsや新規cloneで再現できないため。
 - **検証結果**: GitHub Actionsのtypecheck failureをREDとし、対象fileのtracked化とlocal typecheckのGREENを確認。さらに`git archive HEAD`から作ったclean checkout相当環境でtypecheckを実行し、passを確認した。
 - **関連パス**: `web/.gitignore`, `web/.openai/hosting.json`, `web/vite.config.ts`, `.github/workflows/pages.yml`
+
+## 2026-09-05 privacy-clean repository再作成とGitHub Pages公開完了
+- **何が**: 公開repositoryをclean root commitから再作成し、GitHub Pagesをworkflow方式で有効化した。最初のworkflowはPages有効化とのraceで停止し、再実行ではclean checkoutにだけ現れるhosting config欠落を検出・修正した。修正後のGitHub Actions run `33890484400`はbuild／deployとも成功した。
+- **どう判断**: commitのAuthor／CommitterはGitHub accountのprivacy identityだけに限定し、公開履歴には現在の成果物だけを置く。Viteに必要な非secretのbinding形だけを追跡する。さらに、pinned Pages actionの公式input定義を確認し、未対応の`include-hidden-files`指定をRED／GREEN test付きで削除した。CC0 map作者の連絡先はlicense provenanceとして保持する。
+- **なぜ**: repository履歴、clean checkout、CI artifact、live siteのすべてで個人情報を露出せず、別環境でも同じ公開物を再現できる状態にするため。unsupported inputの警告を放置すると、将来のaction変更時に本当の異常を見落としやすいため。
+- **検証結果**: GitHub上でpublic設定、clean root、GitHub accountだけのcommit帰属を確認した。公開対象の禁止private markerは0件。GitHub Actionsでdata verification、map determinism、69 web tests、typecheck、lint、format、production build、Pages artifact検証、deployがpassした。公開URLはHTTP 200で、Chrome表示、正しいdocumentation link、公開data SHA-256 `102e2f6d589675a4fb45eac239212ff3f160048f5c0479bea62416da67ecb002`の一致を確認した。unsupported input削除はfocused test 10件でGREENを確認し、本entryを含む最終runでも再検証する。
+- **関連パス**: `.github/workflows/pages.yml`, `web/.openai/hosting.json`, `web/tests/publication-config.test.ts`, `README.md`, `README.ja.md`, `docs/workflow.md`
+
+## 2026-09-05 local Pages artifact検証のbase path指定漏れ
+- **何が**: GitHub Pagesと同条件のproduction build後、最初のlocal artifact整形がroot直下の`_next`欠落として停止した。
+- **どう判断／なぜ**: buildは`/nationality-crime-atlas/_next`を正しく生成しており、実装やartifactの破損ではなかった。整形commandだけにCIと同じ`NEXT_PUBLIC_BASE_PATH`を渡していなかったため、環境条件を揃えて再実行した。
+- **検証結果**: 32 files、base path `/nationality-crime-atlas`、dashboard SHA-256 `102e2f6d589675a4fb45eac239212ff3f160048f5c0479bea62416da67ecb002`を含むPages artifact検証がpassした。
+- **関連パス**: `web/scripts/prepare-pages-artifact.mjs`, `web/scripts/verify-pages-artifact.mjs`, `.github/workflows/pages.yml`
