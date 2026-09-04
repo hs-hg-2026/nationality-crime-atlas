@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -8,6 +11,16 @@ import {
 } from '../publication-config.mjs';
 
 describe('GitHub Pages publication paths', () => {
+  it('passes only supported inputs to the pinned Pages artifact action', () => {
+    const workflow = readFileSync(
+      join(process.cwd(), '../.github/workflows/pages.yml'),
+      'utf8',
+    );
+
+    expect(workflow).toContain('actions/upload-pages-artifact@');
+    expect(workflow).not.toMatch(/include-hidden-files:/);
+  });
+
   it('keeps root deployments at the origin root', () => {
     expect(normalizeBasePath('')).toBe('');
     expect(normalizeBasePath('/')).toBe('');
