@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "mapping_scope": "Label/category crosswalk only; it does not establish statistical compatibility between numerator and denominator.",
+  "reference_series_id": "isa-resident-foreigner-population-t1",
+  "nationality": {
+    "aliases": {
+      "アメリカ": {
+        "source_ids": ["S08", "S09"],
+        "target_labels": ["米国"],
+        "reason": "NPA and ISA use different Japanese labels for the United States."
+      },
+      "イギリス": {
+        "source_ids": ["S08", "S09"],
+        "target_labels": ["英国"],
+        "reason": "NPA and ISA use different Japanese labels for the United Kingdom."
+      }
+    },
+    "composites": {
+      "中国": {
+        "source_ids": ["S08", "S09"],
+        "target_labels": ["中国", "台湾"],
+        "targets_complete": false,
+        "reason": "The NPA source footnote states that China includes Taiwan, Hong Kong, etc.; the listed ISA targets are known examples, not an exhaustive equivalence."
+      },
+      "韓国・朝鮮": {
+        "source_ids": ["S08", "S09"],
+        "target_labels": ["韓国", "（朝鮮）"],
+        "targets_complete": true,
+        "reason": "The NPA source category combines two separately published ISA categories."
+      }
+    },
+    "unmatched": {
+      "その他": {
+        "source_ids": ["S08", "S09"],
+        "reason": "The source does not publish the membership of this context-specific remainder bucket."
+      },
+      "国籍不明": {
+        "source_ids": ["S08", "S09"],
+        "reason": "No equivalent nationality category is published in the ISA reference table."
+      }
+    },
+    "region_code_prefixes": {
+      "アジア州の国": {
+        "source_ids": ["S08", "S09"],
+        "prefixes": ["01_"]
+      },
+      "ヨーロッパ州の国": {
+        "source_ids": ["S08", "S09"],
+        "prefixes": ["02_"]
+      },
+      "南北アメリカ州の国": {
+        "source_ids": ["S08", "S09"],
+        "prefixes": ["04_", "05_"]
+      },
+      "アフリカ州の国": {
+        "source_ids": ["S08", "S09"],
+        "prefixes": ["03_"]
+      },
+      "オセアニア州の国": {
+        "source_ids": ["S08", "S09"],
+        "prefixes": ["06_"]
+      }
+    }
+  },
+  "geography": {
+    "national": {
+      "日本": {
+        "canonical_id": "jp:all",
+        "canonical_label": "日本全国",
+        "reason": "This is a derived national aggregate, not an ISA prefecture source code."
+      }
+    },
+    "non_equivalent_types": {
+      "police_region": "This police statistical aggregate contains multiple prefectures and is not a single equivalent population geography.",
+      "police_subregion": "This police statistical area is below prefecture level and has no equivalent ISA prefecture population category."
+    }
+  }
+}

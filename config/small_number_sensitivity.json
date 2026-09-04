@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "policy_status": "sensitivity_only",
+  "comparison_operator": "strictly_less_than",
+  "denominator_thresholds": [
+    100,
+    500,
+    1000,
+    2000,
+    5000,
+    10000,
+    50000
+  ],
+  "numerator_thresholds": [
+    1,
+    5,
+    10,
+    20,
+    50
+  ]
+}

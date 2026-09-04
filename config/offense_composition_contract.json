@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "artifact_pins": {
+    "S08": "23ccb60d89c9b4bdaa898105753506a61d8354a0ae87b01598f6c97f4efd6a83",
+    "S15": "f1c597114874c1a0ba6b87e9a7d7fcbb48041defb7cb16a874c2c9542991d75b"
+  },
+  "processed_input_pins": {
+    "S08": "3fe1d78fe8d4c12b436e09b42641276cd2ba39fc1f1c446af588266d5b6d0029",
+    "S15": "d112ce129e94d635da47aa0efe748d0bb91ae8b76fdf4ad1d5eb46f67bdcf8c6"
+  },
+  "composition": {
+    "composition_id": "nationality_criminal_code_offense_composition",
+    "label_ja": "日本を含む国籍等別・刑法犯上位6区分の構成",
+    "label_en": "Criminal-code offense composition by nationality including Japan",
+    "year": 2024,
+    "foreign_source_id": "S08",
+    "foreign_source_table": "130",
+    "all_person_source_id": "S15",
+    "all_person_source_table": "3",
+    "expected_foreign_country_row_count": 24,
+    "expected_foreign_region_total_row_count": 5,
+    "aggregated_nationality_label": "アメリカ",
+    "expected_aggregated_subcategory_row_count": 4,
+    "expected_foreign_entity_count": 25,
+    "expected_total_entity_count": 26,
+    "category_ids": [
+      "heinous",
+      "assaultive",
+      "theft",
+      "intellectual",
+      "morals",
+      "other_criminal_code"
+    ],
+    "category_definitions": [
+      {
+        "offense_id": "heinous",
+        "label_ja": "凶悪犯",
+        "color": "#b5443c",
+        "display_order": 1,
+        "official_severity_role": "official_high_severity_category"
+      },
+      {
+        "offense_id": "assaultive",
+        "label_ja": "粗暴犯",
+        "color": "#d17c32",
+        "display_order": 2,
+        "official_severity_role": "not_a_project_severity_classification"
+      },
+      {
+        "offense_id": "theft",
+        "label_ja": "窃盗犯",
+        "color": "#c7a83d",
+        "display_order": 3,
+        "official_severity_role": "not_a_project_severity_classification"
+      },
+      {
+        "offense_id": "intellectual",
+        "label_ja": "知能犯",
+        "color": "#327a92",
+        "display_order": 4,
+        "official_severity_role": "not_a_project_severity_classification"
+      },
+      {
+        "offense_id": "morals",
+        "label_ja": "風俗犯",
+        "color": "#775d9b",
+        "display_order": 5,
+        "official_severity_role": "not_a_project_severity_classification"
+      },
+      {
+        "offense_id": "other_criminal_code",
+        "label_ja": "その他の刑法犯",
+        "color": "#778187",
+        "display_order": 6,
+        "official_severity_role": "not_a_project_severity_classification"
+      }
+    ],
+    "metrics": [
+      "cleared_cases",
+      "cleared_persons"
+    ],
+    "small_number_total_threshold": 20,
+    "clustering": {
+      "distance": "jensen_shannon",
+      "log_base": 2,
+      "linkage": "average",
+      "input": "within_entity_composition_share"
+    },
+    "interpretation_policy": "patterns_without_intrinsic_group_inference",
+    "ui_caveat": "構成比は公表された検挙件数・検挙人員の内訳であり、犯罪の多寡、集団の本質、因果、個人riskを示さない。"
+  }
+}

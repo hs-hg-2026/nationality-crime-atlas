@@ -1,0 +1,291 @@
+{
+  "schema_version": 1,
+  "profiles": {
+    "S02": {
+      "description": "NPA 2025 finalized Table 13 with 2024 comparison",
+      "record_type": "prefecture_crime",
+      "expected_artifact_sha256": "0404e10b0ab45b35f9be86c7b748bb039469cff2efc63584b2ac9660056b7323",
+      "expected_record_count": 360,
+      "expected_years": [2024, 2025],
+      "allowed_values": {
+        "population_scope": ["visiting_foreign"],
+        "offense_scope": [
+          "criminal_and_special_law",
+          "criminal_code",
+          "special_law"
+        ],
+        "geography_type": [
+          "national",
+          "police_region",
+          "police_subregion",
+          "prefecture"
+        ],
+        "geography_semantics": ["police_reporting_area_unresolved"]
+      },
+      "expected_distinct_counts": {
+        "year": 2,
+        "offense_scope": 3,
+        "geography": 60,
+        "geography_type": 4,
+        "parent_region": 10
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "year": 2025,
+            "offense_scope": "criminal_and_special_law",
+            "geography": "青森県"
+          },
+          "expect": {"cleared_cases": 23, "cleared_persons": 20},
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "year": 2025,
+            "offense_scope": "criminal_code",
+            "geography": "青森県"
+          },
+          "expect": {"cleared_cases": 16, "cleared_persons": 13},
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "year": 2025,
+            "offense_scope": "special_law",
+            "geography": "青森県"
+          },
+          "expect": {"cleared_cases": 7, "cleared_persons": 7},
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S08": {
+      "description": "NPA 2024 detailed crime statistics Table 130",
+      "record_type": "nationality_crime",
+      "expected_artifact_sha256": "23ccb60d89c9b4bdaa898105753506a61d8354a0ae87b01598f6c97f4efd6a83",
+      "expected_record_count": 33,
+      "expected_years": [2024],
+      "allowed_values": {
+        "population_scope": ["all_foreign"],
+        "row_kind": ["region_total", "country", "subcategory"]
+      },
+      "expected_distinct_counts": {
+        "region": 6,
+        "nationality": 24,
+        "subcategory": 5,
+        "row_kind": 3
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "year": 2024,
+            "nationality": "中国",
+            "subcategory": null,
+            "row_kind": "country"
+          },
+          "expect": {
+            "cleared_cases": 4891,
+            "cleared_persons": 3522,
+            "criminal_code_cleared_cases": 3374,
+            "criminal_code_cleared_persons": 2393
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S09": {
+      "description": "NPA 2024 detailed crime statistics Table 131",
+      "record_type": "nationality_crime",
+      "expected_artifact_sha256": "70d180220c3b53cd5d832acb1c86460b005c47215c0409c7b14ea0f0057a2e30",
+      "expected_record_count": 30,
+      "expected_years": [2024],
+      "allowed_values": {
+        "population_scope": ["visiting_foreign"],
+        "row_kind": ["region_total", "country"]
+      },
+      "expected_distinct_counts": {
+        "region": 6,
+        "nationality": 24,
+        "subcategory": 1,
+        "row_kind": 2
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "year": 2024,
+            "nationality": "中国",
+            "subcategory": null,
+            "row_kind": "country"
+          },
+          "expect": {"cleared_cases": 3131, "cleared_persons": 2211},
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S14": {
+      "description": "ISA 2025-12 resident-foreigner statistics Table 1",
+      "record_type": "population",
+      "expected_artifact_sha256": "3a7c603c42927fc441ba0c062777223754d238df904bd15a034220dffd229a86",
+      "expected_record_count": 468641,
+      "expected_periods": ["2025-12-31"],
+      "allowed_values": {
+        "sex": ["男", "女", "その他"]
+      },
+      "expected_distinct_counts": {
+        "nationality": 197,
+        "residence_status": 36,
+        "sex": 3,
+        "age_group": 17,
+        "prefecture": 48
+      },
+      "expected_sums": {"value": 4125395},
+      "anchors": []
+    },
+    "S14_2024_12": {
+      "description": "ISA 2024-12 resident-foreigner statistics Table 1",
+      "record_type": "population",
+      "expected_artifact_sha256": "c523f699fed40f1bc7d2a975199c0669918e374c408a7423ce510c60500b3fb4",
+      "expected_record_count": 444173,
+      "expected_periods": ["2024-12-31"],
+      "allowed_values": {
+        "sex": ["男", "女", "その他"]
+      },
+      "expected_distinct_counts": {
+        "nationality": 196,
+        "residence_status": 36,
+        "sex": 3,
+        "age_group": 17,
+        "prefecture": 48
+      },
+      "expected_sums": {"value": 3768977},
+      "anchors": []
+    },
+    "S15": {
+      "description": "NPA 2024 detailed crime statistics Table 3 all-person criminal-code totals",
+      "record_type": "overall_prefecture_crime",
+      "expected_artifact_sha256": "f1c597114874c1a0ba6b87e9a7d7fcbb48041defb7cb16a874c2c9542991d75b",
+      "expected_record_count": 60,
+      "expected_years": [2024],
+      "allowed_values": {
+        "population_scope": ["all_persons"],
+        "offense_scope": ["criminal_code_excluding_traffic_negligence"],
+        "geography_type": [
+          "national",
+          "police_region",
+          "police_subregion",
+          "prefecture"
+        ],
+        "geography_semantics": [
+          "national_aggregate",
+          "police_reporting_area_unresolved"
+        ]
+      },
+      "expected_distinct_counts": {
+        "year": 1,
+        "geography": 60,
+        "geography_type": 4,
+        "parent_region": 10
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"year": 2024, "geography": "日本"},
+          "expect": {
+            "recognized_cases": 737679,
+            "cleared_cases": 287273,
+            "cleared_persons": 191826
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {"year": 2024, "geography": "東京都"},
+          "expect": {
+            "recognized_cases": 94752,
+            "cleared_cases": 33961,
+            "cleared_persons": 23731
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S16": {
+      "description": "NPA 2024 detailed crime statistics Table 144 total population",
+      "record_type": "prefecture_population",
+      "expected_artifact_sha256": "e005fe843a1dc3e840ae7ab030b00ffe5930489326eb9e7a7fd1781a04197965",
+      "expected_record_count": 48,
+      "expected_years": [2024],
+      "allowed_values": {
+        "reference_date": ["2024-10-01"],
+        "population_scope": ["total_population"],
+        "geography_type": ["national", "prefecture"],
+        "geography_semantics": [
+          "national_aggregate",
+          "population_estimate_prefecture"
+        ],
+        "source_unit": ["1000_persons"],
+        "rounding": ["nearest_1000_persons"]
+      },
+      "expected_distinct_counts": {
+        "year": 1,
+        "reference_date": 1,
+        "geography": 48,
+        "geography_type": 2,
+        "parent_region": 1
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"year": 2024, "geography": "日本"},
+          "expect": {"population": 123802000, "source_value": 123802},
+          "expected_matches": 1
+        },
+        {
+          "where": {"year": 2024, "geography": "東京都"},
+          "expect": {"population": 14178000, "source_value": 14178},
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S17": {
+      "description": "Statistics Bureau 2024 Population Estimates Table 2 Japanese-national population",
+      "record_type": "prefecture_population",
+      "expected_artifact_sha256": "171c9930a3c881c42ded00fbaace83b4e6dd226d1a90cfddecd1daca2e376e82",
+      "expected_record_count": 48,
+      "expected_years": [2024],
+      "allowed_values": {
+        "reference_date": ["2024-10-01"],
+        "population_scope": ["japanese_population"],
+        "geography_type": ["national", "prefecture"],
+        "geography_semantics": [
+          "national_aggregate",
+          "population_estimate_prefecture"
+        ],
+        "source_unit": ["1000_persons"],
+        "rounding": ["nearest_1000_persons"]
+      },
+      "expected_distinct_counts": {
+        "year": 1,
+        "reference_date": 1,
+        "geography": 48,
+        "geography_type": 2,
+        "parent_region": 1
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"year": 2024, "geography": "日本"},
+          "expect": {"population": 120296000, "source_value": 120296},
+          "expected_matches": 1
+        },
+        {
+          "where": {"year": 2024, "geography": "東京都"},
+          "expect": {"population": 13463000, "source_value": 13463},
+          "expected_matches": 1
+        }
+      ]
+    }
+  }
+}

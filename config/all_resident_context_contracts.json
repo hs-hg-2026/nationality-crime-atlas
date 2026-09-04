@@ -1,0 +1,111 @@
+{
+  "schema_version": 2,
+  "processed_input_pins": {
+    "S15": "d112ce129e94d635da47aa0efe748d0bb91ae8b76fdf4ad1d5eb46f67bdcf8c6",
+    "S16": "9033b3f94523d9a6550c382bdc351ba802d8aff110fe1c0a8051d6844f8541ee"
+  },
+  "defaults": {
+    "measure_kind": "public_data_derived_reference_ratio",
+    "canonical_formula": "numerator_value / denominator_value",
+    "numerator_source_id": "S15",
+    "numerator_year": 2024,
+    "numerator_period_type": "annual_flow",
+    "numerator_population_scope": "all_persons",
+    "numerator_residency_scope": "not_established",
+    "numerator_offense_scope": "criminal_code_excluding_traffic_negligence",
+    "denominator_source_id": "S16",
+    "denominator_metric": "total_population",
+    "denominator_reference_date": "2024-10-01",
+    "denominator_period_type": "point_in_time_stock",
+    "denominator_population_scope": "total_population",
+    "display_multiplier": 100000,
+    "display_scale_status": "provisional",
+    "display_unit_label_ja": "人口10万人当たり",
+    "display_unit_label_en": "per 100,000 residents",
+    "crosswalk_policy": "exact",
+    "expected_published_row_count": 60,
+    "expected_calculated_row_count": 48
+  },
+  "contracts": [
+    {
+      "context_id": "all_resident_recognized_cases",
+      "label_ja": "都道府県等別 刑法犯認知件数 ÷ 10月1日総人口",
+      "label_en": "Recognized criminal-code cases by published geography / October 1 total population",
+      "numerator_metric": "recognized_cases",
+      "base_mismatch_flags": [
+        "annual_flow_vs_point_in_time_population",
+        "case_count_not_person_count",
+        "criminal_code_scope_only",
+        "numerator_residency_scope_not_established",
+        "total_population_rounded_to_nearest_1000"
+      ],
+      "ui_caveat": "警察統計上の年間刑法犯認知件数を10月1日時点の総人口で割った参考比率。分子は居住者だけに対応する統計とは確認できず、official crime rateや個人の発生確率ではない。"
+    },
+    {
+      "context_id": "all_resident_cleared_cases",
+      "label_ja": "都道府県等別 刑法犯検挙件数 ÷ 10月1日総人口",
+      "label_en": "Cleared criminal-code cases by published geography / October 1 total population",
+      "numerator_metric": "cleared_cases",
+      "base_mismatch_flags": [
+        "annual_flow_vs_point_in_time_population",
+        "case_count_not_person_count",
+        "criminal_code_scope_only",
+        "numerator_residency_scope_not_established",
+        "total_population_rounded_to_nearest_1000"
+      ],
+      "ui_caveat": "警察統計上の年間刑法犯検挙件数を10月1日時点の総人口で割った参考比率。分子は居住者だけに対応する統計とは確認できず、official crime rateや個人の発生確率ではない。"
+    },
+    {
+      "context_id": "all_resident_cleared_persons",
+      "label_ja": "都道府県等別 刑法犯検挙人員 ÷ 10月1日総人口",
+      "label_en": "Cleared-person records by published geography / October 1 total population",
+      "numerator_metric": "cleared_persons",
+      "base_mismatch_flags": [
+        "annual_flow_vs_point_in_time_population",
+        "cleared_person_records_not_unique_risk_population",
+        "criminal_code_scope_only",
+        "numerator_residency_scope_not_established",
+        "total_population_rounded_to_nearest_1000"
+      ],
+      "ui_caveat": "警察統計上の年間刑法犯検挙人員を10月1日時点の総人口で割った参考比率。分子は居住者だけに限定された統計とは確認できず、official crime rateや個人の発生確率ではない。"
+    }
+  ],
+  "unsupported_requests": [
+    {
+      "request_id": "japanese_prefecture_numerator",
+      "label_ja": "日本国籍の都道府県別分子",
+      "label_en": "Prefecture-level numerator for Japanese nationals",
+      "refusal_reason": "japanese_prefecture_numerator_unpublished",
+      "geography_label": "都道府県別",
+      "geography_id": "request-scope:jp-prefectures:japanese",
+      "geography_type": "prefecture_collection",
+      "ui_caveat": "current official source setには日本国籍の都道府県別分子がないため、このrequestは生成しない。",
+      "mismatch_flags": [
+        "numerator_not_published",
+        "primary_baseline_is_all_residents"
+      ],
+      "numerator_context": {
+        "requested_geography_grain": "prefecture",
+        "requested_population_scope": "japanese_nationals"
+      }
+    },
+    {
+      "request_id": "individual_nationality_prefecture_numerator",
+      "label_ja": "個別国籍 × 都道府県別分子",
+      "label_en": "Individual-nationality by prefecture numerator",
+      "refusal_reason": "individual_nationality_prefecture_numerator_unpublished",
+      "geography_label": "都道府県別",
+      "geography_id": "request-scope:jp-prefectures:individual-nationality",
+      "geography_type": "prefecture_collection",
+      "ui_caveat": "current official source setには個別国籍 × 都道府県別分子がないため、推計せず refusal として残す。",
+      "mismatch_flags": [
+        "numerator_not_published",
+        "no_prefecture_nationality_numerator"
+      ],
+      "numerator_context": {
+        "requested_geography_grain": "prefecture",
+        "requested_population_scope": "individual_nationality"
+      }
+    }
+  ]
+}

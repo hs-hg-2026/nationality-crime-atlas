@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "processed_input_pins": {
+    "S08": "3fe1d78fe8d4c12b436e09b42641276cd2ba39fc1f1c446af588266d5b6d0029",
+    "S14_2024_12": "32d385ae4d810d18a40dbef8c392db57c8be1e44a216e28ec48971e90a2de83d",
+    "S15": "d112ce129e94d635da47aa0efe748d0bb91ae8b76fdf4ad1d5eb46f67bdcf8c6",
+    "S17": "f82690c52a318abcdd2252b578075651d3daca5ebca16cbaabbf1278be62203b"
+  },
+  "comparison": {
+    "comparison_id": "nationality_criminal_code_cleared_persons",
+    "label_ja": "全国・国籍等別 刑法犯検挙人員 ÷ 対応人口",
+    "label_en": "National criminal-code cleared persons by nationality / corresponding population",
+    "measure_kind": "public_data_derived_reference_ratio",
+    "canonical_formula": "numerator_value / denominator_value",
+    "numerator_year": 2024,
+    "foreign_numerator_source_id": "S08",
+    "foreign_numerator_metric": "criminal_code_cleared_persons",
+    "all_person_numerator_source_id": "S15",
+    "all_person_numerator_metric": "cleared_persons",
+    "foreign_population_source_id": "S14_2024_12",
+    "foreign_denominator_period_end": "2024-12-31",
+    "japanese_population_source_id": "S17",
+    "japanese_denominator_reference_date": "2024-10-01",
+    "expected_foreign_country_row_count": 24,
+    "expected_foreign_region_total_row_count": 5,
+    "foreign_total_outside_region_labels": [
+      "無国籍",
+      "国籍不明"
+    ],
+    "expected_foreign_total_numerator": 10464,
+    "aggregated_nationality_label": "アメリカ",
+    "expected_aggregated_subcategory_row_count": 4,
+    "display_multiplier": 1000,
+    "display_unit_label_ja": "人口1,000人当たり",
+    "display_unit_label_en": "per 1,000 persons",
+    "small_number_denominator_threshold": 1000,
+    "small_number_numerator_threshold": 20,
+    "default_display_behavior": "include_all_with_warnings",
+    "interpretation_policy": "observed_values_without_intrinsic_group_inference",
+    "ui_caveat": "公表された刑法犯検挙人員と対応人口を機械的に組み合わせた参考比率。日本は全人員から全外国人人員を差し引いた残差による参考値であり、集団の本質、因果、個人riskを示さない。"
+  }
+}

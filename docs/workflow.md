@@ -1,0 +1,105 @@
+# workflow — nationality-crime-atlas
+
+工程の時系列map（"You are here"）。個別の判断・失敗・気づきはproject rootの`logbook.md`に分離する。
+
+```text
+M0 publication policy ✓
+  ↓
+M1 official source audit ✓
+  ↓
+M2 immutable acquisition / normalization / catalog ✓
+  ↓
+M3 reference-ratio products and quality gates ✓
+  ↓
+M4 local visualization and publication pipeline ✓
+  ├─ all-resident regional context ✓
+  ├─ Japanese-inclusive nationwide comparison ✓
+  ├─ selectable nationality perspectives + explicit Japanese refusal ✓
+  ├─ symmetric high / low + complete table ✓
+  ├─ 26 × 6 offense-composition heatmap / 100% stack / cluster ✓
+  ├─ signed same-year recognition-clearance gap (not unresolved cohort) ✓
+  ├─ plain-Japanese purpose / limits / glossary / documentation links ✓
+  ├─ desktop / mobile visual inspection ✓
+  └─ fresh independent review of new additions ✓
+       ↓
+     recreate public repository + GitHub Pages deployment verification ← YOU ARE HERE
+       ↓
+M5 historical series / drift / scheduled updates
+```
+
+## Current data flow
+
+```text
+official HTTPS source
+  → nca-acquire
+  → data/raw/<series>/<edition>/<retrieved_timestamp>/       immutable
+  → parse + versioned quality gate
+  → data/processed/<series>/<edition>/<retrieved_timestamp>/ reproducible
+  → data/processed/_catalog/artifacts.{jsonl,csv}
+       ├─ nca-map-dimensions
+       ├─ nca-build-indicators                              supplementary
+       ├─ nca-build-all-resident-context                    primary regional
+       ├─ nca-build-nationality-comparison                  secondary national
+       └─ nca-build-offense-composition                     26 × 6 composition
+              ↓
+         nca-build-compact-export                           schema v5
+              ├─ derive signed same-year recognition-clearance gaps from S15
+              └─ retain source products and definition links
+              ↓
+         output/compact_export/<timestamp>/dashboard_export.json
+              ↓ hash/schema/private-path gate
+         web/public/data/dashboard_export.json
+              ↓ test / typecheck / lint / format / static build
+         local dashboard or GitHub Pages artifact
+```
+
+## Product boundaries
+
+| Product | Numerator | Denominator | Scale | Current output |
+|---|---|---|---|---|
+| All-resident regional context | 2024 all-person crime counts, S15 | 2024-10-01 total population, S16 | per 100,000 | 186 rows: 144 calculated / 42 refused |
+| Same-year recognition-clearance gap | 2024 recognized cases − cleared cases for the same S15 geography | recognized cases, for percentage only | count and % | 62 rows: 60 calculated / 2 refused; not an unresolved cohort |
+| Nationwide nationality comparison | 2024 criminal-code cleared persons, S08; Japanese residual uses S15 − S08 | 2024-12-31 foreign resident population, S14_2024_12; 2024-10-01 Japanese population, S17 | per 1,000 | 26 rows: 22 calculated / 4 refused |
+| Nationality offense composition | S08 foreign categories; Japanese residual uses S15 − S08 for each group | within-entity cleared-person or cleared-case total | share and count | 156 cells: 26 categories × 6 groups |
+| Supplementary nationality indicators | S08 / S09 / S02 | S14_2024_12 / S14 | contract-specific | 290 rows: 250 calculated / 40 refused |
+
+`all residents` means Japanese and foreign residents together. The Japanese nationwide comparison row is not directly published: its numerator is the residual `191,826 − 10,464 = 181,362`, and its population is the rounded Japanese-national estimate `120,296,000`. This derivation and every source ID stay visible in the UI.
+
+## Current publication view
+
+1. The page opens with a plain-Japanese explanation of its purpose, the three available views, limits, a short glossary, and links to the Japanese README and interpretation policy.
+2. Regional controls expose recognized cases, cleared cases, cleared persons, and the signed same-year recognition-clearance gap. The gap is never labeled as a strict unresolved count/rate.
+3. The nationwide nationality selector exposes the Japanese-inclusive view and eight official foreign-nationality perspectives. A missing compatible Japanese numerator becomes a visible refusal.
+4. Five higher and five lower observed ratios are shown symmetrically from each calculated set, alongside its complete table.
+5. The composition section shows all 26 categories across six offense groups as heatmap and 100% stacked views, with cleared-person/case and source/cluster controls.
+6. Small denominator / sparse numerator warnings do not suppress rows. Zero-total composition rows show `構成比算出不能`, not a false 0%.
+7. Values are descriptive public-data-derived reference ratios or mechanical source differences, not official crime rates, causal claims, danger rankings, or statements about individual risk.
+
+## Release gates
+
+- [x] immutable artifact identities and processed-input SHA-256 pins
+- [x] formula, reconciliation, duplicate, refusal, and schema tests
+- [x] compact-export schema v5 and checked-in publication hash
+- [x] responsive desktop / mobile visual inspection with console errors = 0
+- [x] Python and web verification suites
+- [x] nationality perspective selector restored while keeping unavailable Japanese numerators explicit
+- [x] offense-composition and same-year-gap implementation tests and browser inspection
+- [x] plain-Japanese information hierarchy, source names, cautions, and documentation links
+- [x] fresh adversarial reviewer confirms new math, provenance, semantics, and warning behavior
+- [x] scoped reviewer findings closed: no open findings
+- [ ] reviewed commits are pushed and the deployed Pages URL is inspected
+
+## Next phase: historical evidence
+
+After release, add years without overwriting prior editions. The time-series view should separate genuine repeatable patterns from volatility caused by small denominators, report category/schema changes across years, and never manufacture a continuous series where definitions changed. Official-catalog discovery and scheduled acquisition must retain the last verified publication when a new edition fails validation.
+
+## Fixed publication rules
+
+- Do not make a perfectly compatible numerator/denominator a project milestone; publish each available source pairing with its provenance and mismatches.
+- Call project-derived values `公表統計由来の参考比率`, not official or exact crime rates.
+- Keep raw numerators, raw denominators, formulas, dates, geography, population scope, and mismatch flags visible.
+- Do not estimate unpublished `individual nationality × prefecture` crime numerators.
+- Do not collapse NPA `中国`, `韓国・朝鮮`, source-region totals, or unresolved police geographies into a false common category.
+- Keep NPA Table 13 geography as `police_reporting_area_unresolved` until an official definition establishes otherwise.
+
+Detailed scope and results are maintained in [brief.md](./brief.md); permanent cautions are in [interpretation_note.md](./interpretation_note.md).

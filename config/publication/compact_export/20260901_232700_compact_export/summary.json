@@ -1,0 +1,58 @@
+{
+  "compact_export_schema_version": 2,
+  "dashboard_export_sha256": "1617a13037899e862def08b9bab37c5facc711d6d195812d1faf8fa8d39395bc",
+  "definition_counts": {
+    "context_ids": 3,
+    "indicator_ids": 10
+  },
+  "generated_at": "2026-09-01T23:27:00+09:00",
+  "record_counts": {
+    "all_resident_context": 186,
+    "nationality_indicators": 290
+  },
+  "source_count": 7,
+  "source_runs": {
+    "all_resident_context": {
+      "latest_manifest": {
+        "all_resident_context_schema_version": 1,
+        "generated_at": "2026-09-01T22:55:00+09:00",
+        "regional_context_records_csv_sha256": "c9738b3621dc2224ddb2c84c522243ba2880e3f52fa5bbdd25956b55809d148e",
+        "regional_context_records_sha256": "d85a2f815cc5fa285b7570da48213e5f5feab5c5fc7e1d73f483550f79eb4582",
+        "run_relpath": "20260901_225500_all_resident_context",
+        "summary_sha256": "c60a66b2136c9cda76a5b70139d6be7fadabe80cabc747ff618492f684e35437"
+      },
+      "latest_path": "latest.json",
+      "latest_sha256": "0d812933a1d965e8f9a37ecba1a8c12b9f0e5250637e7b338ef3aca16fe9b384",
+      "record_count": 186,
+      "records_path": "20260901_225500_all_resident_context/regional_context_records.jsonl",
+      "records_sha256": "d85a2f815cc5fa285b7570da48213e5f5feab5c5fc7e1d73f483550f79eb4582",
+      "status_counts": {
+        "calculated": 144,
+        "refused": 42
+      },
+      "summary_path": "20260901_225500_all_resident_context/summary.json",
+      "summary_sha256": "c60a66b2136c9cda76a5b70139d6be7fadabe80cabc747ff618492f684e35437"
+    },
+    "nationality_indicators": {
+      "latest_manifest": {
+        "generated_at": "2026-09-01T13:32:39+09:00",
+        "indicator_records_csv_sha256": "e346b242afe05abaaf9047e7f135a22135a5b91dc992b84dee683c5cfcf586ee",
+        "indicator_records_sha256": "b0c352488852ff820f62339616563220ba62a575e0891899d6cb4c977d6f5c9c",
+        "indicator_run_schema_version": 2,
+        "run_relpath": "20260901_133239_indicators",
+        "summary_sha256": "f6dc5f0518df3555ca9058b247b69cf98314ae46d8c4b35b46dbf8a7c7de288a"
+      },
+      "latest_path": "latest.json",
+      "latest_sha256": "7d797ff7c52b722d5deb26c1cdbc237b651574af2fbba192f38dbb924c5b6898",
+      "record_count": 290,
+      "records_path": "20260901_133239_indicators/indicator_records.jsonl",
+      "records_sha256": "b0c352488852ff820f62339616563220ba62a575e0891899d6cb4c977d6f5c9c",
+      "status_counts": {
+        "calculated": 250,
+        "refused": 40
+      },
+      "summary_path": "20260901_133239_indicators/summary.json",
+      "summary_sha256": "f6dc5f0518df3555ca9058b247b69cf98314ae46d8c4b35b46dbf8a7c7de288a"
+    }
+  }
+}

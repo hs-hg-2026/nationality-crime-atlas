@@ -1,0 +1,29 @@
+# --- custom-init-project: provenance レーンの既定除外 ---
+# 持ち込み口（大きい/機微＝患者データ等が入りうる。原則 push しない）
+inbox/
+# AI 生ログ（firehose・未選別）
+agent_logs/
+# 生成成果物（再生成可。追跡したければこの行をコメントアウト）
+output/
+# 解析の原データ（大容量・外部が正本）。directory構造のmarkerだけ残す
+data/raw/*
+!data/raw/.gitkeep
+# 再生成可能なnormalized dataは大容量のため除外し、compact catalogだけ公開可能にする
+data/processed/*
+!data/processed/.gitkeep
+!data/processed/_catalog/
+data/processed/_catalog/*
+!data/processed/_catalog/artifacts.jsonl
+!data/processed/_catalog/artifacts.csv
+
+# Python development artifacts
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# OS metadata
+.DS_Store
