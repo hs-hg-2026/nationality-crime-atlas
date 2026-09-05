@@ -287,3 +287,10 @@
 - **なぜ**: advisoryを無視せず、実際に配信するattack surfaceとsource／development dependencyのriskを分離するため。強制更新で公開済みdata／buildの再現性を壊さず、dependency更新を独立した検証単位にするため。
 - **次**: React Server DOM 19.2.8以上、Vite 8.0.16以上、undici／ws／sharpを含むtoolchain、修正版のない`image-size`を含むvinext更新を別taskで検証する。Dependabot alertsの有効化も検討する。static-onlyという前提が変わりserver機能やuntrusted uploadを追加する前には、未解消advisoryをrelease blockerとして再評価する。
 - **関連情報**: `web/package.json`, `web/package-lock.json`, `.github/workflows/pages.yml`, GitHub Advisory Database `GHSA-wx67-qw84-cm4g`, `GHSA-fx2h-pf6j-xcff`, `GHSA-w3rx-r6r6-pgpr`, `GHSA-f88m-g3jw-g9cj`
+
+## 2026-09-05 v0.1.0 GitHub Release公開
+- **何が**: 初回のGitHub Release `v0.1.0 — 初回公開版`を、見出し修正とpre-release auditを含むcommit `e9785c1`に対して公開した。
+- **どう判断**: 自動生成notesは使わず、機能、読み方、検証、static公開に限定したdependency注意を記した日本語本文を手書きした。Release本文には個人名、個人mail、端末情報、local pathを記載しない。
+- **なぜ**: package metadataの`0.1.0`と公開版のtagを一致させ、何を検証して公開した版かを固定するため。Release本文から不要な個人情報が再流入する経路を作らないため。
+- **検証結果**: GitHub APIでdraft=false、prerelease=false、latest=`v0.1.0`、tag objectがcommit `e9785c13869635ada528b3f64028fe77fe7e8b87`を直接参照することを再確認した。公開後の本文scanでもemail、禁止private marker、代表的secretは0件だった。
+- **関連URL**: `https://github.com/hs-hg-2026/nationality-crime-atlas/releases/tag/v0.1.0`
