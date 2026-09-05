@@ -95,6 +95,146 @@
         }
       ]
     },
+    "S08_2020": {
+      "description": "NPA 2020 detailed crime statistics Table 130",
+      "record_type": "nationality_crime",
+      "expected_artifact_sha256": "5e6ceb16a748f9d4be6313e9b4d3b5aed50e026cbf19e0677891c66ae86a2efd",
+      "expected_record_count": 33,
+      "expected_years": [2020],
+      "allowed_values": {
+        "population_scope": ["all_foreign"],
+        "row_kind": ["region_total", "country", "subcategory"]
+      },
+      "expected_distinct_counts": {
+        "region": 6,
+        "nationality": 24,
+        "subcategory": 5,
+        "row_kind": 3
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "year": 2020,
+            "nationality": "中国",
+            "subcategory": null,
+            "row_kind": "country"
+          },
+          "expect": {
+            "cleared_cases": 6272,
+            "cleared_persons": 4003,
+            "criminal_code_cleared_cases": 3965,
+            "criminal_code_cleared_persons": 2413
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S08_2021": {
+      "description": "NPA 2021 detailed crime statistics Table 130",
+      "record_type": "nationality_crime",
+      "expected_artifact_sha256": "45a4bf1c58d5d0cb4b933d4bc9db5068f12fd66646acd401221fabc71df5f36f",
+      "expected_record_count": 33,
+      "expected_years": [2021],
+      "allowed_values": {
+        "population_scope": ["all_foreign"],
+        "row_kind": ["region_total", "country", "subcategory"]
+      },
+      "expected_distinct_counts": {
+        "region": 6,
+        "nationality": 24,
+        "subcategory": 5,
+        "row_kind": 3
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "year": 2021,
+            "nationality": "中国",
+            "subcategory": null,
+            "row_kind": "country"
+          },
+          "expect": {
+            "cleared_cases": 5162,
+            "cleared_persons": 3616,
+            "criminal_code_cleared_cases": 3334,
+            "criminal_code_cleared_persons": 2251
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S08_2022": {
+      "description": "NPA 2022 detailed crime statistics Table 130",
+      "record_type": "nationality_crime",
+      "expected_artifact_sha256": "901cc0c472411468ba21e88de99d7aa9b3442fe4e6047360e6d3234744ead5ba",
+      "expected_record_count": 33,
+      "expected_years": [2022],
+      "allowed_values": {
+        "population_scope": ["all_foreign"],
+        "row_kind": ["region_total", "country", "subcategory"]
+      },
+      "expected_distinct_counts": {
+        "region": 6,
+        "nationality": 24,
+        "subcategory": 5,
+        "row_kind": 3
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "year": 2022,
+            "nationality": "中国",
+            "subcategory": null,
+            "row_kind": "country"
+          },
+          "expect": {
+            "cleared_cases": 4703,
+            "cleared_persons": 3306,
+            "criminal_code_cleared_cases": 3026,
+            "criminal_code_cleared_persons": 2066
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S08_2023": {
+      "description": "NPA 2023 detailed crime statistics Table 130",
+      "record_type": "nationality_crime",
+      "expected_artifact_sha256": "b1a4a6c9351f77171fc40c57cfbdce4e9fb1e90a68156cab7fefd7cf33a8f9e5",
+      "expected_record_count": 33,
+      "expected_years": [2023],
+      "allowed_values": {
+        "population_scope": ["all_foreign"],
+        "row_kind": ["region_total", "country", "subcategory"]
+      },
+      "expected_distinct_counts": {
+        "region": 6,
+        "nationality": 24,
+        "subcategory": 5,
+        "row_kind": 3
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "year": 2023,
+            "nationality": "中国",
+            "subcategory": null,
+            "row_kind": "country"
+          },
+          "expect": {
+            "cleared_cases": 4770,
+            "cleared_persons": 3464,
+            "criminal_code_cleared_cases": 3263,
+            "criminal_code_cleared_persons": 2282
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
     "S09": {
       "description": "NPA 2024 detailed crime statistics Table 131",
       "record_type": "nationality_crime",
@@ -121,6 +261,146 @@
             "row_kind": "country"
           },
           "expect": {"cleared_cases": 3131, "cleared_persons": 2211},
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S09_2020": {
+      "description": "NPA 2020 detailed crime statistics Table 131",
+      "record_type": "nationality_crime",
+      "expected_artifact_sha256": "91c91a661e67f0ecf593766e45ecd8d29a4b8d06dbf858f72696ac11c995a519",
+      "expected_record_count": 30,
+      "expected_years": [2020],
+      "allowed_values": {
+        "population_scope": ["visiting_foreign"],
+        "row_kind": ["region_total", "country"]
+      },
+      "expected_distinct_counts": {
+        "region": 6,
+        "nationality": 24,
+        "subcategory": 1,
+        "row_kind": 2
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "year": 2020,
+            "nationality": "中国",
+            "subcategory": null,
+            "row_kind": "country"
+          },
+          "expect": {
+            "cleared_cases": 4639,
+            "cleared_persons": 2858,
+            "criminal_code_cleared_cases": 2845,
+            "criminal_code_cleared_persons": 1568
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S09_2021": {
+      "description": "NPA 2021 detailed crime statistics Table 131",
+      "record_type": "nationality_crime",
+      "expected_artifact_sha256": "eabb1b97c0874adb8bb3227cb320aa828fbec3a8d7b954a4d4cc10743048f9ea",
+      "expected_record_count": 30,
+      "expected_years": [2021],
+      "allowed_values": {
+        "population_scope": ["visiting_foreign"],
+        "row_kind": ["region_total", "country"]
+      },
+      "expected_distinct_counts": {
+        "region": 6,
+        "nationality": 24,
+        "subcategory": 1,
+        "row_kind": 2
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "year": 2021,
+            "nationality": "中国",
+            "subcategory": null,
+            "row_kind": "country"
+          },
+          "expect": {
+            "cleared_cases": 3658,
+            "cleared_persons": 2396,
+            "criminal_code_cleared_cases": 2227,
+            "criminal_code_cleared_persons": 1371
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S09_2022": {
+      "description": "NPA 2022 detailed crime statistics Table 131",
+      "record_type": "nationality_crime",
+      "expected_artifact_sha256": "585e3a413906349261b971485c95640582e916943e80d05bf910aa9eb5ca879c",
+      "expected_record_count": 30,
+      "expected_years": [2022],
+      "allowed_values": {
+        "population_scope": ["visiting_foreign"],
+        "row_kind": ["region_total", "country"]
+      },
+      "expected_distinct_counts": {
+        "region": 6,
+        "nationality": 24,
+        "subcategory": 1,
+        "row_kind": 2
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "year": 2022,
+            "nationality": "中国",
+            "subcategory": null,
+            "row_kind": "country"
+          },
+          "expect": {
+            "cleared_cases": 3342,
+            "cleared_persons": 2099,
+            "criminal_code_cleared_cases": 2029,
+            "criminal_code_cleared_persons": 1207
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S09_2023": {
+      "description": "NPA 2023 detailed crime statistics Table 131",
+      "record_type": "nationality_crime",
+      "expected_artifact_sha256": "c4c29c849239552b14a9c9ba339c42fd661a3b39b2231cb14a7050f7397f27bb",
+      "expected_record_count": 30,
+      "expected_years": [2023],
+      "allowed_values": {
+        "population_scope": ["visiting_foreign"],
+        "row_kind": ["region_total", "country"]
+      },
+      "expected_distinct_counts": {
+        "region": 6,
+        "nationality": 24,
+        "subcategory": 1,
+        "row_kind": 2
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "year": 2023,
+            "nationality": "中国",
+            "subcategory": null,
+            "row_kind": "country"
+          },
+          "expect": {
+            "cleared_cases": 3203,
+            "cleared_persons": 2181,
+            "criminal_code_cleared_cases": 2066,
+            "criminal_code_cleared_persons": 1333
+          },
           "expected_matches": 1
         }
       ]
@@ -206,6 +486,198 @@
             "recognized_cases": 94752,
             "cleared_cases": 33961,
             "cleared_persons": 23731
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S15_2020": {
+      "description": "NPA 2020 detailed crime statistics Table 3 all-person criminal-code totals",
+      "record_type": "overall_prefecture_crime",
+      "expected_artifact_sha256": "308cecb15fa3c33b13ecd4e5d5eaf08890aab326a796f5aed6dc8b7dc6bff956",
+      "expected_record_count": 60,
+      "expected_years": [2020],
+      "allowed_values": {
+        "population_scope": ["all_persons"],
+        "offense_scope": ["criminal_code_excluding_traffic_negligence"],
+        "geography_type": [
+          "national",
+          "police_region",
+          "police_subregion",
+          "prefecture"
+        ],
+        "geography_semantics": [
+          "national_aggregate",
+          "police_reporting_area_unresolved"
+        ]
+      },
+      "expected_distinct_counts": {
+        "year": 1,
+        "geography": 60,
+        "geography_type": 4,
+        "parent_region": 10
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"year": 2020, "geography": "日本"},
+          "expect": {
+            "recognized_cases": 614231,
+            "cleared_cases": 279185,
+            "cleared_persons": 182582
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {"year": 2020, "geography": "東京都"},
+          "expect": {
+            "recognized_cases": 82764,
+            "cleared_cases": 33521,
+            "cleared_persons": 23271
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S15_2021": {
+      "description": "NPA 2021 detailed crime statistics Table 3 all-person criminal-code totals",
+      "record_type": "overall_prefecture_crime",
+      "expected_artifact_sha256": "2f007c3d6ef700c3fbbe28f63f3f9ce7abadb67eb86e2207ef4344ed9b2e1270",
+      "expected_record_count": 60,
+      "expected_years": [2021],
+      "allowed_values": {
+        "population_scope": ["all_persons"],
+        "offense_scope": ["criminal_code_excluding_traffic_negligence"],
+        "geography_type": [
+          "national",
+          "police_region",
+          "police_subregion",
+          "prefecture"
+        ],
+        "geography_semantics": [
+          "national_aggregate",
+          "police_reporting_area_unresolved"
+        ]
+      },
+      "expected_distinct_counts": {
+        "year": 1,
+        "geography": 60,
+        "geography_type": 4,
+        "parent_region": 10
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"year": 2021, "geography": "日本"},
+          "expect": {
+            "recognized_cases": 568104,
+            "cleared_cases": 264485,
+            "cleared_persons": 175041
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {"year": 2021, "geography": "東京都"},
+          "expect": {
+            "recognized_cases": 75288,
+            "cleared_cases": 30950,
+            "cleared_persons": 21026
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S15_2022": {
+      "description": "NPA 2022 detailed crime statistics Table 3 all-person criminal-code totals",
+      "record_type": "overall_prefecture_crime",
+      "expected_artifact_sha256": "e05be7dcc58815eb894eafba4e24df5204ae67e78ba849c1750b7e786487d053",
+      "expected_record_count": 60,
+      "expected_years": [2022],
+      "allowed_values": {
+        "population_scope": ["all_persons"],
+        "offense_scope": ["criminal_code_excluding_traffic_negligence"],
+        "geography_type": [
+          "national",
+          "police_region",
+          "police_subregion",
+          "prefecture"
+        ],
+        "geography_semantics": [
+          "national_aggregate",
+          "police_reporting_area_unresolved"
+        ]
+      },
+      "expected_distinct_counts": {
+        "year": 1,
+        "geography": 60,
+        "geography_type": 4,
+        "parent_region": 10
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"year": 2022, "geography": "日本"},
+          "expect": {
+            "recognized_cases": 601331,
+            "cleared_cases": 250350,
+            "cleared_persons": 169409
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {"year": 2022, "geography": "東京都"},
+          "expect": {
+            "recognized_cases": 78475,
+            "cleared_cases": 30587,
+            "cleared_persons": 20911
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S15_2023": {
+      "description": "NPA 2023 detailed crime statistics Table 3 all-person criminal-code totals",
+      "record_type": "overall_prefecture_crime",
+      "expected_artifact_sha256": "4dfa94cfd558fc98fd571e79fb8a4e79c2ceebe2e8b2e12c5d14b75c1d50915a",
+      "expected_record_count": 60,
+      "expected_years": [2023],
+      "allowed_values": {
+        "population_scope": ["all_persons"],
+        "offense_scope": ["criminal_code_excluding_traffic_negligence"],
+        "geography_type": [
+          "national",
+          "police_region",
+          "police_subregion",
+          "prefecture"
+        ],
+        "geography_semantics": [
+          "national_aggregate",
+          "police_reporting_area_unresolved"
+        ]
+      },
+      "expected_distinct_counts": {
+        "year": 1,
+        "geography": 60,
+        "geography_type": 4,
+        "parent_region": 10
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"year": 2023, "geography": "日本"},
+          "expect": {
+            "recognized_cases": 703351,
+            "cleared_cases": 269550,
+            "cleared_persons": 183269
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {"year": 2023, "geography": "東京都"},
+          "expect": {
+            "recognized_cases": 89098,
+            "cleared_cases": 31149,
+            "cleared_persons": 21968
           },
           "expected_matches": 1
         }
