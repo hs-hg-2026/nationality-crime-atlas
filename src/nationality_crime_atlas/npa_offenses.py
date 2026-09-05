@@ -213,6 +213,7 @@ def _classify_nationality_rows(
 ) -> Iterable[Tuple[int, str, Optional[str], Optional[str], Optional[str], Sequence[object]]]:
     current_region = None
     current_nationality = None
+    records_started = False
     for source_row, row in enumerate(
         worksheet.iter_rows(min_row=first_row, values_only=True), start=first_row
     ):
@@ -223,6 +224,8 @@ def _classify_nationality_rows(
         if cases_index + 1 >= len(row):
             continue
         if row[cases_index] in (None, "") and row[cases_index + 1] in (None, ""):
+            if records_started:
+                break
             continue
 
         primary = labels[1] if len(labels) > 1 else None
@@ -259,6 +262,7 @@ def _classify_nationality_rows(
                 "Could not classify nationality row %d in sheet %s"
                 % (source_row, worksheet.title.strip())
             )
+        records_started = True
         yield (
             source_row,
             row_kind,

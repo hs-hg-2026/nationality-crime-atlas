@@ -234,6 +234,8 @@ def parse_npa_overall_prefecture_crime(
                 continue
             if label.startswith("注"):
                 break
+            if label == "確認用":
+                break
             if re.search(r"\d{4}", label):
                 continue
             geography, geography_type, parent_region = _crime_geography(label)
