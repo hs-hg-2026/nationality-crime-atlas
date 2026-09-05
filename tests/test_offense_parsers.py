@@ -70,6 +70,36 @@ def test_nationality_offense_parser_preserves_annual_total_and_subcategories(
     assert us_other.cleared_persons == 9
 
 
+def test_nationality_offense_parser_stops_before_verification_rows(
+    nationality_offense_file,
+):
+    from openpyxl import load_workbook
+
+    workbook = load_workbook(nationality_offense_file)
+    worksheet = workbook["02"]
+    note_row = next(
+        cell.row
+        for cell in worksheet["B"]
+        if isinstance(cell.value, str) and cell.value.startswith("注")
+    )
+    worksheet.cell(note_row, 2, "３ fixture note without 注 marker")
+    worksheet.cell(note_row + 2, 4, "計")
+    worksheet.cell(note_row + 2, 9, 0)
+    worksheet.cell(note_row + 2, 10, 0)
+    worksheet.cell(note_row + 2, 13, 0)
+    worksheet.cell(note_row + 2, 14, 0)
+    workbook.save(nationality_offense_file)
+
+    records = parse_npa_nationality_offense_groups(
+        nationality_offense_file,
+        table_id="130",
+        source_id="S08_R02",
+    )
+
+    assert len(records) == 81
+    assert not any(record.subcategory == "計" for record in records)
+
+
 def test_all_person_parser_extracts_same_six_official_groups(
     all_person_offense_file,
 ):

@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
 
 from nationality_crime_atlas.errors import SchemaError
 from nationality_crime_atlas.cli import main as ingest_main
@@ -154,6 +154,24 @@ def test_overall_crime_parser_preserves_total_and_police_geography(tmp_path):
     assert tokyo.geography_type == "prefecture"
     assert tokyo.geography_semantics == "police_reporting_area_unresolved"
     assert tokyo.source_table == "3"
+
+
+def test_overall_crime_parser_stops_before_official_verification_block(tmp_path):
+    path = _crime_fixture(tmp_path / "R02_003.xlsx")
+    workbook = load_workbook(path)
+    worksheet = workbook["刑法犯総数"]
+    worksheet["B17"] = "確認用"
+    worksheet["B18"] = "総数"
+    worksheet["C18"] = 0
+    worksheet["E18"] = 0
+    worksheet["F18"] = 0
+    workbook.save(path)
+
+    records = parse_npa_overall_prefecture_crime(path, source_id="S15_R02")
+
+    assert len(records) == 6
+    assert {record.year for record in records} == {2024}
+    assert not any(record.geography == "確認用" for record in records)
 
 
 def test_overall_crime_parser_rejects_unrelated_workbook(tmp_path):
