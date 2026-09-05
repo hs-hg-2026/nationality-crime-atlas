@@ -28,6 +28,24 @@ class PopulationRecord:
 
 
 @dataclass(frozen=True)
+class NationalityPopulationTotalRecord:
+    """One official year-end resident-foreigner population total."""
+
+    period_end: str
+    region: Optional[str]
+    nationality: Optional[str]
+    row_kind: str
+    population: int
+    source_region: Optional[str]
+    source_nationality: str
+    source_id: str
+    source_table: str
+    source_sheet: str
+    source_row: int
+    source_column: int
+
+
+@dataclass(frozen=True)
 class NationalityCrimeRecord:
     """Latest-year national clearance totals for one source nationality row."""
 
