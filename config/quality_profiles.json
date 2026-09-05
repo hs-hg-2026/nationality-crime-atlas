@@ -758,6 +758,120 @@
           "expected_matches": 1
         }
       ]
+    },
+    "S17_2021": {
+      "description": "Statistics Bureau 2021 Population Estimates Table 2 Japanese-national population",
+      "record_type": "prefecture_population",
+      "expected_artifact_sha256": "5acd98b56ab29648d39c780098826c8916cd5daddf663bcf72d1198e32aef226",
+      "expected_record_count": 48,
+      "expected_years": [2021],
+      "allowed_values": {
+        "reference_date": ["2021-10-01"],
+        "population_scope": ["japanese_population"],
+        "geography_type": ["national", "prefecture"],
+        "geography_semantics": [
+          "national_aggregate",
+          "population_estimate_prefecture"
+        ],
+        "source_unit": ["1000_persons"],
+        "rounding": ["nearest_1000_persons"]
+      },
+      "expected_distinct_counts": {
+        "year": 1,
+        "reference_date": 1,
+        "geography": 48,
+        "geography_type": 2,
+        "parent_region": 1
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"year": 2021, "geography": "日本"},
+          "expect": {"population": 122780000, "source_value": 122780},
+          "expected_matches": 1
+        },
+        {
+          "where": {"year": 2021, "geography": "東京都"},
+          "expect": {"population": 13459000, "source_value": 13459},
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S17_2022": {
+      "description": "Statistics Bureau 2022 Population Estimates Table 2 Japanese-national population",
+      "record_type": "prefecture_population",
+      "expected_artifact_sha256": "c91ad5d7dd29f067f0d20d27575e8fcc1ab1fb8dc7871b1393080a3b5e682fc2",
+      "expected_record_count": 48,
+      "expected_years": [2022],
+      "allowed_values": {
+        "reference_date": ["2022-10-01"],
+        "population_scope": ["japanese_population"],
+        "geography_type": ["national", "prefecture"],
+        "geography_semantics": [
+          "national_aggregate",
+          "population_estimate_prefecture"
+        ],
+        "source_unit": ["1000_persons"],
+        "rounding": ["nearest_1000_persons"]
+      },
+      "expected_distinct_counts": {
+        "year": 1,
+        "reference_date": 1,
+        "geography": 48,
+        "geography_type": 2,
+        "parent_region": 1
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"year": 2022, "geography": "日本"},
+          "expect": {"population": 122031000, "source_value": 122031},
+          "expected_matches": 1
+        },
+        {
+          "where": {"year": 2022, "geography": "東京都"},
+          "expect": {"population": 13443000, "source_value": 13443},
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S17_2023": {
+      "description": "Statistics Bureau 2023 Population Estimates Table 2 Japanese-national population",
+      "record_type": "prefecture_population",
+      "expected_artifact_sha256": "53a63aea1b02c672f25a9e9e563f9c698901a52e651dd8d2e81c2ef1092d1a47",
+      "expected_record_count": 48,
+      "expected_years": [2023],
+      "allowed_values": {
+        "reference_date": ["2023-10-01"],
+        "population_scope": ["japanese_population"],
+        "geography_type": ["national", "prefecture"],
+        "geography_semantics": [
+          "national_aggregate",
+          "population_estimate_prefecture"
+        ],
+        "source_unit": ["1000_persons"],
+        "rounding": ["nearest_1000_persons"]
+      },
+      "expected_distinct_counts": {
+        "year": 1,
+        "reference_date": 1,
+        "geography": 48,
+        "geography_type": 2,
+        "parent_region": 1
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"year": 2023, "geography": "日本"},
+          "expect": {"population": 121193000, "source_value": 121193},
+          "expected_matches": 1
+        },
+        {
+          "where": {"year": 2023, "geography": "東京都"},
+          "expect": {"population": 13448000, "source_value": 13448},
+          "expected_matches": 1
+        }
+      ]
     }
   }
 }
