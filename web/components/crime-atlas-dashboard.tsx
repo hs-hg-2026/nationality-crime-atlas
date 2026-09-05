@@ -783,11 +783,11 @@ export function CrimeAtlasDashboard({
         >
           <div className="section-heading-row">
             <div>
-              <p className="section-kicker">人口規模をそろえて比較</p>
+              <p className="section-kicker">地域比較の例</p>
               <h2 id="comparison-heading">
                 {view.isSameYearGap
-                  ? '東京と埼玉の同年差分を比較'
-                  : '東京と埼玉を同じ尺度で見る'}
+                  ? '同年差分の件数と割合を比較'
+                  : '人口規模をそろえて比較'}
               </h2>
             </div>
             <Badge variant="secondary">{view.metricLabel}</Badge>
