@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 from openpyxl import Workbook, load_workbook
 
+import nationality_crime_atlas.npa_all_residents as all_residents
 from nationality_crime_atlas.errors import SchemaError
 from nationality_crime_atlas.cli import main as ingest_main
 from nationality_crime_atlas.npa_all_residents import (
@@ -122,6 +123,45 @@ def _japanese_population_fixture(path: Path, *, valid_title: bool = True) -> Pat
     return path
 
 
+def _intercensal_population_fixture(path: Path) -> Path:
+    workbook = Workbook()
+    workbook.remove(workbook.active)
+    for sheet_name, scope_label, national_values, tokyo_values in (
+        (
+            "総人口 (2015年～2020年)",
+            "総人口",
+            (126555, 126146),
+            (14007, 14048),
+        ),
+        (
+            "日本人人口 (2015年～2020年)",
+            "日本人人口",
+            (123886, 123399),
+            (13442, 13484),
+        ),
+    ):
+        worksheet = workbook.create_sheet(sheet_name)
+        worksheet["A1"] = (
+            "第５表 都道府県別人口 (各年10月1日現在)－総人口、日本人"
+            "（2015年～2020年）"
+        )
+        worksheet["A5"] = "(単位 千人)"
+        worksheet["E7"] = scope_label
+        worksheet["E9"] = "2019年"
+        worksheet["F9"] = "2020年"
+        worksheet["A11"] = "全 国"
+        worksheet["E11"], worksheet["F11"] = national_values
+        worksheet["B12"] = "01"
+        worksheet["C12"] = "北 海 道"
+        worksheet["E12"] = 5259 if scope_label == "総人口" else 5208
+        worksheet["F12"] = 5225 if scope_label == "総人口" else 5179
+        worksheet["B13"] = "13"
+        worksheet["C13"] = "東 京 都"
+        worksheet["E13"], worksheet["F13"] = tokyo_values
+    workbook.save(path)
+    return path
+
+
 def _find(records, *, geography: str):
     return next(record for record in records if record.geography == geography)
 
@@ -228,6 +268,34 @@ def test_japanese_population_parser_preserves_published_scope_and_rounding(tmp_p
     assert tokyo.population == 13_463_000
     assert tokyo.geography_type == "prefecture"
     assert tokyo.source_table == "2"
+
+
+def test_intercensal_population_parser_preserves_year_scope_and_rounding(tmp_path):
+    path = _intercensal_population_fixture(tmp_path / "table5.xlsx")
+
+    records = all_residents.parse_statistics_bureau_intercensal_population(
+        path,
+        source_id="S18",
+    )
+
+    assert len(records) == 12
+    target = next(
+        record
+        for record in records
+        if record.year == 2020
+        and record.population_scope == "japanese_population"
+        and record.geography == "東京都"
+    )
+    assert target.reference_date == "2020-10-01"
+    assert target.population == 13484000
+    assert target.source_value == 13484
+    assert target.source_unit == "1000_persons"
+    assert target.rounding == "nearest_1000_persons"
+    assert target.geography_type == "prefecture"
+    assert target.geography_semantics == "population_estimate_prefecture"
+    assert target.source_table == "5"
+    assert target.source_sheet == "日本人人口 (2015年～2020年)"
+    assert target.source_row == 13
 
 
 def test_japanese_population_parser_rejects_unrelated_workbook(tmp_path):
