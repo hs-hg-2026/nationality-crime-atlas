@@ -272,3 +272,11 @@
 - **どう判断／なぜ**: buildは`/nationality-crime-atlas/_next`を正しく生成しており、実装やartifactの破損ではなかった。整形commandだけにCIと同じ`NEXT_PUBLIC_BASE_PATH`を渡していなかったため、環境条件を揃えて再実行した。
 - **検証結果**: 32 files、base path `/nationality-crime-atlas`、dashboard SHA-256 `102e2f6d589675a4fb45eac239212ff3f160048f5c0479bea62416da67ecb002`を含むPages artifact検証がpassした。
 - **関連パス**: `web/scripts/prepare-pages-artifact.mjs`, `web/scripts/verify-pages-artifact.mjs`, `.github/workflows/pages.yml`
+
+## 2026-09-05 東京・埼玉をscopeではなく地域比較の例として表示
+- **何が**: userから、`東京と埼玉を同じ尺度で見る`という見出しでは2地域だけが比較目的に見え、実際の意図である人口規模をそろえた比較例が伝わりにくいとの指摘を受けた。
+- **どう判断**: section kickerを`地域比較の例`、通常時の見出しを`人口規模をそろえて比較`へ変更し、東京・埼玉の固有名は具体例card内だけに残す。同年差分表示では人口を分母にしないため、見出しを`同年差分の件数と割合を比較`とする。
+- **なぜ**: 2都県だけを分析対象と誤読させず、47都道府県に適用する比較方法の具体例であることを明確にするため。同年差分の比較軸と人口当たりの比較軸も混同させないため。
+- **検証結果**: 一般化した2見出しと東京・埼玉cardの保持を要求するcomponent testで2件のREDを確認後、focused 10 tests、full 70 testsをGREEN化。statement coverage 90.63%、branch coverage 84.34%、typecheck、lint、format、data hash、map determinism、production build、32-file Pages artifact検証をpassした。
+- **release状態**: `web/package.json`のpackage versionは`0.1.0`だが、GitHub tag／Releaseは未作成。今回の修正を含むCI成功commitを`v0.1.0`候補とする。
+- **関連パス**: `web/components/crime-atlas-dashboard.tsx`, `web/tests/dashboard.test.tsx`
