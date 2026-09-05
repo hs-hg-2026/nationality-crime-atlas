@@ -669,18 +669,30 @@ def _clearance_share_fixture(tmp_path: Path) -> Path:
                         "role": "numerator_minuend",
                         "metric": metric,
                         "value": values["all_foreign"][metric][0],
+                        "source_table": "130",
+                        "source_sheet": "01",
+                        "source_row": 17,
+                        "source_column": 7 if metric == "cleared_cases" else 8,
                     },
                     {
                         "source_id": "S09",
                         "role": "numerator_subtrahend",
                         "metric": metric,
                         "value": values["visiting_foreign"][metric][0],
+                        "source_table": "131",
+                        "source_sheet": "01",
+                        "source_row": 17,
+                        "source_column": 6 if metric == "cleared_cases" else 7,
                     },
                     {
                         "source_id": "S15",
                         "role": "denominator",
                         "metric": metric,
                         "value": denominator,
+                        "source_table": "3",
+                        "source_sheet": "刑法犯総数",
+                        "source_row": 18,
+                        "source_column": 5 if metric == "cleared_cases" else 6,
                     },
                 ]
                 mismatch_flags = [
@@ -697,12 +709,31 @@ def _clearance_share_fixture(tmp_path: Path) -> Path:
                         "role": "numerator",
                         "metric": metric,
                         "value": numerator,
+                        "source_table": (
+                            "130" if foreign_scope == "all_foreign" else "131"
+                        ),
+                        "source_sheet": "01",
+                        "source_row": 17,
+                        "source_column": (
+                            7
+                            if foreign_scope == "all_foreign"
+                            and metric == "cleared_cases"
+                            else 8
+                            if foreign_scope == "all_foreign"
+                            else 6
+                            if metric == "cleared_cases"
+                            else 7
+                        ),
                     },
                     {
                         "source_id": "S15",
                         "role": "denominator",
                         "metric": metric,
                         "value": denominator,
+                        "source_table": "3",
+                        "source_sheet": "刑法犯総数",
+                        "source_row": 18,
+                        "source_column": 5 if metric == "cleared_cases" else 6,
                     },
                 ]
                 mismatch_flags = [
@@ -834,6 +865,14 @@ def _rewrite_clearance_share_records(latest_path: Path, mutation: str) -> None:
     elif mutation == "ui_caveat":
         for row in rows:
             row["ui_caveat"] = "在留外国人の犯罪率を示す。"
+    elif mutation == "metric_label":
+        for row in rows:
+            row["metric_label_ja"] = "犯罪率"
+    elif mutation == "source_coordinates":
+        for row in rows:
+            if row["foreign_scope"] == "all_foreign_minus_visiting_foreign":
+                row["source_components"][0]["source_table"] = "999"
+                row["source_components"][0]["source_row"] = 999
     else:  # pragma: no cover - test helper guard
         raise AssertionError("Unsupported fixture mutation: %s" % mutation)
 
@@ -1060,6 +1099,8 @@ def test_same_year_gap_refuses_a_percentage_when_recognized_count_is_zero(tmp_pa
         "source_components",
         "interpretation_policy",
         "ui_caveat",
+        "metric_label",
+        "source_coordinates",
     ],
 )
 def test_compact_export_rejects_unsafe_clearance_share_semantics(

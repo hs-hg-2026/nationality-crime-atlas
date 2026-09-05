@@ -381,6 +381,8 @@ describe('dashboard publication bundle', () => {
     'source_components',
     'interpretation_policy',
     'ui_caveat',
+    'metric_label',
+    'source_coordinates',
   ])('rejects unsafe clearance-share semantics: %s', (mutation) => {
     const directory = makeTemporaryDirectory();
     const source = makeCompactSource(directory);
@@ -427,6 +429,20 @@ describe('dashboard publication bundle', () => {
       payload.definitions.clearance_share_ids[
         'national_criminal_code_clearance_foreign_share'
       ].ui_caveat = '在留外国人の犯罪率を示す。';
+    } else if (mutation === 'metric_label') {
+      for (const row of rows) {
+        row.metric_label_ja = '犯罪率';
+      }
+    } else if (mutation === 'source_coordinates') {
+      for (const row of rows) {
+        if (row.foreign_scope === 'all_foreign_minus_visiting_foreign') {
+          const components = row.source_components as Array<
+            Record<string, unknown>
+          >;
+          components[0].source_table = '999';
+          components[0].source_row = 999;
+        }
+      }
     }
     writeHashClosedDashboard(source, payload);
 

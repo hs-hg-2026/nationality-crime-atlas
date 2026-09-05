@@ -469,6 +469,8 @@ describe('national clearance foreign-share trend model', () => {
     'source_components',
     'interpretation_policy',
     'ui_caveat',
+    'metric_label',
+    'source_coordinates',
   ])('rejects unsafe clearance-share semantics: %s', (mutation) => {
     const dashboard = structuredClone(parseDashboardData(dashboardFixture));
     const rows = dashboard.records.clearance_share_trends;
@@ -515,6 +517,15 @@ describe('national clearance foreign-share trend model', () => {
       dashboard.definitions.clearance_share_ids[
         'national_criminal_code_clearance_foreign_share'
       ].ui_caveat = '在留外国人の犯罪率を示す。';
+    } else if (mutation === 'metric_label') {
+      for (const row of rows) row.metric_label_ja = '犯罪率';
+    } else if (mutation === 'source_coordinates') {
+      for (const row of rows) {
+        if (row.foreign_scope === 'all_foreign_minus_visiting_foreign') {
+          row.source_components[0].source_table = '999';
+          row.source_components[0].source_row = 999;
+        }
+      }
     }
 
     expect(() =>
