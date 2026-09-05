@@ -270,33 +270,37 @@ describe('CrimeAtlasDashboard', () => {
     );
   });
 
-  it('shows high and low observations symmetrically and keeps every nationality category', () => {
+  it('shows every nationality category in one ordered reference-ratio plot', () => {
     render(<CrimeAtlasDashboard dashboard={dashboard} />);
 
     const section = screen.getByTestId('nationality-comparison-section');
-    const highSide = within(section).getByTestId('nationality-high-side');
-    const lowSide = within(section).getByTestId('nationality-low-side');
+    const orderedPlot = within(section).getByTestId(
+      'nationality-ordered-plot',
+    );
     const fullTable = within(section).getByTestId(
       'nationality-comparison-table',
     );
 
+    expect(within(orderedPlot).getAllByTestId('nationality-order-row')).toHaveLength(
+      26,
+    );
+    expect(within(orderedPlot).getAllByTestId('nationality-order-row')[0]).toHaveTextContent(
+      /無国籍.*10\.68/,
+    );
     expect(
-      within(highSide).getByRole('cell', { name: '無国籍' }),
-    ).toBeVisible();
-    expect(within(highSide).getByText(/10.68/)).toBeVisible();
+      within(orderedPlot).getByTestId('nationality-order-japanese'),
+    ).toHaveTextContent(/日本（残差による参考値）.*1\.51/);
     expect(
-      within(highSide).getByText(
-        /人口が少ないため、参考比率が大きく変動しやすい/,
-      ),
-    ).toBeVisible();
+      within(section).queryByTestId('nationality-high-side'),
+    ).not.toBeInTheDocument();
     expect(
-      within(lowSide).getByRole('cell', { name: 'インドネシア' }),
-    ).toBeVisible();
+      within(section).queryByTestId('nationality-low-side'),
+    ).not.toBeInTheDocument();
     expect(
-      within(lowSide).getByRole('cell', {
-        name: /日本（残差による参考値）/,
+      within(section).queryByRole('button', {
+        name: '実数（検挙人員）',
       }),
-    ).toBeVisible();
+    ).not.toBeInTheDocument();
     expect(within(fullTable).getAllByRole('row')).toHaveLength(27);
     expect(
       within(fullTable).getByTestId('nationality-japanese-reference'),
@@ -311,6 +315,30 @@ describe('CrimeAtlasDashboard', () => {
         }),
       ).toHaveAttribute('href', expect.stringMatching(/^https:\/\//));
     }
+  });
+
+  it('shows the ten-year clearance share and switches cases and persons', async () => {
+    const user = userEvent.setup();
+    render(<CrimeAtlasDashboard dashboard={dashboard} />);
+
+    const section = screen.getByTestId('clearance-share-trend-section');
+    expect(
+      within(section).getByRole('heading', {
+        name: '検挙全体に占める外国人区分の割合',
+      }),
+    ).toBeVisible();
+    expect(within(section).getByText(/2015–2024年/)).toBeVisible();
+    expect(within(section).getByTestId('clearance-share-chart')).toBeVisible();
+    expect(within(section).getByTestId('clearance-share-table')).toHaveTextContent(
+      /2024.*287,273.*18,861.*6\.57%.*13,405.*4\.67%/,
+    );
+
+    await user.click(
+      within(section).getByRole('button', { name: '検挙人員' }),
+    );
+    expect(within(section).getByTestId('clearance-share-table')).toHaveTextContent(
+      /2024.*191,826.*10,464.*5\.46%.*6,368.*3\.32%/,
+    );
   });
 
   it('shows all nationality offense patterns as a clustered heatmap and 100% bars', async () => {
@@ -373,10 +401,9 @@ describe('CrimeAtlasDashboard', () => {
     });
     expect(within(selector).getAllByRole('option')).toHaveLength(10);
     expect(within(section).getByText('参考比率の式')).toBeVisible();
-    expect(within(section).getByText(/高低表の尺度:/)).toBeVisible();
     expect(
       within(section).getByText(
-        /比率を算出できる区分から機械的に抽出.*未算出の行は全区分表に残します/,
+        /参考比率の高い順に全区分を表示.*未算出の行も残します/,
       ),
     ).toBeVisible();
 
@@ -405,20 +432,15 @@ describe('CrimeAtlasDashboard', () => {
     );
     expect(within(section).getByText('7区分は未算出')).toBeVisible();
 
-    await user.click(
-      within(section).getByRole('button', { name: '実数（検挙人員）' }),
+    const orderedPlot = within(section).getByTestId(
+      'nationality-ordered-plot',
+    );
+    expect(within(orderedPlot).getAllByTestId('nationality-order-row')).toHaveLength(
+      25,
     );
     expect(
-      within(section).getByTestId('nationality-high-side'),
-    ).toHaveTextContent(/ベトナム.*4,113.*人/);
-    expect(
-      within(section).getByRole('button', { name: '実数（検挙人員）' }),
-    ).toHaveAttribute('aria-pressed', 'true');
-    expect(
-      within(section).getByText(
-        /公表された犯罪件数・人員がある区分から機械的に抽出.*公表実数を表示します/,
-      ),
-    ).toBeVisible();
+      within(orderedPlot).getByTestId('nationality-order-japanese'),
+    ).toHaveTextContent(/日本（対応する公表分子なし）.*未算出/);
   });
 
   it('selects Japanese-inclusive criminal-code cleared cases', async () => {

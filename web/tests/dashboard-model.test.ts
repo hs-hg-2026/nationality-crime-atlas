@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import dashboardFixture from '@/public/data/dashboard_export.json';
 import {
+  buildClearanceShareTrendViewModel,
   buildNationalityComparisonViewModel,
   buildOffenseCompositionViewModel,
   buildSelectableNationalityViewModel,
@@ -293,7 +294,7 @@ describe('nationality offense composition model', () => {
 });
 
 describe('all-nationality comparison model', () => {
-  it('keeps all categories while presenting symmetric high and low views', () => {
+  it('keeps all categories in one descending reference-ratio order', () => {
     const dashboard = parseDashboardData(dashboardFixture);
     const view = buildNationalityComparisonViewModel(dashboard);
 
@@ -303,6 +304,21 @@ describe('all-nationality comparison model', () => {
     expect(
       view.rows.filter((row) => row.calculationStatus === 'refused'),
     ).toHaveLength(4);
+    expect(view.orderedRows).toHaveLength(26);
+    expect(view.orderedRows[0].name).toBe('無国籍');
+    expect(
+      view.orderedRows
+        .filter((row) => row.referenceRatio !== null)
+        .every(
+          (row, index, rows) =>
+            index === 0 ||
+            (rows[index - 1].referenceRatio ?? -Infinity) >=
+              (row.referenceRatio ?? -Infinity),
+        ),
+    ).toBe(true);
+    expect(
+      view.orderedRows.slice(-4).every((row) => row.referenceRatio === null),
+    ).toBe(true);
     expect(view.highRows.map((row) => row.name)).toEqual([
       '無国籍',
       'イラン',
@@ -388,6 +404,57 @@ describe('all-nationality comparison model', () => {
     expect(() => buildNationalityComparisonViewModel(brokenDashboard)).toThrow(
       /comparison row .* has missing values/i,
     );
+  });
+});
+
+describe('national clearance foreign-share trend model', () => {
+  it('keeps ten years of cleared-case counts and both foreign scopes', () => {
+    const dashboard = parseDashboardData(dashboardFixture);
+    const view = buildClearanceShareTrendViewModel(
+      dashboard,
+      'cleared_cases',
+    );
+
+    expect(view.points).toHaveLength(10);
+    expect(view.years).toEqual([
+      2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024,
+    ]);
+    const latest = view.points.at(-1);
+    expect(latest).toMatchObject({
+      year: 2024,
+      allPersonsTotal: 287_273,
+      allForeignCount: 18_861,
+      visitingForeignCount: 13_405,
+    });
+    expect(latest?.allForeignShare).toBeCloseTo(6.565740883);
+    expect(latest?.visitingForeignShare).toBeCloseTo(4.666293244);
+    expect(view.metricLabel).toBe('検挙件数');
+    expect(view.sources.map((source) => source.id)).toEqual([
+      'S08',
+      'S09',
+      'S15',
+    ]);
+    expect(view.uiCaveat).toMatch(/人口当たりの犯罪率/);
+  });
+
+  it('switches to cleared persons without changing the year grid', () => {
+    const dashboard = parseDashboardData(dashboardFixture);
+    const view = buildClearanceShareTrendViewModel(
+      dashboard,
+      'cleared_persons',
+    );
+
+    expect(view.points).toHaveLength(10);
+    const latest = view.points.at(-1);
+    expect(latest).toMatchObject({
+      year: 2024,
+      allPersonsTotal: 191_826,
+      allForeignCount: 10_464,
+      visitingForeignCount: 6_368,
+    });
+    expect(latest?.allForeignShare).toBeCloseTo(5.455466421);
+    expect(latest?.visitingForeignShare).toBeCloseTo(3.319676164);
+    expect(view.metricLabel).toBe('検挙人員');
   });
 });
 
