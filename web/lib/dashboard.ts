@@ -58,6 +58,9 @@ export const NATIONALITY_METRICS = [
 export const NATIONALITY_COMPARISON_ID =
   'nationality_criminal_code_cleared_persons' as const;
 
+export const NATIONALITY_CASES_COMPARISON_ID =
+  'nationality_criminal_code_cleared_cases' as const;
+
 export const OFFENSE_COMPOSITION_ID =
   'nationality_criminal_code_offense_composition' as const;
 
@@ -65,6 +68,10 @@ export const NATIONALITY_PERSPECTIVES = [
   {
     id: NATIONALITY_COMPARISON_ID,
     label: '刑法犯の検挙人員（日本を含む）',
+  },
+  {
+    id: NATIONALITY_CASES_COMPARISON_ID,
+    label: '刑法犯の検挙件数（日本を含む）',
   },
   {
     id: 'x_cleared_persons_exact',
@@ -944,6 +951,168 @@ export function buildNationalityComparisonViewModel(
   };
 }
 
+function nationalityComparisonEntityKey(value: {
+  sourceOrder: number;
+  publishedLabel: string;
+  isJapaneseReference: boolean;
+}): string {
+  return `${value.sourceOrder}:${value.publishedLabel}:${value.isJapaneseReference}`;
+}
+
+function buildNationalityCasesComparisonViewModel(
+  dashboard: DashboardData,
+  mode: ValueMode,
+): NationalityComparisonViewModel {
+  const definition =
+    dashboard.definitions.nationality_comparison_ids[NATIONALITY_COMPARISON_ID];
+  if (!definition) {
+    throw new Error(
+      `Nationality comparison definition is missing: ${NATIONALITY_COMPARISON_ID}`,
+    );
+  }
+  const denominatorRows = dashboard.records.nationality_comparison.filter(
+    (row) => row.comparison_id === NATIONALITY_COMPARISON_ID,
+  );
+  if (denominatorRows.length === 0) {
+    throw new Error('No nationality comparison denominator rows exist.');
+  }
+
+  const offenseView = buildOffenseCompositionViewModel(
+    dashboard,
+    'cleared_cases',
+    'source',
+  );
+  const offenseByKey = new Map<string, OffenseCompositionEntity>();
+  for (const entity of offenseView.entities) {
+    const key = nationalityComparisonEntityKey(entity);
+    if (offenseByKey.has(key)) {
+      throw new Error(`Duplicate cleared-case comparison entity: ${key}`);
+    }
+    offenseByKey.set(key, entity);
+  }
+
+  const rows = denominatorRows
+    .map((row): NationalityComparisonDatum => {
+      const key = nationalityComparisonEntityKey({
+        sourceOrder: row.source_order,
+        publishedLabel: row.published_label,
+        isJapaneseReference: row.is_japanese_reference,
+      });
+      const entity = offenseByKey.get(key);
+      if (!entity) {
+        throw new Error(`Cleared-case comparison entity is missing: ${key}`);
+      }
+      if (entity.year !== row.year) {
+        throw new Error(`Cleared-case comparison year conflicts for ${key}`);
+      }
+      if (
+        row.calculation_status === 'calculated' &&
+        row.denominator_value === null
+      ) {
+        throw new Error(
+          `Cleared-case comparison denominator is missing: ${key}`,
+        );
+      }
+      const referenceRatio =
+        row.calculation_status === 'calculated' &&
+        row.denominator_value !== null
+          ? (entity.total / row.denominator_value) *
+            definition.display_multiplier
+          : null;
+      return {
+        id: `${NATIONALITY_CASES_COMPARISON_ID}:${entity.id}`,
+        name: entity.name,
+        publishedLabel: entity.publishedLabel,
+        sourceOrder: entity.sourceOrder,
+        isJapaneseReference: entity.isJapaneseReference,
+        year: entity.year,
+        value: mode === 'ratio' ? referenceRatio : entity.total,
+        numerator: entity.total,
+        denominator: row.denominator_value,
+        referenceRatio,
+        calculationStatus: row.calculation_status,
+        refusalReason: row.refusal_reason,
+        warningCodes: [
+          ...new Set([
+            ...row.small_number_warning_flags.filter(
+              (warning) => warning !== 'sparse_numerator_count',
+            ),
+            ...entity.warningCodes.filter(
+              (warning) => warning !== 'sparse_entity_total_cleared_persons',
+            ),
+          ]),
+        ].sort(),
+        mismatchCodes: [
+          ...new Set([...row.mismatch_flags, ...entity.mismatchCodes]),
+        ].sort(),
+        derivationMethod: entity.derivationMethod,
+        derivationFormula: entity.derivationFormula,
+        numeratorSourceIds: [...entity.numeratorSourceIds],
+        denominatorSourceId: row.denominator_source_id,
+      };
+    })
+    .sort((left, right) => left.sourceOrder - right.sourceOrder);
+  if (offenseByKey.size !== rows.length) {
+    throw new Error('Cleared-case and population comparison entities differ.');
+  }
+
+  const calculatedRows = rows.filter(
+    (row) => row.calculationStatus === 'calculated',
+  );
+  const { highRows, lowRows } = selectNationalitySides(rows);
+  const japaneseRows = rows.filter((row) => row.isJapaneseReference);
+  if (japaneseRows.length !== 1) {
+    throw new Error(
+      `Expected exactly one Japanese cleared-case row, received ${japaneseRows.length}.`,
+    );
+  }
+  const sourceIds = new Set<string>();
+  for (const row of rows) {
+    for (const sourceId of row.numeratorSourceIds) sourceIds.add(sourceId);
+    if (row.denominatorSourceId) sourceIds.add(row.denominatorSourceId);
+  }
+
+  return {
+    comparisonId: NATIONALITY_CASES_COMPARISON_ID,
+    perspectiveId: NATIONALITY_CASES_COMPARISON_ID,
+    perspectiveLabel: nationalityPerspectiveLabel(
+      NATIONALITY_CASES_COMPARISON_ID,
+    ),
+    perspectiveKind: 'japanese_inclusive_comparison',
+    metricLabel: '全国・国籍等別 刑法犯検挙件数 ÷ 対応人口',
+    mode,
+    unitLabel: mode === 'ratio' ? definition.display_unit_label_ja : '件',
+    numeratorLabel: '検挙件数',
+    rawUnitLabel: '件',
+    scopeLabel: '刑法犯の検挙件数／外国人は公表値、日本は差し引きによる参考値',
+    geographyLabel: '日本全国',
+    year: denominatorRows[0].year,
+    referenceDates: [
+      ...new Set(denominatorRows.map((row) => row.denominator_reference_date)),
+    ].sort(),
+    formula: definition.canonical_formula,
+    displayMultiplier: definition.display_multiplier,
+    statisticalCompatibility: definition.statistical_compatibility,
+    defaultDisplayBehavior: definition.default_display_behavior,
+    interpretationPolicy: definition.interpretation_policy,
+    uiCaveat:
+      '公表された刑法犯検挙件数と対応人口を機械的に組み合わせた参考比率。日本は全件数から全外国人の件数を差し引いた残差による参考値であり、集団の本質、因果、個人riskを示さない。',
+    rows,
+    calculatedRows,
+    highRows,
+    lowRows,
+    japaneseReference: japaneseRows[0],
+    refusedCount: rows.filter((row) => row.calculationStatus === 'refused')
+      .length,
+    refusalReasons: countComparisonRefusalReasons(rows),
+    warningCodes: [...new Set(rows.flatMap((row) => row.warningCodes))].sort(),
+    mismatchCodes: [
+      ...new Set(rows.flatMap((row) => row.mismatchCodes)),
+    ].sort(),
+    sources: collectSources(dashboard, sourceIds),
+  };
+}
+
 function legacyNationalityName(
   row: NationalityIndicatorRow,
   duplicateLabels: ReadonlyMap<string, number>,
@@ -1125,6 +1294,9 @@ export function buildSelectableNationalityViewModel(
 ): NationalityComparisonViewModel {
   if (perspectiveId === NATIONALITY_COMPARISON_ID) {
     return buildNationalityComparisonViewModel(dashboard, mode);
+  }
+  if (perspectiveId === NATIONALITY_CASES_COMPARISON_ID) {
+    return buildNationalityCasesComparisonViewModel(dashboard, mode);
   }
   return buildPublishedIndicatorComparisonViewModel(
     dashboard,

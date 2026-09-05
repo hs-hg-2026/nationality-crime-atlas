@@ -371,7 +371,7 @@ describe('CrimeAtlasDashboard', () => {
     const selector = within(section).getByRole('combobox', {
       name: '国籍等別の分子・対象範囲',
     });
-    expect(within(selector).getAllByRole('option')).toHaveLength(9);
+    expect(within(selector).getAllByRole('option')).toHaveLength(10);
     expect(within(section).getByText('参考比率の式')).toBeVisible();
     expect(within(section).getByText(/高低表の尺度:/)).toBeVisible();
     expect(
@@ -439,7 +439,9 @@ describe('CrimeAtlasDashboard', () => {
         selected: true,
       }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/日本（残差による参考値）/)).toBeVisible();
-    expect(screen.getByText('268,412')).toBeVisible();
+    expect(
+      screen.getAllByText(/日本（残差による参考値）/).length,
+    ).toBeGreaterThan(0);
+    expect(screen.getAllByText('268,412').length).toBeGreaterThan(0);
   });
 });

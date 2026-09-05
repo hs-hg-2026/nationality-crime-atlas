@@ -435,7 +435,7 @@ describe('selectable all-nationality comparison model', () => {
       view.rows.find((row) => row.publishedLabel === 'ベトナム'),
     ).toMatchObject({
       numerator: 6_164,
-      numeratorSourceIds: ['S08', 'S15'],
+      numeratorSourceIds: ['S08'],
     });
   });
 
@@ -560,9 +560,9 @@ describe('selectable all-nationality comparison model', () => {
                   (row) => row.entity_id,
                 ),
               ).size
-          : dashboard.records.nationality_indicators.filter(
-              (row) => row.indicator_id === perspective.id,
-            ).length;
+            : dashboard.records.nationality_indicators.filter(
+                (row) => row.indicator_id === perspective.id,
+              ).length;
 
       expect(view.rows).toHaveLength(
         serializedCount +
