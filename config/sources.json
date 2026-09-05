@@ -86,6 +86,21 @@
       "notes": [
         "Used only as the denominator for the derived Japanese-national reference row and not as a prefecture-level nationality numerator."
       ]
+    },
+    "statistics-bureau-intercensal-population-prefecture": {
+      "publisher": "Statistics Bureau of Japan",
+      "dataset": "Population Estimates Table 5: intercensally adjusted total and Japanese-national population by prefecture",
+      "parser": "statistics-bureau-intercensal-population",
+      "license_url": "https://www.stat.go.jp/info/riyou.html",
+      "dimensions": ["year", "reference_date", "prefecture", "population_scope"],
+      "definitions": [
+        "Official 2015--2020 population series adjusted after the 2020 Population Census and published for October 1 of each year.",
+        "The source notes that Japanese-national population includes allocated nationality-unknown population.",
+        "Published in units of 1,000 persons and rounded; normalized population preserves this limitation in explicit source-unit and rounding fields."
+      ],
+      "notes": [
+        "This later official vintage is used instead of mixing the initial annual vintages for 2015--2020."
+      ]
     }
   },
   "editions": {
@@ -528,6 +543,32 @@
       "verified_at": "2026-09-05",
       "verification_level": "binary_and_primary",
       "expected_sha256": "53a63aea1b02c672f25a9e9e563f9c698901a52e651dd8d2e81c2ef1092d1a47"
+    },
+    "S18": {
+      "series_id": "statistics-bureau-intercensal-population-prefecture",
+      "source_table": "5",
+      "expected_format": "xlsx",
+      "filename": "estat_000013168605.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000013168605",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?fileKind=4&statInfId=000013168605",
+      "period": "2015-10-01 through 2020-10-01 intercensally adjusted population",
+      "coverage_periods": [
+        "2015-10-01",
+        "2016-10-01",
+        "2017-10-01",
+        "2018-10-01",
+        "2019-10-01",
+        "2020-10-01"
+      ],
+      "published_at": null,
+      "revision": "intercensally_adjusted_after_2020_census",
+      "stable_ids": {
+        "e_stat_stat_inf_id": "000013168605",
+        "statistics_bureau_table": "table-5"
+      },
+      "verified_at": "2026-09-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "9e28da4c0ef8c2680577ad5ef0b0a78023d389113f66c85ab9e52bdbed89a1fc"
     }
   }
 }

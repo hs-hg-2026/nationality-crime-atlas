@@ -872,6 +872,78 @@
           "expected_matches": 1
         }
       ]
+    },
+    "S18": {
+      "description": "Statistics Bureau 2015--2020 intercensally adjusted Population Estimates Table 5",
+      "record_type": "prefecture_population",
+      "expected_artifact_sha256": "9e28da4c0ef8c2680577ad5ef0b0a78023d389113f66c85ab9e52bdbed89a1fc",
+      "expected_record_count": 576,
+      "expected_years": [2015, 2016, 2017, 2018, 2019, 2020],
+      "allowed_values": {
+        "reference_date": [
+          "2015-10-01",
+          "2016-10-01",
+          "2017-10-01",
+          "2018-10-01",
+          "2019-10-01",
+          "2020-10-01"
+        ],
+        "population_scope": ["total_population", "japanese_population"],
+        "geography_type": ["national", "prefecture"],
+        "geography_semantics": [
+          "national_aggregate",
+          "population_estimate_prefecture"
+        ],
+        "source_unit": ["1000_persons"],
+        "rounding": ["nearest_1000_persons"]
+      },
+      "expected_distinct_counts": {
+        "year": 6,
+        "reference_date": 6,
+        "population_scope": 2,
+        "geography": 48,
+        "geography_type": 2,
+        "parent_region": 1
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "year": 2020,
+            "population_scope": "total_population",
+            "geography": "日本"
+          },
+          "expect": {"population": 126146000, "source_value": 126146},
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "year": 2020,
+            "population_scope": "japanese_population",
+            "geography": "日本"
+          },
+          "expect": {"population": 123399000, "source_value": 123399},
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "year": 2020,
+            "population_scope": "total_population",
+            "geography": "東京都"
+          },
+          "expect": {"population": 14048000, "source_value": 14048},
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "year": 2020,
+            "population_scope": "japanese_population",
+            "geography": "東京都"
+          },
+          "expect": {"population": 13484000, "source_value": 13484},
+          "expected_matches": 1
+        }
+      ]
     }
   }
 }

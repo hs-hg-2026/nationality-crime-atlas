@@ -12,6 +12,7 @@ from .errors import PipelineConflictError, QualityGateError, SchemaError
 from .npa_all_residents import (
     parse_npa_overall_prefecture_crime,
     parse_npa_prefecture_population,
+    parse_statistics_bureau_intercensal_population,
     parse_statistics_bureau_japanese_population,
 )
 from .npa_nationality import parse_npa_nationality_totals
@@ -30,6 +31,7 @@ PARSER_CONTRACT_VERSIONS = {
     "npa-overall-prefecture-crime": 1,
     "npa-prefecture-population": 1,
     "statistics-bureau-japanese-population": 2,
+    "statistics-bureau-intercensal-population": 1,
 }
 
 
@@ -87,6 +89,10 @@ def _records_for_source(
         return parse_npa_prefecture_population(artifact, source_id=source_id)
     if parser == "statistics-bureau-japanese-population":
         return parse_statistics_bureau_japanese_population(
+            artifact, source_id=source_id
+        )
+    if parser == "statistics-bureau-intercensal-population":
+        return parse_statistics_bureau_intercensal_population(
             artifact, source_id=source_id
         )
     raise SchemaError("Unsupported parser in source metadata: %r" % parser)

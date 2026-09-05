@@ -10,6 +10,7 @@ from typing import Iterable, Optional, Sequence
 from .npa_all_residents import (
     parse_npa_overall_prefecture_crime,
     parse_npa_prefecture_population,
+    parse_statistics_bureau_intercensal_population,
     parse_statistics_bureau_japanese_population,
 )
 from .npa_nationality import parse_npa_nationality_totals
@@ -53,6 +54,11 @@ def _argument_parser() -> argparse.ArgumentParser:
         "statistics-bureau-japanese-population"
     )
     _common_arguments(japanese_population)
+
+    intercensal_population = commands.add_parser(
+        "statistics-bureau-intercensal-population"
+    )
+    _common_arguments(intercensal_population)
     return parser
 
 
@@ -98,8 +104,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             arguments.input,
             source_id=arguments.source_id,
         )
-    else:
+    elif arguments.command == "statistics-bureau-japanese-population":
         records = parse_statistics_bureau_japanese_population(
+            arguments.input,
+            source_id=arguments.source_id,
+        )
+    else:
+        records = parse_statistics_bureau_intercensal_population(
             arguments.input,
             source_id=arguments.source_id,
         )
