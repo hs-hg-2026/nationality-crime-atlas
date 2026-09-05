@@ -631,6 +631,92 @@ def _offense_composition_fixture(tmp_path: Path) -> Path:
     return root / "latest.json"
 
 
+def _clearance_share_fixture(tmp_path: Path) -> Path:
+    root = tmp_path / "processed" / "_clearance_share_trend"
+    run_dir = root / "20260905_181000_clearance_share_trend"
+    records_path = run_dir / "clearance_share_records.jsonl"
+    summary_path = run_dir / "summary.json"
+    records = []
+    values = {
+        "all_foreign": {
+            "label": "外国人全体",
+            "source_id": "S08",
+            "cleared_cases": (60, 600),
+            "cleared_persons": (40, 300),
+        },
+        "visiting_foreign": {
+            "label": "来日外国人",
+            "source_id": "S09",
+            "cleared_cases": (40, 600),
+            "cleared_persons": (25, 300),
+        },
+    }
+    for foreign_scope, definition in values.items():
+        for metric in ("cleared_cases", "cleared_persons"):
+            numerator, denominator = definition[metric]
+            records.append(
+                {
+                    "national_clearance_share_schema_version": 1,
+                    "trend_id": "national_criminal_code_clearance_foreign_share",
+                    "label_ja": "全国の刑法犯検挙（日本人等を含む）に占める外国人区分の割合",
+                    "label_en": "Foreign-scope share of national criminal-code clearances",
+                    "interpretation_policy": "share_of_clearances_not_population_risk",
+                    "ui_caveat": "検挙全体に占める構成比であり、人口当たりの犯罪率ではない。",
+                    "year": 2024,
+                    "foreign_scope": foreign_scope,
+                    "foreign_scope_label_ja": definition["label"],
+                    "metric": metric,
+                    "metric_label_ja": "検挙件数" if metric == "cleared_cases" else "検挙人員",
+                    "numerator_value": numerator,
+                    "denominator_value": denominator,
+                    "quotient": numerator / denominator,
+                    "display_multiplier": 100,
+                    "display_unit_label_ja": "%",
+                    "display_value": numerator / denominator * 100,
+                    "calculation_status": "calculated",
+                    "refusal_reason": None,
+                    "numerator_source_id": definition["source_id"],
+                    "denominator_source_id": "S15",
+                    "derivation_method": "direct_published_counts_division",
+                    "derivation_formula": "fixture formula",
+                    "source_components": [],
+                    "mismatch_flags": [
+                        "share_of_clearance_counts_not_population_rate"
+                    ],
+                }
+            )
+    records_hash = _write_jsonl(records_path, records)
+    _write_json(
+        summary_path,
+        {
+            "national_clearance_share_schema_version": 1,
+            "generated_at": "2026-09-05T18:10:00+09:00",
+            "trend_id": "national_criminal_code_clearance_foreign_share",
+            "record_count": len(records),
+            "year_count": 1,
+            "years": [2024],
+            "status_counts": {"calculated": len(records), "refused": 0},
+            "source_artifacts": {
+                "S08": _s08_source_artifact(),
+                "S09": _source_artifact("S09", "131"),
+                "S15": _source_artifact("S15", "3"),
+            },
+        },
+    )
+    _write_json(
+        root / "latest.json",
+        {
+            "national_clearance_share_schema_version": 1,
+            "generated_at": "2026-09-05T18:10:00+09:00",
+            "run_relpath": run_dir.name,
+            "summary_sha256": sha256_file(summary_path),
+            "clearance_share_records_sha256": records_hash,
+            "clearance_share_records_csv_sha256": "0" * 64,
+        },
+    )
+    return root / "latest.json"
+
+
 def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     from nationality_crime_atlas.compact_export import generate_compact_export
 
@@ -638,12 +724,14 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     all_resident_latest_path = _all_resident_fixture(tmp_path)
     comparison_latest_path = _comparison_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
+    clearance_share_latest_path = _clearance_share_fixture(tmp_path)
 
     report = generate_compact_export(
         indicator_latest_path=indicator_latest_path,
         all_resident_latest_path=all_resident_latest_path,
         nationality_comparison_latest_path=comparison_latest_path,
         offense_composition_latest_path=offense_latest_path,
+        clearance_share_latest_path=clearance_share_latest_path,
         output_root=tmp_path / "output" / "compact_export",
         generated_at="2026-09-01T18:00:00+09:00",
     )
@@ -652,11 +740,14 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     latest = json.loads(report.latest_path.read_text(encoding="utf-8"))
     summary = json.loads(report.summary_path.read_text(encoding="utf-8"))
 
-    assert payload["compact_export_schema_version"] == 5
+    assert payload["compact_export_schema_version"] == 6
     assert payload["publication_policy"]["primary_view"] == "all_resident_context"
     assert payload["publication_policy"]["secondary_view"] == "nationality_comparison"
     assert payload["publication_policy"]["supplementary_view"] == "nationality_indicators"
     assert payload["publication_policy"]["composition_view"] == "offense_composition"
+    assert payload["publication_policy"]["clearance_share_view"] == (
+        "national_criminal_code_clearance_foreign_share"
+    )
     assert payload["source_runs"]["nationality_indicators"]["latest_manifest"]["run_relpath"] == (
         "20260901_133239_indicators"
     )
@@ -669,6 +760,9 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert payload["source_runs"]["offense_composition"]["latest_manifest"][
         "run_relpath"
     ] == "20260903_080000_offense_composition"
+    assert payload["source_runs"]["clearance_share_trend"]["latest_manifest"][
+        "run_relpath"
+    ] == "20260905_181000_clearance_share_trend"
     assert payload["definitions"]["indicator_ids"]["x_cleared_cases_as_published_mismatch"][
         "label_ja"
     ].startswith("全国・国籍別")
@@ -698,11 +792,15 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert payload["definitions"]["offense_category_ids"]["heinous"][
         "official_severity_role"
     ] == "official_high_severity_category"
+    assert payload["definitions"]["clearance_share_ids"][
+        "national_criminal_code_clearance_foreign_share"
+    ]["interpretation_policy"] == "share_of_clearances_not_population_risk"
     assert "label_ja" not in payload["records"]["nationality_indicators"][0]
     assert "label_en" not in payload["records"]["all_resident_context"][0]
     assert "label_ja" not in payload["records"]["nationality_comparison"][0]
     assert "label_ja" not in payload["records"]["offense_composition"][0]
     assert "offense_label" not in payload["records"]["offense_composition"][0]
+    assert "label_ja" not in payload["records"]["clearance_share_trends"][0]
     assert payload["records"]["nationality_indicators"][0]["indicator_id"] in payload[
         "definitions"
     ]["indicator_ids"]
@@ -718,6 +816,9 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert payload["records"]["offense_composition"][0]["offense_id"] in payload[
         "definitions"
     ]["offense_category_ids"]
+    assert payload["records"]["clearance_share_trends"][0]["trend_id"] in payload[
+        "definitions"
+    ]["clearance_share_ids"]
     assert payload["records"]["nationality_comparison"][0]["numerator_source_ids"] == [
         "S08",
         "S15",
@@ -746,6 +847,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
         "all_resident_context": 6,
         "nationality_comparison": 1,
         "offense_composition": 12,
+        "clearance_share_trends": 4,
     }
     assert latest["run_relpath"] == "20260901_180000_compact_export"
     assert latest["dashboard_export_sha256"] == sha256_file(report.export_path)
@@ -754,6 +856,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert summary["record_counts"]["all_resident_context"] == 6
     assert summary["record_counts"]["nationality_comparison"] == 1
     assert summary["record_counts"]["offense_composition"] == 12
+    assert summary["record_counts"]["clearance_share_trends"] == 4
     assert payload["sources"]["S08"]["publisher"] == "National Police Agency of Japan"
     assert payload["sources"]["S16"]["source_table"] == "144"
     assert payload["sources"]["S17"]["source_table"] == "2"
@@ -823,6 +926,7 @@ def test_generate_compact_export_rejects_latest_hash_mismatch(tmp_path):
     all_resident_latest_path = _all_resident_fixture(tmp_path)
     comparison_latest_path = _comparison_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
+    clearance_share_latest_path = _clearance_share_fixture(tmp_path)
     indicator_latest = json.loads(indicator_latest_path.read_text(encoding="utf-8"))
     indicator_latest["summary_sha256"] = "f" * 64
     _write_json(indicator_latest_path, indicator_latest)
@@ -833,6 +937,7 @@ def test_generate_compact_export_rejects_latest_hash_mismatch(tmp_path):
             all_resident_latest_path=all_resident_latest_path,
             nationality_comparison_latest_path=comparison_latest_path,
             offense_composition_latest_path=offense_latest_path,
+            clearance_share_latest_path=clearance_share_latest_path,
             output_root=tmp_path / "output" / "compact_export",
             generated_at="2026-09-01T18:00:00+09:00",
         )
@@ -845,6 +950,7 @@ def test_compact_export_cli_writes_timestamped_bundle(tmp_path, capsys):
     all_resident_latest_path = _all_resident_fixture(tmp_path)
     comparison_latest_path = _comparison_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
+    clearance_share_latest_path = _clearance_share_fixture(tmp_path)
 
     exit_code = main(
         [
@@ -856,6 +962,8 @@ def test_compact_export_cli_writes_timestamped_bundle(tmp_path, capsys):
             str(comparison_latest_path),
             "--offense-composition-latest",
             str(offense_latest_path),
+            "--clearance-share-latest",
+            str(clearance_share_latest_path),
             "--output-root",
             str(tmp_path / "output" / "compact_export"),
             "--generated-at",
@@ -870,6 +978,7 @@ def test_compact_export_cli_writes_timestamped_bundle(tmp_path, capsys):
         "nationality_comparison": 1,
         "nationality_indicators": 2,
         "offense_composition": 12,
+        "clearance_share_trends": 4,
     }
     assert payload["output_dir"].endswith("20260901_180000_compact_export")
 
@@ -881,6 +990,7 @@ def test_compact_export_rejects_hash_closed_but_inaccurate_source_summary(tmp_pa
     all_resident_latest_path = _all_resident_fixture(tmp_path)
     comparison_latest_path = _comparison_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
+    clearance_share_latest_path = _clearance_share_fixture(tmp_path)
     latest = json.loads(indicator_latest_path.read_text(encoding="utf-8"))
     summary_path = indicator_latest_path.parent / latest["run_relpath"] / "summary.json"
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
@@ -895,6 +1005,7 @@ def test_compact_export_rejects_hash_closed_but_inaccurate_source_summary(tmp_pa
             all_resident_latest_path=all_resident_latest_path,
             nationality_comparison_latest_path=comparison_latest_path,
             offense_composition_latest_path=offense_latest_path,
+            clearance_share_latest_path=clearance_share_latest_path,
             output_root=tmp_path / "output" / "compact_export",
             generated_at="2026-09-01T18:00:00+09:00",
         )
@@ -905,6 +1016,7 @@ def test_compact_export_hashes_the_same_latest_bytes_that_it_parses(tmp_path, mo
     all_resident_latest_path = _all_resident_fixture(tmp_path)
     comparison_latest_path = _comparison_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
+    clearance_share_latest_path = _clearance_share_fixture(tmp_path)
     original_latest_sha256 = sha256_file(indicator_latest_path)
     original_sha256_file = compact_export_module.sha256_file
     mutation_performed = False
@@ -929,6 +1041,7 @@ def test_compact_export_hashes_the_same_latest_bytes_that_it_parses(tmp_path, mo
         all_resident_latest_path=all_resident_latest_path,
         nationality_comparison_latest_path=comparison_latest_path,
         offense_composition_latest_path=offense_latest_path,
+        clearance_share_latest_path=clearance_share_latest_path,
         output_root=tmp_path / "output" / "compact_export",
         generated_at="2026-09-01T18:00:00+09:00",
     )
@@ -949,6 +1062,7 @@ def test_concurrent_compact_exports_publish_a_hash_closed_latest_pointer(
     all_resident_latest_path = _all_resident_fixture(tmp_path)
     comparison_latest_path = _comparison_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
+    clearance_share_latest_path = _clearance_share_fixture(tmp_path)
     output_root = tmp_path / "output" / "compact_export"
     original_replace = Path.replace
     latest_barrier = threading.Barrier(2)
@@ -966,6 +1080,7 @@ def test_concurrent_compact_exports_publish_a_hash_closed_latest_pointer(
             all_resident_latest_path=all_resident_latest_path,
             nationality_comparison_latest_path=comparison_latest_path,
             offense_composition_latest_path=offense_latest_path,
+            clearance_share_latest_path=clearance_share_latest_path,
             output_root=output_root,
             generated_at=generated_at,
         )
