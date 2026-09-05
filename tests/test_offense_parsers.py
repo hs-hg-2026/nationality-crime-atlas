@@ -6,6 +6,55 @@ from nationality_crime_atlas.npa_offenses import (
     parse_npa_all_person_offense_groups,
     parse_npa_nationality_offense_groups,
 )
+from nationality_crime_atlas.npa_all_residents import (
+    parse_npa_all_person_annual_clearances,
+)
+from nationality_crime_atlas.npa_nationality import (
+    parse_npa_nationality_annual_clearances,
+)
+
+
+def test_nationality_annual_clearance_parser_preserves_every_published_year(
+    nationality_crime_file,
+):
+    table_id, path = nationality_crime_file
+
+    records = parse_npa_nationality_annual_clearances(
+        path,
+        table_id=table_id,
+        source_id="S08" if table_id == "130" else "S09",
+    )
+
+    assert [(record.year, record.cleared_cases, record.cleared_persons) for record in records] == [
+        (2023, 55, 35),
+        (2024, 60, 40),
+    ]
+    assert {record.population_scope for record in records} == {
+        "all_foreign" if table_id == "130" else "visiting_foreign"
+    }
+    assert {record.offense_scope for record in records} == {
+        "criminal_code_figure4_basis"
+    }
+    assert all(record.geography == "日本全国" for record in records)
+
+
+def test_all_person_annual_clearance_parser_preserves_every_published_year(
+    all_person_offense_file,
+):
+    records = parse_npa_all_person_annual_clearances(
+        all_person_offense_file,
+        source_id="S15",
+    )
+
+    assert [(record.year, record.cleared_cases, record.cleared_persons) for record in records] == [
+        (2023, 599, 299),
+        (2024, 600, 300),
+    ]
+    assert {record.population_scope for record in records} == {"all_persons"}
+    assert {record.offense_scope for record in records} == {
+        "criminal_code_excluding_traffic_negligence"
+    }
+    assert all(record.geography == "日本全国" for record in records)
 
 
 def test_nationality_offense_parser_extracts_official_group_hierarchy(
