@@ -438,3 +438,135 @@ def parse_statistics_bureau_japanese_population(
         return records
     finally:
         workbook.close()
+
+
+INTERCENSAL_POPULATION_SHEETS = {
+    "総人口 (2015年～2020年)": "total_population",
+    "日本人人口 (2015年～2020年)": "japanese_population",
+}
+
+
+def _intercensal_year_columns(worksheet) -> List[Tuple[int, int]]:
+    year_columns = []
+    for column in range(1, worksheet.max_column + 1):
+        match = re.fullmatch(r"\s*(\d{4})年\s*", str(worksheet.cell(9, column).value or ""))
+        if match:
+            year_columns.append((int(match.group(1)), column))
+    if not year_columns:
+        raise SchemaError("Statistics Bureau Table 5 year columns were not found")
+    return year_columns
+
+
+def parse_statistics_bureau_intercensal_population(
+    path: Path,
+    *,
+    source_id: str,
+) -> List[PrefecturePopulationRecord]:
+    """Parse 2015--2020 adjusted total and Japanese population from Table 5."""
+
+    workbook = load_workbook(Path(path), read_only=True, data_only=True)
+    try:
+        missing_sheets = sorted(
+            set(INTERCENSAL_POPULATION_SHEETS) - set(workbook.sheetnames)
+        )
+        if missing_sheets:
+            raise SchemaError(
+                "Statistics Bureau Table 5 sheets were not found: %s"
+                % ", ".join(missing_sheets)
+            )
+
+        records = []
+        for sheet_name, population_scope in INTERCENSAL_POPULATION_SHEETS.items():
+            worksheet = workbook[sheet_name]
+            title = _workbook_title(worksheet, max_row=5)
+            if (
+                "第５表" not in title
+                or "都道府県別人口" not in title
+                or "各年10月1日現在" not in title
+                or "総人口、日本人" not in title
+            ):
+                raise SchemaError("Statistics Bureau Table 5 title was not recognized")
+            if "単位千人" not in _clean(worksheet.cell(5, 1).value):
+                raise SchemaError("Statistics Bureau Table 5 population unit was not recognized")
+
+            scope_header = _clean(
+                " ".join(
+                    str(value)
+                    for value in next(
+                        worksheet.iter_rows(min_row=7, max_row=7, values_only=True)
+                    )
+                    if value not in (None, "")
+                )
+            )
+            expected_scope_header = (
+                "総人口"
+                if population_scope == "total_population"
+                else "日本人人口"
+            )
+            if expected_scope_header not in scope_header:
+                raise SchemaError(
+                    "Statistics Bureau Table 5 population scope was not recognized"
+                )
+
+            year_columns = _intercensal_year_columns(worksheet)
+            found_national = False
+            for source_row in range(11, worksheet.max_row + 1):
+                national_label = _clean(worksheet.cell(source_row, 1).value)
+                prefecture_code = _clean(worksheet.cell(source_row, 2).value)
+                prefecture_label = _clean(worksheet.cell(source_row, 3).value)
+                if national_label == "全国":
+                    geography = "日本"
+                    geography_type = "national"
+                    found_national = True
+                elif re.fullmatch(r"\d{2}", prefecture_code) and prefecture_label:
+                    geography = (
+                        prefecture_label
+                        if prefecture_label in PREFECTURE_PARENT_REGION
+                        else _canonical_prefecture(prefecture_label)
+                    )
+                    if geography is None:
+                        raise SchemaError(
+                            "Unrecognized Statistics Bureau Table 5 geography: %s"
+                            % prefecture_label
+                        )
+                    geography_type = "prefecture"
+                else:
+                    continue
+
+                for year, value_column in year_columns:
+                    source_value = _integer(
+                        worksheet.cell(source_row, value_column).value,
+                        label="population",
+                        source_row=source_row,
+                    )
+                    records.append(
+                        PrefecturePopulationRecord(
+                            year=year,
+                            reference_date="%04d-10-01" % year,
+                            population_scope=population_scope,
+                            geography=geography,
+                            geography_type=geography_type,
+                            parent_region=None,
+                            geography_semantics=(
+                                "national_aggregate"
+                                if geography_type == "national"
+                                else "population_estimate_prefecture"
+                            ),
+                            population=source_value * 1000,
+                            source_value=source_value,
+                            source_unit="1000_persons",
+                            rounding="nearest_1000_persons",
+                            source_id=source_id,
+                            source_table="5",
+                            source_sheet=worksheet.title,
+                            source_row=source_row,
+                        )
+                    )
+            if not found_national:
+                raise SchemaError(
+                    "Statistics Bureau Table 5 national row was not found in %s"
+                    % sheet_name
+                )
+        return records
+    finally:
+        workbook.close()
