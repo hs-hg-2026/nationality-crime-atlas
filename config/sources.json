@@ -101,6 +101,21 @@
       "notes": [
         "This later official vintage is used instead of mixing the initial annual vintages for 2015--2020."
       ]
+    },
+    "isa-resident-foreigner-population-total": {
+      "publisher": "Immigration Services Agency of Japan",
+      "dataset": "Resident-foreigner statistics Table 1: nationality and region totals",
+      "parser": "population-nationality-totals",
+      "license_url": "https://www.e-stat.go.jp/terms-of-use",
+      "dimensions": ["period_end", "nationality_or_region"],
+      "definitions": [
+        "Official resident-foreigner stock at calendar year end, in persons.",
+        "This population scope is not definitionally identical to the NPA all-foreigner or visiting-foreigner categories."
+      ],
+      "notes": [
+        "Only the published total across residence statuses is normalized; raw region and nationality labels are retained.",
+        "The official workbook changes from a wide visual layout to a flat machine-readable layout between 2021 and 2022."
+      ]
     }
   },
   "editions": {
@@ -569,6 +584,166 @@
       "verified_at": "2026-09-05",
       "verification_level": "binary_and_primary",
       "expected_sha256": "9e28da4c0ef8c2680577ad5ef0b0a78023d389113f66c85ab9e52bdbed89a1fc"
+    },
+    "S19_2016": {
+      "series_id": "isa-resident-foreigner-population-total",
+      "source_table": "1",
+      "expected_format": "xlsx",
+      "filename": "16-12-01-1.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000031557945",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000031557945&fileKind=0",
+      "period": "2016-12-31 resident-foreigner stock by nationality or region",
+      "coverage_periods": ["2016-12-31"],
+      "published_at": "2018-07-20",
+      "revision": "e_stat_published_edition",
+      "stable_ids": {"e_stat_stat_inf_id": "000031557945", "table_number": "16-12-01-1"},
+      "verified_at": "2026-09-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "9c22453746ec6cc1e696db9e5b338e5c76b422aac23a1e9678a3f8a7ee872481"
+    },
+    "S19_2017": {
+      "series_id": "isa-resident-foreigner-population-total",
+      "source_table": "1",
+      "expected_format": "xlsx",
+      "filename": "17-12-01-1.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000031669224",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000031669224&fileKind=0",
+      "period": "2017-12-31 resident-foreigner stock by nationality or region",
+      "coverage_periods": ["2017-12-31"],
+      "published_at": "2018-06-29",
+      "revision": "e_stat_published_edition",
+      "stable_ids": {"e_stat_stat_inf_id": "000031669224", "table_number": "17-12-01-1"},
+      "verified_at": "2026-09-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "ab1773d57f0dafc9f8e77273ac3bfa317a28b0081f09cb8ea9e051de63c0f0c2"
+    },
+    "S19_2018": {
+      "series_id": "isa-resident-foreigner-population-total",
+      "source_table": "1",
+      "expected_format": "xlsx",
+      "filename": "18-12-01-1.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000031832809",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000031832809&fileKind=0",
+      "period": "2018-12-31 resident-foreigner stock by nationality or region",
+      "coverage_periods": ["2018-12-31"],
+      "published_at": "2019-07-25",
+      "revision": "e_stat_published_edition",
+      "stable_ids": {"e_stat_stat_inf_id": "000031832809", "table_number": "18-12-01-1"},
+      "verified_at": "2026-09-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "247a2ae232ec04d1360920148aa8d0d01c7c1d802b11b3c050c854919c4c4185"
+    },
+    "S19_2019": {
+      "series_id": "isa-resident-foreigner-population-total",
+      "source_table": "1",
+      "expected_format": "xlsx",
+      "filename": "19-12-01-1.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000031964914",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000031964914&fileKind=0",
+      "period": "2019-12-31 resident-foreigner stock by nationality or region",
+      "coverage_periods": ["2019-12-31"],
+      "published_at": "2020-07-31",
+      "revision": "e_stat_published_edition",
+      "stable_ids": {"e_stat_stat_inf_id": "000031964914", "table_number": "19-12-01-1"},
+      "verified_at": "2026-09-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "b4c9774ee641ad02ba96c5117b254ded4e16bb4ad19b844148015c2f31883792"
+    },
+    "S19_2020": {
+      "series_id": "isa-resident-foreigner-population-total",
+      "source_table": "1",
+      "expected_format": "xlsx",
+      "filename": "20-12-01-1.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000032104290",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000032104290&fileKind=4",
+      "period": "2020-12-31 resident-foreigner stock by nationality or region",
+      "coverage_periods": ["2020-12-31"],
+      "published_at": "2021-09-21",
+      "revision": "e_stat_published_edition",
+      "stable_ids": {"e_stat_stat_inf_id": "000032104290", "table_number": "20-12-01-1"},
+      "verified_at": "2026-09-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "b798ad3f892d4da60fd0925ced185eab30b134aab5f5cbb238b04afba52c91a1"
+    },
+    "S19_2021": {
+      "series_id": "isa-resident-foreigner-population-total",
+      "source_table": "1",
+      "expected_format": "xlsx",
+      "filename": "21-12-01-1.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000032212359",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000032212359&fileKind=4",
+      "period": "2021-12-31 resident-foreigner stock by nationality or region",
+      "coverage_periods": ["2021-12-31"],
+      "published_at": "2022-07-15",
+      "revision": "e_stat_published_edition",
+      "stable_ids": {"e_stat_stat_inf_id": "000032212359", "table_number": "21-12-01-1"},
+      "verified_at": "2026-09-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "2a2253ef440d0444d1f901cadb7798fb334b44994745c9fcf2a282cdd01fc619"
+    },
+    "S19_2022": {
+      "series_id": "isa-resident-foreigner-population-total",
+      "source_table": "1",
+      "expected_format": "xlsx",
+      "filename": "22-12-01-1.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000040068461",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040068461&fileKind=0",
+      "period": "2022-12-31 resident-foreigner stock by nationality or region",
+      "coverage_periods": ["2022-12-31"],
+      "published_at": "2023-07-07",
+      "revision": "e_stat_published_edition",
+      "stable_ids": {"e_stat_stat_inf_id": "000040068461", "table_number": "22-12-01-1"},
+      "verified_at": "2026-09-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "2acb2d84748d533ffc8b5bf37f99667ac06c924b9a0fdb2da82c38a970817e25"
+    },
+    "S19_2023": {
+      "series_id": "isa-resident-foreigner-population-total",
+      "source_table": "1",
+      "expected_format": "xlsx",
+      "filename": "23-12-01.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000040186952",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040186952&fileKind=0",
+      "period": "2023-12-31 resident-foreigner stock by nationality or region",
+      "coverage_periods": ["2023-12-31"],
+      "published_at": "2024-07-05",
+      "revision": "e_stat_published_edition",
+      "stable_ids": {"e_stat_stat_inf_id": "000040186952", "table_number": "23-12-01"},
+      "verified_at": "2026-09-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "16f703a47b83448902c332b4a268dc4ade95acf0ec45facecb306d2abf8efcab"
+    },
+    "S19_2024": {
+      "series_id": "isa-resident-foreigner-population-total",
+      "source_table": "1",
+      "expected_format": "xlsx",
+      "filename": "24-12-01-1.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000040292366",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040292366&fileKind=0",
+      "period": "2024-12-31 resident-foreigner stock by nationality or region",
+      "coverage_periods": ["2024-12-31"],
+      "published_at": "2025-07-11",
+      "revision": "e_stat_published_edition",
+      "stable_ids": {"e_stat_stat_inf_id": "000040292366", "table_number": "24-12-01-1"},
+      "verified_at": "2026-09-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "d400d8e2b46d2e6384eb6787ad04568e8bfe2b7a5e89f2d2191d5d079c4f4306"
+    },
+    "S19_2025": {
+      "series_id": "isa-resident-foreigner-population-total",
+      "source_table": "1",
+      "expected_format": "xlsx",
+      "filename": "25-12-01-1.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000040472260",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040472260&fileKind=0",
+      "period": "2025-12-31 resident-foreigner stock by nationality or region",
+      "coverage_periods": ["2025-12-31"],
+      "published_at": "2026-07-10",
+      "revision": "e_stat_published_edition",
+      "stable_ids": {"e_stat_stat_inf_id": "000040472260", "table_number": "25-12-01-1"},
+      "verified_at": "2026-09-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "cef9a02be7b4c289017e763579fdab4e347e9830aebaeee73be91743ef00d62c"
     }
   }
 }
