@@ -662,6 +662,58 @@ def _clearance_share_fixture(tmp_path: Path) -> Path:
     for foreign_scope, definition in values.items():
         for metric in ("cleared_cases", "cleared_persons"):
             numerator, denominator = definition[metric]
+            if foreign_scope == "all_foreign_minus_visiting_foreign":
+                source_components = [
+                    {
+                        "source_id": "S08",
+                        "role": "numerator_minuend",
+                        "metric": metric,
+                        "value": values["all_foreign"][metric][0],
+                    },
+                    {
+                        "source_id": "S09",
+                        "role": "numerator_subtrahend",
+                        "metric": metric,
+                        "value": values["visiting_foreign"][metric][0],
+                    },
+                    {
+                        "source_id": "S15",
+                        "role": "denominator",
+                        "metric": metric,
+                        "value": denominator,
+                    },
+                ]
+                mismatch_flags = [
+                    "arithmetic_residual_not_directly_published",
+                    "denominator_includes_japanese_and_others",
+                    "residual_includes_settled_residents_us_forces_and_unknown_status",
+                    "residual_not_equivalent_to_usual_residents",
+                    "share_of_clearance_counts_not_population_rate",
+                ]
+            else:
+                source_components = [
+                    {
+                        "source_id": definition["source_id"],
+                        "role": "numerator",
+                        "metric": metric,
+                        "value": numerator,
+                    },
+                    {
+                        "source_id": "S15",
+                        "role": "denominator",
+                        "metric": metric,
+                        "value": denominator,
+                    },
+                ]
+                mismatch_flags = [
+                    "denominator_includes_japanese_and_others",
+                    "share_of_clearance_counts_not_population_rate",
+                    (
+                        "all_foreign_scope_not_resident_foreigner_population"
+                        if foreign_scope == "all_foreign"
+                        else "visiting_foreign_includes_nonresidents"
+                    ),
+                ]
             records.append(
                 {
                     "national_clearance_share_schema_version": 2,
@@ -669,7 +721,14 @@ def _clearance_share_fixture(tmp_path: Path) -> Path:
                     "label_ja": "全国の刑法犯検挙（日本人等を含む）に占める外国人区分の割合",
                     "label_en": "Foreign-scope share of national criminal-code clearances",
                     "interpretation_policy": "share_of_clearances_not_population_risk",
-                    "ui_caveat": "検挙全体に占める構成比であり、人口当たりの犯罪率ではない。",
+                    "ui_caveat": (
+                        "分母は日本人等を含む全国の刑法犯検挙総数、分子は警察庁の"
+                        "「外国人」「来日外国人」区分、または両者の算術差分である。"
+                        "検挙全体に占める構成比であり、人口当たりの犯罪率、犯罪の発生率、"
+                        "個人のriskを示さない。「来日外国人」は定着居住者、在日米軍関係者、"
+                        "在留資格不明者を除く区分で、短期滞在者だけを指さない。差分にも"
+                        "定着居住者以外が含まれるため、普段から住む外国人だけを表す値ではない。"
+                    ),
                     "year": 2024,
                     "foreign_scope": foreign_scope,
                     "foreign_scope_label_ja": definition["label"],
@@ -688,12 +747,19 @@ def _clearance_share_fixture(tmp_path: Path) -> Path:
                         "source_ids", [definition["source_id"]]
                     ),
                     "denominator_source_id": "S15",
-                    "derivation_method": "direct_published_counts_division",
-                    "derivation_formula": "fixture formula",
-                    "source_components": [],
-                    "mismatch_flags": [
-                        "share_of_clearance_counts_not_population_rate"
-                    ],
+                    "derivation_method": (
+                        "arithmetic_residual_all_foreign_minus_visiting_foreign"
+                        if foreign_scope == "all_foreign_minus_visiting_foreign"
+                        else "direct_published_counts_division"
+                    ),
+                    "derivation_formula": (
+                        "(S08.%s - S09.%s) / S15.%s" % (metric, metric, metric)
+                        if foreign_scope == "all_foreign_minus_visiting_foreign"
+                        else "%s.%s / S15.%s"
+                        % (definition["source_id"], metric, metric)
+                    ),
+                    "source_components": source_components,
+                    "mismatch_flags": mismatch_flags,
                 }
             )
     records_hash = _write_jsonl(records_path, records)
@@ -726,6 +792,53 @@ def _clearance_share_fixture(tmp_path: Path) -> Path:
         },
     )
     return root / "latest.json"
+
+
+def _rewrite_clearance_share_records(latest_path: Path, mutation: str) -> None:
+    latest = json.loads(latest_path.read_text(encoding="utf-8"))
+    records_path = (
+        latest_path.parent
+        / latest["run_relpath"]
+        / "clearance_share_records.jsonl"
+    )
+    rows = [
+        json.loads(line)
+        for line in records_path.read_text(encoding="utf-8").splitlines()
+    ]
+    if mutation == "scope_source_binding":
+        for row in rows:
+            if row["foreign_scope"] == "all_foreign":
+                row["numerator_source_id"] = "S09"
+                row["numerator_source_ids"] = ["S09"]
+            elif row["foreign_scope"] == "visiting_foreign":
+                row["numerator_source_id"] = "S08"
+                row["numerator_source_ids"] = ["S08"]
+            else:
+                row["numerator_source_id"] = "S09"
+                row["numerator_source_ids"] = ["S09", "S08"]
+    elif mutation == "residual_label":
+        for row in rows:
+            if row["foreign_scope"] == "all_foreign_minus_visiting_foreign":
+                row["foreign_scope_label_ja"] = "在留外国人"
+    elif mutation == "required_warnings":
+        for row in rows:
+            if row["foreign_scope"] == "all_foreign_minus_visiting_foreign":
+                row["mismatch_flags"] = []
+    elif mutation == "source_components":
+        for row in rows:
+            if row["foreign_scope"] == "all_foreign_minus_visiting_foreign":
+                row["source_components"] = []
+    elif mutation == "interpretation_policy":
+        for row in rows:
+            row["interpretation_policy"] = "population_crime_rate"
+    elif mutation == "ui_caveat":
+        for row in rows:
+            row["ui_caveat"] = "在留外国人の犯罪率を示す。"
+    else:  # pragma: no cover - test helper guard
+        raise AssertionError("Unsupported fixture mutation: %s" % mutation)
+
+    latest["clearance_share_records_sha256"] = _write_jsonl(records_path, rows)
+    _write_json(latest_path, latest)
 
 
 def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
@@ -938,6 +1051,41 @@ def test_same_year_gap_refuses_a_percentage_when_recognized_count_is_zero(tmp_pa
     assert gap_row["refusal_reason"] == "zero_recognized_cases"
 
 
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "scope_source_binding",
+        "residual_label",
+        "required_warnings",
+        "source_components",
+        "interpretation_policy",
+        "ui_caveat",
+    ],
+)
+def test_compact_export_rejects_unsafe_clearance_share_semantics(
+    tmp_path, mutation
+):
+    from nationality_crime_atlas.compact_export import generate_compact_export
+
+    indicator_latest_path = _indicator_fixture(tmp_path)
+    all_resident_latest_path = _all_resident_fixture(tmp_path)
+    comparison_latest_path = _comparison_fixture(tmp_path)
+    offense_latest_path = _offense_composition_fixture(tmp_path)
+    clearance_share_latest_path = _clearance_share_fixture(tmp_path)
+    _rewrite_clearance_share_records(clearance_share_latest_path, mutation)
+
+    with pytest.raises(SchemaError, match="clearance share semantic contract"):
+        generate_compact_export(
+            indicator_latest_path=indicator_latest_path,
+            all_resident_latest_path=all_resident_latest_path,
+            nationality_comparison_latest_path=comparison_latest_path,
+            offense_composition_latest_path=offense_latest_path,
+            clearance_share_latest_path=clearance_share_latest_path,
+            output_root=tmp_path / "output" / "compact_export",
+            generated_at="2026-09-01T18:00:00+09:00",
+        )
+
+
 def test_generate_compact_export_rejects_latest_hash_mismatch(tmp_path):
     from nationality_crime_atlas.compact_export import generate_compact_export
 
@@ -997,7 +1145,7 @@ def test_compact_export_cli_writes_timestamped_bundle(tmp_path, capsys):
         "nationality_comparison": 1,
         "nationality_indicators": 2,
         "offense_composition": 12,
-        "clearance_share_trends": 4,
+        "clearance_share_trends": 6,
     }
     assert payload["output_dir"].endswith("20260901_180000_compact_export")
 

@@ -155,6 +155,9 @@ def test_clearance_share_trend_keeps_direct_scopes_and_their_arithmetic_residual
     assert report.record_count == 12
     assert report.year_count == 2
     assert report.latest_path.is_file()
+    assert json.loads(report.latest_path.read_text(encoding="utf-8"))[
+        "national_clearance_share_schema_version"
+    ] == 2
     assert {
         (row["year"], row["foreign_scope"], row["metric"])
         for row in rows

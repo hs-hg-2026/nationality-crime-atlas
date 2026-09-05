@@ -78,6 +78,24 @@ function makeCompactSource(directory: string) {
   return { dashboardPath, pointerPath, summaryPath };
 }
 
+function writeHashClosedDashboard(
+  source: ReturnType<typeof makeCompactSource>,
+  payload: unknown,
+): void {
+  const dashboardBytes = Buffer.from(`${JSON.stringify(payload, null, 2)}\n`);
+  writeFileSync(source.dashboardPath, dashboardBytes);
+
+  const summary = JSON.parse(readFileSync(source.summaryPath, 'utf8'));
+  summary.dashboard_export_sha256 = sha256(dashboardBytes);
+  const summaryBytes = Buffer.from(`${JSON.stringify(summary, null, 2)}\n`);
+  writeFileSync(source.summaryPath, summaryBytes);
+
+  const pointer = JSON.parse(readFileSync(source.pointerPath, 'utf8'));
+  pointer.dashboard_export_sha256 = sha256(dashboardBytes);
+  pointer.summary_sha256 = sha256(summaryBytes);
+  writeFileSync(source.pointerPath, `${JSON.stringify(pointer, null, 2)}\n`);
+}
+
 function syncCanonicalBundle(directory: string) {
   const source = makeCompactSource(directory);
   const destinationPath = join(directory, 'dashboard_export.json');
@@ -354,6 +372,77 @@ describe('dashboard publication bundle', () => {
 
     expect(result.status).not.toBe(0);
     expect(result.stderr).toMatch(/nationality_comparison.*unknown/i);
+  });
+
+  it.each([
+    'scope_source_binding',
+    'residual_label',
+    'required_warnings',
+    'source_components',
+    'interpretation_policy',
+    'ui_caveat',
+  ])('rejects unsafe clearance-share semantics: %s', (mutation) => {
+    const directory = makeTemporaryDirectory();
+    const source = makeCompactSource(directory);
+    const payload = JSON.parse(readFileSync(source.dashboardPath, 'utf8'));
+    const rows: Array<Record<string, unknown>> =
+      payload.records.clearance_share_trends;
+
+    if (mutation === 'scope_source_binding') {
+      for (const row of rows) {
+        if (row.foreign_scope === 'all_foreign') {
+          row.numerator_source_id = 'S09';
+          row.numerator_source_ids = ['S09'];
+        } else if (row.foreign_scope === 'visiting_foreign') {
+          row.numerator_source_id = 'S08';
+          row.numerator_source_ids = ['S08'];
+        } else {
+          row.numerator_source_id = 'S09';
+          row.numerator_source_ids = ['S09', 'S08'];
+        }
+      }
+    } else if (mutation === 'residual_label') {
+      for (const row of rows) {
+        if (row.foreign_scope === 'all_foreign_minus_visiting_foreign') {
+          row.foreign_scope_label_ja = '在留外国人';
+        }
+      }
+    } else if (mutation === 'required_warnings') {
+      for (const row of rows) {
+        if (row.foreign_scope === 'all_foreign_minus_visiting_foreign') {
+          row.mismatch_flags = [];
+        }
+      }
+    } else if (mutation === 'source_components') {
+      for (const row of rows) {
+        if (row.foreign_scope === 'all_foreign_minus_visiting_foreign') {
+          row.source_components = [];
+        }
+      }
+    } else if (mutation === 'interpretation_policy') {
+      payload.definitions.clearance_share_ids[
+        'national_criminal_code_clearance_foreign_share'
+      ].interpretation_policy = 'population_crime_rate';
+    } else if (mutation === 'ui_caveat') {
+      payload.definitions.clearance_share_ids[
+        'national_criminal_code_clearance_foreign_share'
+      ].ui_caveat = '在留外国人の犯罪率を示す。';
+    }
+    writeHashClosedDashboard(source, payload);
+
+    const result = runScript([
+      '--pointer',
+      source.pointerPath,
+      '--publication-pointer',
+      join(directory, 'publication/compact_export/latest.json'),
+      '--destination',
+      join(directory, 'published.json'),
+      '--manifest',
+      join(directory, 'published.manifest.json'),
+    ]);
+
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toMatch(/clearance-share semantic contract/i);
   });
 
   it.each([

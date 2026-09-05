@@ -337,9 +337,11 @@ describe('CrimeAtlasDashboard', () => {
       /2024.*287,273.*18,861.*6\.57%.*13,405.*4\.67%.*5,456.*1\.90%/,
     );
     expect(
-      within(section).getByText('外国人全体−来日外国人（差分）'),
+      within(section).getAllByText('外国人全体−来日外国人（差分）'),
+    ).toHaveLength(2);
+    expect(
+      within(section).getByText(/普段から住む外国人だけを表す値ではありません/),
     ).toBeVisible();
-    expect(within(section).getByText(/普段から住む外国人だけを表す値ではありません/)).toBeVisible();
 
     await user.click(within(section).getByRole('button', { name: '検挙人員' }));
     expect(

@@ -131,10 +131,10 @@ describe('regional dashboard model', () => {
     ).toThrow(/schema version/i);
   });
 
-  it('rejects a schema-v6 payload without required dashboard records', () => {
+  it('rejects a schema-v7 payload without required dashboard records', () => {
     expect(() =>
       parseDashboardData({
-        compact_export_schema_version: 6,
+        compact_export_schema_version: 7,
         definitions: {},
         records: {},
         sources: {},
@@ -460,6 +460,66 @@ describe('national clearance foreign-share trend model', () => {
       ((10_464 - 6_368) / 191_826) * 100,
     );
     expect(view.metricLabel).toBe('検挙人員');
+  });
+
+  it.each([
+    'scope_source_binding',
+    'residual_label',
+    'required_warnings',
+    'source_components',
+    'interpretation_policy',
+    'ui_caveat',
+  ])('rejects unsafe clearance-share semantics: %s', (mutation) => {
+    const dashboard = structuredClone(parseDashboardData(dashboardFixture));
+    const rows = dashboard.records.clearance_share_trends;
+
+    if (mutation === 'scope_source_binding') {
+      for (const row of rows) {
+        if (row.foreign_scope === 'all_foreign') {
+          row.numerator_source_id = 'S09';
+          row.numerator_source_ids = ['S09'];
+        } else if (row.foreign_scope === 'visiting_foreign') {
+          row.numerator_source_id = 'S08';
+          row.numerator_source_ids = ['S08'];
+        } else {
+          row.numerator_source_id = 'S09';
+          row.numerator_source_ids = ['S09', 'S08'];
+        }
+      }
+    } else if (mutation === 'residual_label') {
+      for (const row of rows) {
+        if (row.foreign_scope === 'all_foreign_minus_visiting_foreign') {
+          row.foreign_scope_label_ja = '在留外国人';
+        }
+      }
+    } else if (mutation === 'required_warnings') {
+      for (const row of rows) {
+        if (row.foreign_scope === 'all_foreign_minus_visiting_foreign') {
+          row.mismatch_flags = [];
+        }
+      }
+    } else if (mutation === 'source_components') {
+      for (const row of rows) {
+        if (row.foreign_scope === 'all_foreign_minus_visiting_foreign') {
+          Object.assign(row, { source_components: [] });
+        }
+      }
+    } else if (mutation === 'interpretation_policy') {
+      Object.assign(
+        dashboard.definitions.clearance_share_ids[
+          'national_criminal_code_clearance_foreign_share'
+        ],
+        { interpretation_policy: 'population_crime_rate' },
+      );
+    } else if (mutation === 'ui_caveat') {
+      dashboard.definitions.clearance_share_ids[
+        'national_criminal_code_clearance_foreign_share'
+      ].ui_caveat = '在留外国人の犯罪率を示す。';
+    }
+
+    expect(() =>
+      buildClearanceShareTrendViewModel(dashboard, 'cleared_cases'),
+    ).toThrow(/clearance-share semantic contract/i);
   });
 });
 
