@@ -319,6 +319,38 @@ def test_project_quality_profiles_pin_historical_npa_detail_editions():
         assert profile["anchors"][0]["where"]["year"] == year
 
 
+def test_project_quality_profiles_pin_historical_japanese_population_editions():
+    profiles = load_quality_profiles("config/quality_profiles.json")
+    expected = {
+        "S17_2021": (
+            2021,
+            "5acd98b56ab29648d39c780098826c8916cd5daddf663bcf72d1198e32aef226",
+            122780,
+            13459,
+        ),
+        "S17_2022": (
+            2022,
+            "c91ad5d7dd29f067f0d20d27575e8fcc1ab1fb8dc7871b1393080a3b5e682fc2",
+            122031,
+            13443,
+        ),
+        "S17_2023": (
+            2023,
+            "53a63aea1b02c672f25a9e9e563f9c698901a52e651dd8d2e81c2ef1092d1a47",
+            121193,
+            13448,
+        ),
+    }
+
+    for source_id, (year, artifact_hash, national, tokyo) in expected.items():
+        profile = profiles[source_id]
+        assert profile["expected_artifact_sha256"] == artifact_hash
+        assert profile["expected_record_count"] == 48
+        assert profile["expected_years"] == [year]
+        assert profile["anchors"][0]["expect"]["source_value"] == national
+        assert profile["anchors"][1]["expect"]["source_value"] == tokyo
+
+
 def test_all_resident_context_record_types_pass_quality_validation(tmp_path):
     crime_records = [
         OverallPrefectureCrimeRecord(

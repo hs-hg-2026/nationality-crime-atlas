@@ -30,6 +30,9 @@ def test_project_registry_declares_all_current_sources():
         "S15_2023",
         "S16",
         "S17",
+        "S17_2021",
+        "S17_2022",
+        "S17_2023",
     }
     assert registry["S14"]["parser"] == "population-t1"
     assert registry["S14"]["series_id"] == "isa-resident-foreigner-population-t1"
@@ -76,6 +79,34 @@ def test_project_registry_pins_historical_npa_detail_editions():
         assert metadata["source_table"] == table
         assert metadata["filename"] == filename
         assert metadata["coverage_periods"] == [str(year)]
+        assert metadata["expected_sha256"] == artifact_hash
+        assert metadata["verified_at"] == "2026-09-05"
+
+
+def test_project_registry_pins_historical_japanese_population_editions():
+    registry = load_source_registry("config/sources.json")
+    expected = {
+        "S17_2021": (
+            "05k2021-2.xlsx",
+            "5acd98b56ab29648d39c780098826c8916cd5daddf663bcf72d1198e32aef226",
+        ),
+        "S17_2022": (
+            "05k2022-2.xlsx",
+            "c91ad5d7dd29f067f0d20d27575e8fcc1ab1fb8dc7871b1393080a3b5e682fc2",
+        ),
+        "S17_2023": (
+            "05k2023-2.xlsx",
+            "53a63aea1b02c672f25a9e9e563f9c698901a52e651dd8d2e81c2ef1092d1a47",
+        ),
+    }
+
+    for source_id, (filename, artifact_hash) in expected.items():
+        year = int(source_id[-4:])
+        metadata = registry[source_id]
+        assert metadata["series_id"] == "statistics-bureau-japanese-population-prefecture"
+        assert metadata["source_table"] == "2"
+        assert metadata["filename"] == filename
+        assert metadata["coverage_periods"] == [f"{year}-10-01"]
         assert metadata["expected_sha256"] == artifact_hash
         assert metadata["verified_at"] == "2026-09-05"
 
