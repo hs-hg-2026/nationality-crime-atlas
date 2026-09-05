@@ -33,6 +33,7 @@ def test_project_registry_declares_all_current_sources():
         "S17_2021",
         "S17_2022",
         "S17_2023",
+        "S18",
     }
     assert registry["S14"]["parser"] == "population-t1"
     assert registry["S14"]["series_id"] == "isa-resident-foreigner-population-t1"
@@ -109,6 +110,27 @@ def test_project_registry_pins_historical_japanese_population_editions():
         assert metadata["coverage_periods"] == [f"{year}-10-01"]
         assert metadata["expected_sha256"] == artifact_hash
         assert metadata["verified_at"] == "2026-09-05"
+
+
+def test_project_registry_pins_intercensal_population_edition():
+    registry = load_source_registry("config/sources.json")
+
+    metadata = registry["S18"]
+    assert metadata["series_id"] == "statistics-bureau-intercensal-population-prefecture"
+    assert metadata["source_table"] == "5"
+    assert metadata["filename"] == "estat_000013168605.xlsx"
+    assert metadata["coverage_periods"] == [
+        "2015-10-01",
+        "2016-10-01",
+        "2017-10-01",
+        "2018-10-01",
+        "2019-10-01",
+        "2020-10-01",
+    ]
+    assert metadata["expected_sha256"] == (
+        "9e28da4c0ef8c2680577ad5ef0b0a78023d389113f66c85ab9e52bdbed89a1fc"
+    )
+    assert metadata["verified_at"] == "2026-09-05"
 
 
 def test_registry_rejects_missing_required_metadata(tmp_path):

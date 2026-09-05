@@ -351,6 +351,20 @@ def test_project_quality_profiles_pin_historical_japanese_population_editions():
         assert profile["anchors"][1]["expect"]["source_value"] == tokyo
 
 
+def test_project_quality_profile_pins_intercensal_population_edition():
+    profiles = load_quality_profiles("config/quality_profiles.json")
+
+    profile = profiles["S18"]
+    assert profile["expected_artifact_sha256"] == (
+        "9e28da4c0ef8c2680577ad5ef0b0a78023d389113f66c85ab9e52bdbed89a1fc"
+    )
+    assert profile["expected_record_count"] == 576
+    assert profile["expected_years"] == [2015, 2016, 2017, 2018, 2019, 2020]
+    assert profile["expected_distinct_counts"]["population_scope"] == 2
+    assert profile["anchors"][0]["expect"]["source_value"] == 126146
+    assert profile["anchors"][1]["expect"]["source_value"] == 123399
+
+
 def test_all_resident_context_record_types_pass_quality_validation(tmp_path):
     crime_records = [
         OverallPrefectureCrimeRecord(

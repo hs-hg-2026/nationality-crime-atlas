@@ -331,6 +331,13 @@ def test_japanese_population_parser_rejects_unrelated_workbook(tmp_path):
             _japanese_population_fixture,
             "prefecture_population",
         ),
+        (
+            "statistics-bureau-intercensal-population",
+            "S18",
+            "5",
+            _intercensal_population_fixture,
+            "prefecture_population",
+        ),
     ],
 )
 def test_pipeline_dispatches_all_resident_context_parsers(
@@ -342,11 +349,11 @@ def test_pipeline_dispatches_all_resident_context_parsers(
     tmp_path,
 ):
     source_path = fixture_factory(tmp_path / (source_id + ".xlsx"))
-    expected_count = {"S15": 6, "S16": 4, "S17": 3}[source_id]
+    expected_count = {"S15": 6, "S16": 4, "S17": 3, "S18": 12}[source_id]
     profile = {
         "record_type": record_type,
         "expected_record_count": expected_count,
-        "expected_years": [2024],
+        "expected_years": [2019, 2020] if source_id == "S18" else [2024],
         "allowed_values": {},
         "expected_distinct_counts": {},
         "expected_sums": {},
@@ -394,6 +401,11 @@ def test_pipeline_dispatches_all_resident_context_parsers(
             "statistics-bureau-japanese-population",
             "S17",
             _japanese_population_fixture,
+        ),
+        (
+            "statistics-bureau-intercensal-population",
+            "S18",
+            _intercensal_population_fixture,
         ),
     ],
 )
