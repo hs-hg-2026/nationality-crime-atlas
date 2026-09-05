@@ -647,8 +647,16 @@ def _clearance_share_fixture(tmp_path: Path) -> Path:
         "visiting_foreign": {
             "label": "来日外国人",
             "source_id": "S09",
+            "source_ids": ["S09"],
             "cleared_cases": (40, 600),
             "cleared_persons": (25, 300),
+        },
+        "all_foreign_minus_visiting_foreign": {
+            "label": "外国人全体−来日外国人（差分）",
+            "source_id": "S08",
+            "source_ids": ["S08", "S09"],
+            "cleared_cases": (20, 600),
+            "cleared_persons": (15, 300),
         },
     }
     for foreign_scope, definition in values.items():
@@ -656,7 +664,7 @@ def _clearance_share_fixture(tmp_path: Path) -> Path:
             numerator, denominator = definition[metric]
             records.append(
                 {
-                    "national_clearance_share_schema_version": 1,
+                    "national_clearance_share_schema_version": 2,
                     "trend_id": "national_criminal_code_clearance_foreign_share",
                     "label_ja": "全国の刑法犯検挙（日本人等を含む）に占める外国人区分の割合",
                     "label_en": "Foreign-scope share of national criminal-code clearances",
@@ -676,6 +684,9 @@ def _clearance_share_fixture(tmp_path: Path) -> Path:
                     "calculation_status": "calculated",
                     "refusal_reason": None,
                     "numerator_source_id": definition["source_id"],
+                    "numerator_source_ids": definition.get(
+                        "source_ids", [definition["source_id"]]
+                    ),
                     "denominator_source_id": "S15",
                     "derivation_method": "direct_published_counts_division",
                     "derivation_formula": "fixture formula",
@@ -689,7 +700,7 @@ def _clearance_share_fixture(tmp_path: Path) -> Path:
     _write_json(
         summary_path,
         {
-            "national_clearance_share_schema_version": 1,
+            "national_clearance_share_schema_version": 2,
             "generated_at": "2026-09-05T18:10:00+09:00",
             "trend_id": "national_criminal_code_clearance_foreign_share",
             "record_count": len(records),
@@ -706,7 +717,7 @@ def _clearance_share_fixture(tmp_path: Path) -> Path:
     _write_json(
         root / "latest.json",
         {
-            "national_clearance_share_schema_version": 1,
+            "national_clearance_share_schema_version": 2,
             "generated_at": "2026-09-05T18:10:00+09:00",
             "run_relpath": run_dir.name,
             "summary_sha256": sha256_file(summary_path),
@@ -740,7 +751,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     latest = json.loads(report.latest_path.read_text(encoding="utf-8"))
     summary = json.loads(report.summary_path.read_text(encoding="utf-8"))
 
-    assert payload["compact_export_schema_version"] == 6
+    assert payload["compact_export_schema_version"] == 7
     assert payload["publication_policy"]["primary_view"] == "all_resident_context"
     assert payload["publication_policy"]["secondary_view"] == "nationality_comparison"
     assert payload["publication_policy"]["supplementary_view"] == "nationality_indicators"
@@ -819,6 +830,14 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert payload["records"]["clearance_share_trends"][0]["trend_id"] in payload[
         "definitions"
     ]["clearance_share_ids"]
+    residual_share = next(
+        row
+        for row in payload["records"]["clearance_share_trends"]
+        if row["foreign_scope"] == "all_foreign_minus_visiting_foreign"
+        and row["metric"] == "cleared_cases"
+    )
+    assert residual_share["numerator_value"] == 20
+    assert residual_share["numerator_source_ids"] == ["S08", "S09"]
     assert payload["records"]["nationality_comparison"][0]["numerator_source_ids"] == [
         "S08",
         "S15",
@@ -847,7 +866,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
         "all_resident_context": 6,
         "nationality_comparison": 1,
         "offense_composition": 12,
-        "clearance_share_trends": 4,
+        "clearance_share_trends": 6,
     }
     assert latest["run_relpath"] == "20260901_180000_compact_export"
     assert latest["dashboard_export_sha256"] == sha256_file(report.export_path)
@@ -856,7 +875,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert summary["record_counts"]["all_resident_context"] == 6
     assert summary["record_counts"]["nationality_comparison"] == 1
     assert summary["record_counts"]["offense_composition"] == 12
-    assert summary["record_counts"]["clearance_share_trends"] == 4
+    assert summary["record_counts"]["clearance_share_trends"] == 6
     assert payload["sources"]["S08"]["publisher"] == "National Police Agency of Japan"
     assert payload["sources"]["S16"]["source_table"] == "144"
     assert payload["sources"]["S17"]["source_table"] == "2"

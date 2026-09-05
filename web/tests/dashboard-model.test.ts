@@ -408,7 +408,7 @@ describe('all-nationality comparison model', () => {
 });
 
 describe('national clearance foreign-share trend model', () => {
-  it('keeps ten years of cleared-case counts and both foreign scopes', () => {
+  it('keeps ten years of direct foreign scopes and their residual', () => {
     const dashboard = parseDashboardData(dashboardFixture);
     const view = buildClearanceShareTrendViewModel(dashboard, 'cleared_cases');
 
@@ -422,9 +422,13 @@ describe('national clearance foreign-share trend model', () => {
       allPersonsTotal: 287_273,
       allForeignCount: 18_861,
       visitingForeignCount: 13_405,
+      allForeignMinusVisitingCount: 5_456,
     });
     expect(latest?.allForeignShare).toBeCloseTo(6.565531742);
     expect(latest?.visitingForeignShare).toBeCloseTo(4.666293038);
+    expect(latest?.allForeignMinusVisitingShare).toBeCloseTo(
+      ((18_861 - 13_405) / 287_273) * 100,
+    );
     expect(view.metricLabel).toBe('検挙件数');
     expect(view.sources.map((source) => source.id)).toEqual([
       'S08',
@@ -448,9 +452,13 @@ describe('national clearance foreign-share trend model', () => {
       allPersonsTotal: 191_826,
       allForeignCount: 10_464,
       visitingForeignCount: 6_368,
+      allForeignMinusVisitingCount: 4_096,
     });
     expect(latest?.allForeignShare).toBeCloseTo(5.454943543);
     expect(latest?.visitingForeignShare).toBeCloseTo(3.319675122);
+    expect(latest?.allForeignMinusVisitingShare).toBeCloseTo(
+      ((10_464 - 6_368) / 191_826) * 100,
+    );
     expect(view.metricLabel).toBe('検挙人員');
   });
 });

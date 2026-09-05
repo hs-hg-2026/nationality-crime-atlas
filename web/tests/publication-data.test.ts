@@ -141,14 +141,14 @@ describe('dashboard publication bundle', () => {
     const manifest = JSON.parse(firstManifest.toString('utf8'));
     expect(manifest).toMatchObject({
       publication_manifest_schema_version: 1,
-      compact_export_schema_version: 6,
+      compact_export_schema_version: 7,
       source_run_relpath: pointer.run_relpath,
       dashboard_export_sha256: pointer.dashboard_export_sha256,
       record_counts: {
         all_resident_context: 248,
         nationality_comparison: 26,
         nationality_indicators: 290,
-        clearance_share_trends: 40,
+        clearance_share_trends: 60,
       },
       definition_counts: {
         context_ids: 4,
@@ -190,6 +190,20 @@ describe('dashboard publication bundle', () => {
       denominator_value: 287_273,
       numerator_source_id: 'S09',
       denominator_source_id: 'S15',
+    });
+    const latestResidualCases = published.records.clearance_share_trends.find(
+      (row: { year?: number; metric?: string; foreign_scope?: string }) =>
+        row.year === 2024 &&
+        row.metric === 'cleared_cases' &&
+        row.foreign_scope === 'all_foreign_minus_visiting_foreign',
+    );
+    expect(latestResidualCases).toMatchObject({
+      numerator_value: 5_456,
+      denominator_value: 287_273,
+      numerator_source_ids: ['S08', 'S09'],
+      denominator_source_id: 'S15',
+      derivation_method:
+        'arithmetic_residual_all_foreign_minus_visiting_foreign',
     });
 
     const second = syncCanonicalBundle(directory);

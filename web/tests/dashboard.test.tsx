@@ -333,12 +333,20 @@ describe('CrimeAtlasDashboard', () => {
     expect(within(section).getByTestId('clearance-share-chart')).toBeVisible();
     expect(
       within(section).getByTestId('clearance-share-table'),
-    ).toHaveTextContent(/2024.*287,273.*18,861.*6\.57%.*13,405.*4\.67%/);
+    ).toHaveTextContent(
+      /2024.*287,273.*18,861.*6\.57%.*13,405.*4\.67%.*5,456.*1\.90%/,
+    );
+    expect(
+      within(section).getByText('外国人全体−来日外国人（差分）'),
+    ).toBeVisible();
+    expect(within(section).getByText(/普段から住む外国人だけを表す値ではありません/)).toBeVisible();
 
     await user.click(within(section).getByRole('button', { name: '検挙人員' }));
     expect(
       within(section).getByTestId('clearance-share-table'),
-    ).toHaveTextContent(/2024.*191,826.*10,464.*5\.45%.*6,368.*3\.32%/);
+    ).toHaveTextContent(
+      /2024.*191,826.*10,464.*5\.45%.*6,368.*3\.32%.*4,096.*2\.14%/,
+    );
   });
 
   it('shows all nationality offense patterns as a clustered heatmap and 100% bars', async () => {

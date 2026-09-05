@@ -8,11 +8,11 @@ from openpyxl import Workbook, load_workbook
 from nationality_crime_atlas.clearance_share_trend import (
     generate_clearance_share_trend,
 )
-from nationality_crime_atlas.errors import IntegrityError
+from nationality_crime_atlas.errors import IntegrityError, SchemaError
 from nationality_crime_atlas.provenance import sha256_file
 
 
-def _write_visiting_foreign_fixture(path: Path) -> None:
+def _write_visiting_foreign_fixture(path: Path, *, cases_2024: int = 40) -> None:
     workbook = Workbook()
     worksheet = workbook.active
     worksheet.title = "01 "
@@ -25,7 +25,7 @@ def _write_visiting_foreign_fixture(path: Path) -> None:
     worksheet.cell(8, 6, 30)
     worksheet.cell(8, 7, 20)
     worksheet.cell(9, 3, "2024年")
-    worksheet.cell(9, 6, 40)
+    worksheet.cell(9, 6, cases_2024)
     worksheet.cell(9, 7, 25)
     workbook.save(path)
 
@@ -42,6 +42,8 @@ def _build_inputs(
     tmp_path: Path,
     nationality_table130_file: Path,
     all_person_offense_file: Path,
+    *,
+    visiting_2024_cases: int = 40,
 ):
     raw_root = tmp_path / "raw"
     catalog_rows = []
@@ -50,7 +52,9 @@ def _build_inputs(
         "S09": (tmp_path / "visiting.xlsx", "131"),
         "S15": (all_person_offense_file, "3"),
     }
-    _write_visiting_foreign_fixture(source_files["S09"][0])
+    _write_visiting_foreign_fixture(
+        source_files["S09"][0], cases_2024=visiting_2024_cases
+    )
 
     workbook = load_workbook(all_person_offense_file)
     workbook["刑法犯総数"].cell(
@@ -128,7 +132,7 @@ def _build_inputs(
     return catalog, raw_root, contract
 
 
-def test_clearance_share_trend_keeps_cases_and_persons_for_both_foreign_scopes(
+def test_clearance_share_trend_keeps_direct_scopes_and_their_arithmetic_residual(
     tmp_path,
     nationality_table130_file,
     all_person_offense_file,
@@ -148,7 +152,7 @@ def test_clearance_share_trend_keeps_cases_and_persons_for_both_foreign_scopes(
     )
 
     rows = [json.loads(line) for line in report.jsonl_path.read_text().splitlines()]
-    assert report.record_count == 8
+    assert report.record_count == 12
     assert report.year_count == 2
     assert report.latest_path.is_file()
     assert {
@@ -157,7 +161,11 @@ def test_clearance_share_trend_keeps_cases_and_persons_for_both_foreign_scopes(
     } == {
         (year, scope, metric)
         for year in (2023, 2024)
-        for scope in ("all_foreign", "visiting_foreign")
+        for scope in (
+            "all_foreign",
+            "visiting_foreign",
+            "all_foreign_minus_visiting_foreign",
+        )
         for metric in ("cleared_cases", "cleared_persons")
     }
     all_foreign_cases = next(
@@ -181,6 +189,52 @@ def test_clearance_share_trend_keeps_cases_and_persons_for_both_foreign_scopes(
     assert visiting_persons["denominator_value"] == 300
     assert visiting_persons["display_value"] == pytest.approx(8.333333333333332)
     assert "visiting_foreign_includes_nonresidents" in visiting_persons["mismatch_flags"]
+
+    residual_cases = next(
+        row
+        for row in rows
+        if row["year"] == 2024
+        and row["foreign_scope"] == "all_foreign_minus_visiting_foreign"
+        and row["metric"] == "cleared_cases"
+    )
+    assert residual_cases["foreign_scope_label_ja"] == (
+        "外国人全体−来日外国人（差分）"
+    )
+    assert residual_cases["numerator_value"] == 20
+    assert residual_cases["denominator_value"] == 600
+    assert residual_cases["display_value"] == pytest.approx(20 / 600 * 100)
+    assert residual_cases["numerator_source_ids"] == ["S08", "S09"]
+    assert residual_cases["derivation_method"] == (
+        "arithmetic_residual_all_foreign_minus_visiting_foreign"
+    )
+    assert "residual_not_equivalent_to_usual_residents" in residual_cases[
+        "mismatch_flags"
+    ]
+
+
+def test_clearance_share_trend_refuses_a_negative_foreign_scope_residual(
+    tmp_path,
+    nationality_table130_file,
+    all_person_offense_file,
+):
+    catalog, raw_root, contract = _build_inputs(
+        tmp_path,
+        nationality_table130_file,
+        all_person_offense_file,
+        visiting_2024_cases=61,
+    )
+
+    with pytest.raises(
+        SchemaError,
+        match="Visiting-foreign clearances exceed all-foreign clearances",
+    ):
+        generate_clearance_share_trend(
+            catalog_path=catalog,
+            raw_root=raw_root,
+            contract_path=contract,
+            output_root=tmp_path / "trend",
+            generated_at="2026-09-05T18:10:00+09:00",
+        )
 
 
 def test_clearance_share_trend_stops_on_unreviewed_artifact_hash(
