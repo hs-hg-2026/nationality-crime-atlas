@@ -9,9 +9,11 @@ import {
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const EXPECTED_COMPACT_EXPORT_SCHEMA_VERSION = 5;
+const EXPECTED_COMPACT_EXPORT_SCHEMA_VERSION = 6;
 const SAME_YEAR_GAP_CONTEXT_ID =
   'all_resident_same_year_recognition_clearance_gap';
+const CLEARANCE_SHARE_TREND_ID =
+  'national_criminal_code_clearance_foreign_share';
 const PUBLICATION_MANIFEST_SCHEMA_VERSION = 1;
 const SAFE_RUN_RELPATH = /^\d{8}_\d{6}_compact_export$/u;
 const SHA256 = /^[a-f0-9]{64}$/u;
@@ -132,6 +134,7 @@ function validateRecordLinks(payload) {
   const comparisonDefinitions = payload.definitions.nationality_comparison_ids;
   const offenseDefinitions = payload.definitions.offense_composition_ids;
   const offenseCategoryDefinitions = payload.definitions.offense_category_ids;
+  const clearanceShareDefinitions = payload.definitions.clearance_share_ids;
   const sources = payload.sources;
 
   payload.records.nationality_indicators.forEach((record, index) => {
@@ -290,6 +293,79 @@ function validateRecordLinks(payload) {
       }
     }
   });
+
+  const clearanceShareKeys = new Set();
+  const clearanceShareRowsByMetricYear = new Map();
+  payload.records.clearance_share_trends.forEach((record, index) => {
+    const label = `records.clearance_share_trends[${index}]`;
+    requireObject(record, label);
+    if (!Object.hasOwn(clearanceShareDefinitions, record.trend_id)) {
+      throw new Error(`${label} references an unknown trend definition.`);
+    }
+    if (record.trend_id !== CLEARANCE_SHARE_TREND_ID) {
+      throw new Error(`${label} has an unsupported trend_id.`);
+    }
+    if (!['cleared_cases', 'cleared_persons'].includes(record.metric)) {
+      throw new Error(`${label} has an unsupported metric.`);
+    }
+    if (!['all_foreign', 'visiting_foreign'].includes(record.foreign_scope)) {
+      throw new Error(`${label} has an unsupported foreign_scope.`);
+    }
+    for (const key of ['numerator_source_id', 'denominator_source_id']) {
+      if (
+        typeof record[key] !== 'string' ||
+        !Object.hasOwn(sources, record[key])
+      ) {
+        throw new Error(`${label} references an unknown ${key}.`);
+      }
+    }
+    if (
+      record.calculation_status !== 'calculated' ||
+      record.refusal_reason !== null ||
+      !Number.isSafeInteger(record.year) ||
+      !Number.isSafeInteger(record.numerator_value) ||
+      !Number.isSafeInteger(record.denominator_value) ||
+      record.numerator_value < 0 ||
+      record.denominator_value <= 0 ||
+      record.numerator_value > record.denominator_value
+    ) {
+      throw new Error(`${label} has invalid calculated counts.`);
+    }
+    const expectedQuotient = record.numerator_value / record.denominator_value;
+    const expectedDisplay = expectedQuotient * 100;
+    if (
+      typeof record.quotient !== 'number' ||
+      typeof record.display_value !== 'number' ||
+      Math.abs(record.quotient - expectedQuotient) > 1e-12 ||
+      Math.abs(record.display_value - expectedDisplay) > 1e-10
+    ) {
+      throw new Error(`${label} has inconsistent arithmetic.`);
+    }
+
+    const uniqueKey = `${record.metric}:${record.year}:${record.foreign_scope}`;
+    if (clearanceShareKeys.has(uniqueKey)) {
+      throw new Error(`${label} duplicates ${uniqueKey}.`);
+    }
+    clearanceShareKeys.add(uniqueKey);
+    const metricYearKey = `${record.metric}:${record.year}`;
+    const metricYearRows =
+      clearanceShareRowsByMetricYear.get(metricYearKey) ?? [];
+    metricYearRows.push(record);
+    clearanceShareRowsByMetricYear.set(metricYearKey, metricYearRows);
+  });
+  for (const [metricYear, rows] of clearanceShareRowsByMetricYear) {
+    if (
+      rows.length !== 2 ||
+      !rows.some((row) => row.foreign_scope === 'all_foreign') ||
+      !rows.some((row) => row.foreign_scope === 'visiting_foreign') ||
+      rows[0].denominator_value !== rows[1].denominator_value ||
+      rows[0].denominator_source_id !== rows[1].denominator_source_id
+    ) {
+      throw new Error(
+        `Clearance-share scope pair is incomplete for ${metricYear}.`,
+      );
+    }
+  }
 }
 
 export function inspectDashboardPayload(payload) {
@@ -314,6 +390,10 @@ export function inspectDashboardPayload(payload) {
     payload.definitions.offense_category_ids,
     'definitions.offense_category_ids',
   );
+  requireObject(
+    payload.definitions.clearance_share_ids,
+    'definitions.clearance_share_ids',
+  );
   requireObject(payload.records, 'records');
   if (!Array.isArray(payload.records.nationality_indicators)) {
     throw new Error('records.nationality_indicators must be an array.');
@@ -326,6 +406,9 @@ export function inspectDashboardPayload(payload) {
   }
   if (!Array.isArray(payload.records.offense_composition)) {
     throw new Error('records.offense_composition must be an array.');
+  }
+  if (!Array.isArray(payload.records.clearance_share_trends)) {
+    throw new Error('records.clearance_share_trends must be an array.');
   }
   requireObject(payload.sources, 'sources');
   requireObject(payload.publication_policy, 'publication_policy');
@@ -348,6 +431,11 @@ export function inspectDashboardPayload(payload) {
     payload.publication_policy.composition_view,
     'offense_composition',
     'publication composition view mismatch',
+  );
+  assertEqual(
+    payload.publication_policy.clearance_share_view,
+    CLEARANCE_SHARE_TREND_ID,
+    'publication clearance-share view mismatch',
   );
   assertEqual(
     payload.publication_policy.same_year_gap_view,
@@ -392,6 +480,7 @@ export function inspectDashboardPayload(payload) {
       nationality_comparison: payload.records.nationality_comparison.length,
       nationality_indicators: payload.records.nationality_indicators.length,
       offense_composition: payload.records.offense_composition.length,
+      clearance_share_trends: payload.records.clearance_share_trends.length,
     },
     definition_counts: {
       context_ids: Object.keys(payload.definitions.context_ids).length,
@@ -405,6 +494,8 @@ export function inspectDashboardPayload(payload) {
       offense_category_ids: Object.keys(
         payload.definitions.offense_category_ids,
       ).length,
+      clearance_share_ids: Object.keys(payload.definitions.clearance_share_ids)
+        .length,
     },
     source_count: Object.keys(payload.sources).length,
   };

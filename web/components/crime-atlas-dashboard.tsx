@@ -12,7 +12,15 @@ import {
   Scale,
   ShieldAlert,
 } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -36,14 +44,17 @@ import {
 } from '@/components/ui/native-select';
 import { PrefectureMap } from '@/components/prefecture-map';
 import {
+  buildClearanceShareTrendViewModel,
   buildOffenseCompositionViewModel,
   buildSelectableNationalityViewModel,
   buildRegionalViewModel,
   CONTEXT_METRICS,
+  type ClearanceShareMetric,
+  type ClearanceShareTrendViewModel,
   type ContextMetricId,
   type DashboardData,
   formatDashboardValue,
-  type NationalityComparisonDatum,
+  type NationalityComparisonViewModel,
   NATIONALITY_COMPARISON_ID,
   NATIONALITY_PERSPECTIVES,
   type NationalityPerspectiveId,
@@ -60,6 +71,17 @@ const chartConfig = {
   value: {
     label: '表示値',
     color: 'var(--chart-1)',
+  },
+} satisfies ChartConfig;
+
+const clearanceShareChartConfig = {
+  allForeignShare: {
+    label: '外国人全体',
+    color: 'var(--chart-1)',
+  },
+  visitingForeignShare: {
+    label: '来日外国人',
+    color: 'var(--chart-2)',
   },
 } satisfies ChartConfig;
 
@@ -80,12 +102,12 @@ const sourceDisplay: Record<
   S08: {
     dataset: '外国人の国籍等別・検挙件数と検挙人員',
     publisher: '警察庁',
-    period: '2024年',
+    period: '2015–2024年（2024年の詳細内訳を含む）',
   },
   S09: {
     dataset: '来日外国人の国籍等別・検挙件数と検挙人員',
     publisher: '警察庁',
-    period: '2024年',
+    period: '2015–2024年（2024年の詳細内訳を含む）',
   },
   S14: {
     dataset: '在留外国人統計：国籍・地域別の在留外国人数',
@@ -100,7 +122,7 @@ const sourceDisplay: Record<
   S15: {
     dataset: '都道府県等別の刑法犯認知件数・検挙件数・検挙人員',
     publisher: '警察庁',
-    period: '2024年',
+    period: '2015–2024年（2024年の都道府県別値を含む）',
   },
   S16: {
     dataset: '都道府県別の総人口',
@@ -187,6 +209,14 @@ const interpretationLabels: Record<string, string> = {
     '総人口は千人単位に丸められた公表値',
   visitor_vs_resident_population_mismatch:
     '「来日外国人」の犯罪統計と在留外国人数は対象範囲が一致しない',
+  all_foreign_scope_not_resident_foreigner_population:
+    '「外国人全体」は在留外国人人口と同じ範囲ではない',
+  denominator_includes_japanese_and_others:
+    '分母は日本人等を含む全国の検挙総数',
+  share_of_clearance_counts_not_population_rate:
+    '検挙全体の構成比であり、人口当たりの犯罪率ではない',
+  visiting_foreign_includes_nonresidents:
+    '「来日外国人」には短期滞在者や不法滞在者等が含まれ得る',
 };
 
 function interpretationLabel(code: string): string {
@@ -313,67 +343,300 @@ function ComparisonCard({
   );
 }
 
-function NationalitySideTable({
-  title,
-  description,
-  rows,
-  mode,
-  unitLabel,
-  valueLabel,
-  testId,
+function NationalityOrderedPlot({
+  view,
 }: {
-  title: string;
-  description: string;
-  rows: NationalityComparisonDatum[];
-  mode: ValueMode;
-  unitLabel: string;
-  valueLabel: string;
-  testId: string;
+  view: NationalityComparisonViewModel;
 }) {
+  const maximum = Math.max(
+    ...view.orderedRows.map((row) => row.referenceRatio ?? 0),
+    0,
+  );
   return (
-    <Card className="nationality-side-card" data-testid={testId}>
+    <Card
+      className="nationality-order-card"
+      data-testid="nationality-ordered-plot"
+    >
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle>全{view.orderedRows.length}区分の参考比率</CardTitle>
+        <CardDescription>
+          参考比率の高い順に全区分を表示。日本の参考値は別色にし、未算出の行も残します。
+        </CardDescription>
       </CardHeader>
-      <CardContent className="table-scroll">
-        <table className="nationality-table nationality-side-table">
-          <caption className="sr-only">{title}</caption>
-          <thead>
-            <tr>
-              <th scope="col">国籍等</th>
-              <th scope="col">{valueLabel}</th>
-              <th scope="col">注意点・算出状況</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.id}>
-                <td>{row.name}</td>
-                <td>
-                  {row.value === null
-                    ? '—'
-                    : formatDashboardValue(row.value, mode)}
-                  <span>
-                    {mode === 'ratio' ? ' / 1,000人' : ` ${unitLabel}`}
-                  </span>
-                </td>
-                <td>
-                  {row.warningCodes.map((code) => (
-                    <InterpretationNote key={code} code={code} />
-                  ))}
-                  {row.calculationStatus === 'refused' ? (
-                    <InterpretationNote code={row.refusalReason ?? ''} />
-                  ) : row.warningCodes.length === 0 ? (
-                    <span>—</span>
-                  ) : null}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <CardContent className="nationality-order-list">
+        {view.orderedRows.map((row, index) => {
+          const width =
+            row.referenceRatio === null || maximum === 0
+              ? 0
+              : (row.referenceRatio / maximum) * 100;
+          return (
+            <div
+              className={`nationality-order-row${
+                row.isJapaneseReference ? ' is-japanese-reference' : ''
+              }`}
+              data-testid="nationality-order-row"
+              key={row.id}
+            >
+              <div className="nationality-order-label">
+                <span className="nationality-order-rank">
+                  {row.referenceRatio === null ? '—' : index + 1}
+                </span>
+                <span
+                  data-testid={
+                    row.isJapaneseReference
+                      ? 'nationality-order-japanese'
+                      : undefined
+                  }
+                >
+                  {row.name}
+                </span>
+              </div>
+              <div className="nationality-order-track" aria-hidden="true">
+                {row.referenceRatio === null ? null : (
+                  <span
+                    className="nationality-order-bar"
+                    style={{ width: `${width}%` }}
+                  />
+                )}
+              </div>
+              <strong className="nationality-order-value">
+                {row.referenceRatio === null ? (
+                  <span className="not-calculated">未算出</span>
+                ) : (
+                  <>
+                    {formatDashboardValue(row.referenceRatio, 'ratio')}
+                    <small> / 1,000人</small>
+                  </>
+                )}
+              </strong>
+            </div>
+          );
+        })}
       </CardContent>
     </Card>
+  );
+}
+
+function formatClearanceShare(value: number): string {
+  return `${value.toLocaleString('ja-JP', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}%`;
+}
+
+function ClearanceShareTrend({
+  view,
+  metric,
+  onMetricChange,
+}: {
+  view: ClearanceShareTrendViewModel;
+  metric: ClearanceShareMetric;
+  onMetricChange: (metric: ClearanceShareMetric) => void;
+}) {
+  return (
+    <section
+      id="clearance-share"
+      className="clearance-share-section"
+      aria-labelledby="clearance-share-heading"
+      data-testid="clearance-share-trend-section"
+    >
+      <div className="section-heading-row">
+        <div>
+          <p className="section-kicker">全国の時系列</p>
+          <h2 id="clearance-share-heading">検挙全体に占める外国人区分の割合</h2>
+          <p className="intro-copy">
+            日本人等を含む全国の刑法犯検挙総数に対し、「外国人全体」と「来日外国人」の全国値が占める割合を示します。
+          </p>
+        </div>
+        <Badge variant="outline">
+          {view.years[0]}–{view.years.at(-1)}年
+        </Badge>
+      </div>
+
+      <div className="clearance-share-controls">
+        <fieldset className="control-field">
+          <legend>分子・分母の単位</legend>
+          <div className="mode-buttons">
+            <Button
+              type="button"
+              variant={metric === 'cleared_cases' ? 'default' : 'outline'}
+              aria-pressed={metric === 'cleared_cases'}
+              onClick={() => onMetricChange('cleared_cases')}
+            >
+              検挙件数
+            </Button>
+            <Button
+              type="button"
+              variant={metric === 'cleared_persons' ? 'default' : 'outline'}
+              aria-pressed={metric === 'cleared_persons'}
+              onClick={() => onMetricChange('cleared_persons')}
+            >
+              検挙人員
+            </Button>
+          </div>
+        </fieldset>
+        <div className="clearance-share-legend" aria-label="折れ線の凡例">
+          <span className="all-foreign">外国人全体</span>
+          <span className="visiting-foreign">来日外国人</span>
+        </div>
+      </div>
+
+      <Alert className="clearance-share-alert">
+        <Info aria-hidden="true" />
+        <AlertTitle>人口当たりの犯罪率ではありません</AlertTitle>
+        <AlertDescription>
+          {view.uiCaveat}
+          <span className="method-contract">
+            算式{' '}
+            <code>
+              外国人区分の{view.metricLabel} ÷ 全国の{view.metricLabel} × 100
+            </code>
+          </span>
+        </AlertDescription>
+      </Alert>
+
+      <div className="clearance-share-grid">
+        <Card className="clearance-share-chart-card">
+          <CardHeader>
+            <CardTitle>{view.metricLabel}の割合の変化</CardTitle>
+            <CardDescription>
+              「来日外国人」は紹介された図4と同じ分子範囲。「外国人全体」は別の範囲として併記します。
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={clearanceShareChartConfig}
+              className="clearance-share-chart"
+              data-testid="clearance-share-chart"
+              initialDimension={{ width: 760, height: 360 }}
+            >
+              <LineChart
+                accessibilityLayer
+                data={view.points}
+                margin={{ left: 4, right: 20, top: 12, bottom: 4 }}
+              >
+                <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="year"
+                  axisLine={false}
+                  tickLine={false}
+                  tickMargin={8}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tickMargin={8}
+                  tickFormatter={(value) => `${Number(value)}%`}
+                  width={44}
+                />
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      labelFormatter={(_, payload) =>
+                        payload[0]?.payload?.year
+                          ? `${payload[0].payload.year}年`
+                          : ''
+                      }
+                      formatter={(value, name) => (
+                        <>
+                          <span>
+                            {name === 'allForeignShare'
+                              ? '外国人全体'
+                              : '来日外国人'}
+                          </span>
+                          <strong>{formatClearanceShare(Number(value))}</strong>
+                        </>
+                      )}
+                    />
+                  }
+                />
+                <Line
+                  dataKey="allForeignShare"
+                  name="allForeignShare"
+                  type="monotone"
+                  stroke="var(--color-allForeignShare)"
+                  strokeWidth={2.5}
+                  dot={{ r: 3 }}
+                />
+                <Line
+                  dataKey="visitingForeignShare"
+                  name="visitingForeignShare"
+                  type="monotone"
+                  stroke="var(--color-visitingForeignShare)"
+                  strokeWidth={2.5}
+                  dot={{ r: 3 }}
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card className="clearance-share-table-card">
+          <CardHeader>
+            <CardTitle>年ごとの実数と割合</CardTitle>
+            <CardDescription>
+              丸める前の公表値からこのサイトで単純に割り算します。
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="table-scroll">
+            <table
+              className="nationality-table clearance-share-table"
+              data-testid="clearance-share-table"
+            >
+              <caption className="sr-only">
+                全国の{view.metricLabel}に占める外国人区分の割合
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">年</th>
+                  <th scope="col">全国総数</th>
+                  <th scope="col">外国人全体</th>
+                  <th scope="col">来日外国人</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...view.points].reverse().map((point) => (
+                  <tr key={point.year}>
+                    <th scope="row">{point.year}</th>
+                    <td>
+                      {point.allPersonsTotal.toLocaleString('ja-JP')}
+                      <small>{view.unitLabel}</small>
+                    </td>
+                    <td>
+                      {point.allForeignCount.toLocaleString('ja-JP')}
+                      <small>{view.unitLabel}</small>{' '}
+                      <strong>
+                        {formatClearanceShare(point.allForeignShare)}
+                      </strong>
+                    </td>
+                    <td>
+                      {point.visitingForeignCount.toLocaleString('ja-JP')}
+                      <small>{view.unitLabel}</small>{' '}
+                      <strong>
+                        {formatClearanceShare(point.visitingForeignShare)}
+                      </strong>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="clearance-share-sources">
+        <CardHeader>
+          <BookOpen aria-hidden="true" />
+          <CardTitle>この時系列の出典</CardTitle>
+          <CardDescription>
+            外国人全体、来日外国人、日本人等を含む全国総数を別々に辿れます。
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <SourceList sources={view.sources} />
+        </CardContent>
+      </Card>
+    </section>
   );
 }
 
@@ -554,7 +817,8 @@ export function CrimeAtlasDashboard({
   const [mode, setMode] = useState<ValueMode>('ratio');
   const [nationalityPerspectiveId, setNationalityPerspectiveId] =
     useState<NationalityPerspectiveId>(NATIONALITY_COMPARISON_ID);
-  const [nationalityMode, setNationalityMode] = useState<ValueMode>('ratio');
+  const [clearanceShareMetric, setClearanceShareMetric] =
+    useState<ClearanceShareMetric>('cleared_cases');
   const [offenseMetric, setOffenseMetric] =
     useState<OffenseCompositionMetric>('cleared_persons');
   const [offenseOrder, setOffenseOrder] =
@@ -570,9 +834,13 @@ export function CrimeAtlasDashboard({
       buildSelectableNationalityViewModel(
         dashboard,
         nationalityPerspectiveId,
-        nationalityMode,
+        'ratio',
       ),
-    [dashboard, nationalityMode, nationalityPerspectiveId],
+    [dashboard, nationalityPerspectiveId],
+  );
+  const clearanceShareView = useMemo(
+    () => buildClearanceShareTrendViewModel(dashboard, clearanceShareMetric),
+    [clearanceShareMetric, dashboard],
   );
   const offenseView = useMemo(
     () =>
@@ -606,6 +874,7 @@ export function CrimeAtlasDashboard({
           <a href="#about">このサイトについて</a>
           <a href="#regional">地域全体</a>
           <a href="#nationality">国籍等別</a>
+          <a href="#clearance-share">時系列</a>
           <a href="#offense">犯罪の種類</a>
         </nav>
         <Badge variant="outline" className="verified-badge">
@@ -646,7 +915,7 @@ export function CrimeAtlasDashboard({
             <article>
               <h3>次に国籍等別を見る</h3>
               <p>
-                全国の公表値を、日本を含む全区分、高い側・低い側、犯罪の種類という複数の見方で確認できます。
+                全国の公表値を、日本を含む全区分の参考比率順、時系列、犯罪の種類という複数の見方で確認できます。
               </p>
               <a href="#nationality">国籍等別の表示へ</a>
             </article>
@@ -1011,27 +1280,6 @@ export function CrimeAtlasDashboard({
                 ))}
               </NativeSelect>
             </label>
-            <fieldset className="control-field nationality-mode-control">
-              <legend>高い側／低い側を並べる値</legend>
-              <div className="mode-buttons">
-                <Button
-                  type="button"
-                  variant={nationalityMode === 'ratio' ? 'default' : 'outline'}
-                  aria-pressed={nationalityMode === 'ratio'}
-                  onClick={() => setNationalityMode('ratio')}
-                >
-                  参考比率（人口当たり）
-                </Button>
-                <Button
-                  type="button"
-                  variant={nationalityMode === 'count' ? 'default' : 'outline'}
-                  aria-pressed={nationalityMode === 'count'}
-                  onClick={() => setNationalityMode('count')}
-                >
-                  実数（{nationalityView.numeratorLabel}）
-                </Button>
-              </div>
-            </fieldset>
             <div className="definition-strip">
               <span>現在の対象範囲</span>
               <strong>{nationalityView.scopeLabel}</strong>
@@ -1049,55 +1297,12 @@ export function CrimeAtlasDashboard({
             <ShieldAlert aria-hidden="true" />
             <AlertTitle>値は隠さず、属性の評価には使いません</AlertTitle>
             <AlertDescription>
-              犯罪統計と人口統計は同じ人を追跡したものではなく、対象範囲や基準日が異なる場合があります。高い／低いという並びは選択した表示値の大小だけを示し、集団の本質や、個人が犯罪をする可能性の判断ではありません。現在の並びは
-              {nationalityMode === 'ratio'
-                ? nationalityView.unitLabel
-                : `${nationalityView.numeratorLabel}の実数`}
-              、分母基準日は
+              犯罪統計と人口統計は同じ人を追跡したものではなく、対象範囲や基準日が異なる場合があります。参考比率の高い順という並びは数値の大小だけを示し、集団の本質や、個人が犯罪をする可能性の判断ではありません。未算出の行も0とせず残します。分母基準日は
               {nationalityView.referenceDates.join(' / ')} です。
             </AlertDescription>
           </Alert>
 
-          <div className="nationality-side-grid">
-            <NationalitySideTable
-              title={`${
-                nationalityMode === 'ratio'
-                  ? '観測参考比率'
-                  : `公表${nationalityView.numeratorLabel}`
-              }が高い側（5区分）`}
-              description={
-                nationalityMode === 'ratio'
-                  ? '比率を算出できる区分から機械的に抽出。注意が必要な値も除外せず、未算出の行は全区分表に残します。'
-                  : '公表された犯罪件数・人員がある区分から機械的に抽出。注意点や比率の算出可否にかかわらず、公表実数を表示します。'
-              }
-              rows={nationalityView.highRows}
-              mode={nationalityMode}
-              unitLabel={nationalityView.unitLabel}
-              valueLabel={
-                nationalityMode === 'ratio'
-                  ? '参考比率'
-                  : nationalityView.numeratorLabel
-              }
-              testId="nationality-high-side"
-            />
-            <NationalitySideTable
-              title={`${
-                nationalityMode === 'ratio'
-                  ? '観測参考比率'
-                  : `公表${nationalityView.numeratorLabel}`
-              }が低い側（5区分）`}
-              description="高い側と同数を表示。値がない区分は機械的な並びへ入れず、全区分表に残します。"
-              rows={nationalityView.lowRows}
-              mode={nationalityMode}
-              unitLabel={nationalityView.unitLabel}
-              valueLabel={
-                nationalityMode === 'ratio'
-                  ? '参考比率'
-                  : nationalityView.numeratorLabel
-              }
-              testId="nationality-low-side"
-            />
-          </div>
+          <NationalityOrderedPlot view={nationalityView} />
 
           <div className="nationality-grid">
             <Card className="nationality-table-card">
@@ -1108,12 +1313,7 @@ export function CrimeAtlasDashboard({
                     元データの掲載順で、算出値・注意点・未算出の理由・出典を省略せず表示します。
                   </CardDescription>
                 </div>
-                <Badge variant="secondary">
-                  高低表の尺度:{' '}
-                  {nationalityMode === 'ratio'
-                    ? nationalityView.unitLabel
-                    : `${nationalityView.numeratorLabel}の実数`}
-                </Badge>
+                <Badge variant="secondary">実数と参考比率を併記</Badge>
               </CardHeader>
               <CardContent className="table-scroll">
                 <table
@@ -1280,6 +1480,12 @@ export function CrimeAtlasDashboard({
             </div>
           </div>
         </section>
+
+        <ClearanceShareTrend
+          view={clearanceShareView}
+          metric={clearanceShareMetric}
+          onMetricChange={setClearanceShareMetric}
+        />
 
         <section
           id="offense"

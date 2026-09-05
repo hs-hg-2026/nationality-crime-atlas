@@ -1,7 +1,7 @@
 {
-  "compact_export_schema_version": 5,
-  "dashboard_export_sha256": "102e2f6d589675a4fb45eac239212ff3f160048f5c0479bea62416da67ecb002",
-  "generated_at": "2026-09-03T23:15:49+09:00",
-  "run_relpath": "20260903_231549_compact_export",
-  "summary_sha256": "478995a2c4c14b1d4dd83571f541d1da92ec6e9f1da4f6fdb8965ec5d50c7c3e"
+  "compact_export_schema_version": 6,
+  "dashboard_export_sha256": "55e0d091713f452ca82d24147be3ad1c94cbde19703278eb4b1f948de9e2c10a",
+  "generated_at": "2026-09-05T22:35:00+09:00",
+  "run_relpath": "20260905_223500_compact_export",
+  "summary_sha256": "b8326bc7e315c8053330c189145334d1e2bb9b7d78199cc0c7eb1e4bbd72350a"
 }

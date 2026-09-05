@@ -131,10 +131,10 @@ describe('regional dashboard model', () => {
     ).toThrow(/schema version/i);
   });
 
-  it('rejects a schema-v5 payload without required dashboard records', () => {
+  it('rejects a schema-v6 payload without required dashboard records', () => {
     expect(() =>
       parseDashboardData({
-        compact_export_schema_version: 5,
+        compact_export_schema_version: 6,
         definitions: {},
         records: {},
         sources: {},
@@ -410,10 +410,7 @@ describe('all-nationality comparison model', () => {
 describe('national clearance foreign-share trend model', () => {
   it('keeps ten years of cleared-case counts and both foreign scopes', () => {
     const dashboard = parseDashboardData(dashboardFixture);
-    const view = buildClearanceShareTrendViewModel(
-      dashboard,
-      'cleared_cases',
-    );
+    const view = buildClearanceShareTrendViewModel(dashboard, 'cleared_cases');
 
     expect(view.points).toHaveLength(10);
     expect(view.years).toEqual([
@@ -426,8 +423,8 @@ describe('national clearance foreign-share trend model', () => {
       allForeignCount: 18_861,
       visitingForeignCount: 13_405,
     });
-    expect(latest?.allForeignShare).toBeCloseTo(6.565740883);
-    expect(latest?.visitingForeignShare).toBeCloseTo(4.666293244);
+    expect(latest?.allForeignShare).toBeCloseTo(6.565531742);
+    expect(latest?.visitingForeignShare).toBeCloseTo(4.666293038);
     expect(view.metricLabel).toBe('検挙件数');
     expect(view.sources.map((source) => source.id)).toEqual([
       'S08',
@@ -452,8 +449,8 @@ describe('national clearance foreign-share trend model', () => {
       allForeignCount: 10_464,
       visitingForeignCount: 6_368,
     });
-    expect(latest?.allForeignShare).toBeCloseTo(5.455466421);
-    expect(latest?.visitingForeignShare).toBeCloseTo(3.319676164);
+    expect(latest?.allForeignShare).toBeCloseTo(5.454943543);
+    expect(latest?.visitingForeignShare).toBeCloseTo(3.319675122);
     expect(view.metricLabel).toBe('検挙人員');
   });
 });

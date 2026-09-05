@@ -803,9 +803,10 @@ body {
   }
   .nationality-controls {
     display: grid;
-    grid-template-columns:
-      minmax(280px, 1.55fr) minmax(250px, 1.15fr) minmax(190px, 0.8fr)
-      minmax(190px, 0.8fr);
+    grid-template-columns: minmax(280px, 1.55fr) minmax(220px, 1fr) minmax(
+        220px,
+        1fr
+      );
     align-items: end;
     gap: 1rem;
     margin-top: 1.5rem;
@@ -846,31 +847,73 @@ body {
     border-color: color-mix(in oklch, var(--primary), var(--border) 72%);
     background: color-mix(in oklch, var(--primary), white 93%);
   }
-  .nationality-side-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem;
+  .nationality-order-card {
     margin-top: 1.25rem;
-  }
-  .nationality-side-card {
     border-color: color-mix(in oklch, var(--primary), var(--border) 78%);
   }
-  .nationality-side-card [data-slot='card-title'] {
+  .nationality-order-card [data-slot='card-title'] {
     font-size: 1rem;
   }
-  .nationality-table.nationality-side-table {
-    min-width: 470px;
+  .nationality-order-list {
+    display: grid;
+    gap: 0.45rem;
   }
-  .nationality-side-table td:last-child {
-    max-width: 170px;
-    text-align: left;
+  .nationality-order-row {
+    display: grid;
+    grid-template-columns: minmax(12rem, 17rem) minmax(8rem, 1fr) 7.4rem;
+    align-items: center;
+    gap: 0.8rem;
+    min-height: 2.2rem;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.45rem;
   }
-  .nationality-side-table td code {
-    display: block;
+  .nationality-order-row:nth-child(even) {
+    background: color-mix(in oklch, var(--muted), transparent 45%);
+  }
+  .nationality-order-row.is-japanese-reference {
+    background: color-mix(in oklch, var(--accent), white 76%);
+  }
+  .nationality-order-label {
+    display: grid;
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0.45rem;
+    min-width: 0;
+    font-size: 0.76rem;
+    font-weight: 680;
+    line-height: 1.45;
+  }
+  .nationality-order-rank {
     color: var(--muted-foreground);
-    font-family: var(--font-geist-mono), ui-monospace, monospace;
-    font-size: 0.6rem;
-    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .nationality-order-track {
+    height: 0.68rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--muted);
+  }
+  .nationality-order-bar {
+    display: block;
+    min-width: 2px;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--chart-1);
+  }
+  .is-japanese-reference .nationality-order-bar {
+    background: var(--chart-2);
+  }
+  .nationality-order-value {
+    font-size: 0.76rem;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .nationality-order-value small {
+    color: var(--muted-foreground);
+    font-size: 0.62rem;
+    font-weight: 500;
   }
   .interpretation-note {
     display: block;
@@ -1021,6 +1064,103 @@ body {
     padding: 0.28rem 0.45rem;
     border-radius: 0.35rem;
     background: var(--muted);
+  }
+
+  .clearance-share-section {
+    margin-top: clamp(4rem, 9vw, 7rem);
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+    border-top: 1px solid var(--border);
+  }
+  .clearance-share-section h2 {
+    margin-top: 0.4rem;
+    font-size: clamp(1.9rem, 4vw, 3.35rem);
+    font-weight: 770;
+    letter-spacing: -0.05em;
+    line-height: 1.08;
+  }
+  .clearance-share-controls {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) * 1.4);
+    background: var(--card);
+  }
+  .clearance-share-controls .control-field {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .clearance-share-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    color: var(--muted-foreground);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+  .clearance-share-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .clearance-share-legend span::before {
+    width: 1.5rem;
+    height: 0.18rem;
+    border-radius: 999px;
+    background: var(--chart-1);
+    content: '';
+  }
+  .clearance-share-legend .visiting-foreign::before {
+    background: var(--chart-2);
+  }
+  .clearance-share-alert {
+    margin-top: 1rem;
+    border-color: color-mix(in oklch, var(--primary), var(--border) 72%);
+    background: color-mix(in oklch, var(--primary), white 93%);
+  }
+  .clearance-share-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+  .clearance-share-chart-card,
+  .clearance-share-table-card {
+    min-width: 0;
+  }
+  .clearance-share-chart {
+    width: 100%;
+    min-width: 0;
+    height: 330px;
+    aspect-ratio: auto;
+  }
+  .clearance-share-table {
+    min-width: 480px;
+  }
+  .clearance-share-table th:first-child {
+    text-align: left;
+  }
+  .clearance-share-table td,
+  .clearance-share-table th:not(:first-child) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .clearance-share-table td strong {
+    display: block;
+    color: var(--primary);
+    font-size: 0.75rem;
+  }
+  .clearance-share-table td small {
+    color: var(--muted-foreground);
+    font-size: 0.62rem;
+  }
+  .clearance-share-sources {
+    margin-top: 1.25rem;
   }
 
   .offense-section {
@@ -1259,8 +1399,8 @@ body {
     .prefecture-map-card,
     .content-grid,
     .nationality-controls,
-    .nationality-side-grid,
     .nationality-grid,
+    .clearance-share-grid,
     .offense-controls,
     .offense-evidence-grid {
       grid-template-columns: 1fr;
@@ -1284,6 +1424,10 @@ body {
     .offense-controls .control-field + .control-field {
       padding-top: 0.8rem;
       border-top: 1px solid var(--border);
+    }
+    .clearance-share-controls {
+      align-items: flex-start;
+      flex-direction: column;
     }
     .comparison-readout {
       order: 3;
@@ -1324,27 +1468,18 @@ body {
       grid-template-columns: 1fr;
       gap: 0.35rem;
     }
-    .nationality-table.nationality-side-table {
-      min-width: 100%;
-      table-layout: fixed;
-      font-size: 0.72rem;
+    .nationality-order-row {
+      grid-template-columns: minmax(0, 1fr) 5.7rem;
+      gap: 0.45rem;
+      padding-block: 0.45rem;
     }
-    .nationality-side-table th,
-    .nationality-side-table td {
-      padding-right: 0.35rem;
-      padding-left: 0.35rem;
+    .nationality-order-track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      height: 0.5rem;
     }
-    .nationality-side-table th:first-child {
-      width: 40%;
-    }
-    .nationality-side-table th:nth-child(2) {
-      width: 30%;
-    }
-    .nationality-side-table th:nth-child(3) {
-      width: 30%;
-    }
-    .nationality-side-table td code {
-      font-size: 0.52rem;
+    .nationality-order-value small {
+      display: none;
     }
     .mismatch-strip {
       grid-template-columns: 1fr;

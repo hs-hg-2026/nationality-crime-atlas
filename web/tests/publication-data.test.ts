@@ -141,18 +141,20 @@ describe('dashboard publication bundle', () => {
     const manifest = JSON.parse(firstManifest.toString('utf8'));
     expect(manifest).toMatchObject({
       publication_manifest_schema_version: 1,
-      compact_export_schema_version: 5,
+      compact_export_schema_version: 6,
       source_run_relpath: pointer.run_relpath,
       dashboard_export_sha256: pointer.dashboard_export_sha256,
       record_counts: {
         all_resident_context: 248,
         nationality_comparison: 26,
         nationality_indicators: 290,
+        clearance_share_trends: 40,
       },
       definition_counts: {
         context_ids: 4,
         indicator_ids: 10,
         nationality_comparison_ids: 1,
+        clearance_share_ids: 1,
       },
       source_count: 8,
       source_pointer_sha256: sha256(readFileSync(source.pointerPath)),
@@ -163,6 +165,7 @@ describe('dashboard publication bundle', () => {
       primary_view: 'all_resident_context',
       secondary_view: 'nationality_comparison',
       supplementary_view: 'nationality_indicators',
+      clearance_share_view: 'national_criminal_code_clearance_foreign_share',
       same_year_gap_view: 'all_resident_same_year_recognition_clearance_gap',
       same_year_gap_is_unresolved_cohort: false,
     });
@@ -175,6 +178,18 @@ describe('dashboard publication bundle', () => {
       numerator_source_ids: ['S08', 'S15'],
       denominator_source_id: 'S17',
       calculation_status: 'calculated',
+    });
+    const latestVisitingCases = published.records.clearance_share_trends.find(
+      (row: { year?: number; metric?: string; foreign_scope?: string }) =>
+        row.year === 2024 &&
+        row.metric === 'cleared_cases' &&
+        row.foreign_scope === 'visiting_foreign',
+    );
+    expect(latestVisitingCases).toMatchObject({
+      numerator_value: 13_405,
+      denominator_value: 287_273,
+      numerator_source_id: 'S09',
+      denominator_source_id: 'S15',
     });
 
     const second = syncCanonicalBundle(directory);

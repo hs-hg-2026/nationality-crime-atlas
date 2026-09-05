@@ -274,21 +274,21 @@ describe('CrimeAtlasDashboard', () => {
     render(<CrimeAtlasDashboard dashboard={dashboard} />);
 
     const section = screen.getByTestId('nationality-comparison-section');
-    const orderedPlot = within(section).getByTestId(
-      'nationality-ordered-plot',
-    );
+    const orderedPlot = within(section).getByTestId('nationality-ordered-plot');
     const fullTable = within(section).getByTestId(
       'nationality-comparison-table',
     );
 
-    expect(within(orderedPlot).getAllByTestId('nationality-order-row')).toHaveLength(
-      26,
-    );
-    expect(within(orderedPlot).getAllByTestId('nationality-order-row')[0]).toHaveTextContent(
-      /無国籍.*10\.68/,
-    );
     expect(
-      within(orderedPlot).getByTestId('nationality-order-japanese'),
+      within(orderedPlot).getAllByTestId('nationality-order-row'),
+    ).toHaveLength(26);
+    expect(
+      within(orderedPlot).getAllByTestId('nationality-order-row')[0],
+    ).toHaveTextContent(/無国籍.*10\.68/);
+    expect(
+      within(orderedPlot)
+        .getByTestId('nationality-order-japanese')
+        .closest('.nationality-order-row'),
     ).toHaveTextContent(/日本（残差による参考値）.*1\.51/);
     expect(
       within(section).queryByTestId('nationality-high-side'),
@@ -327,18 +327,18 @@ describe('CrimeAtlasDashboard', () => {
         name: '検挙全体に占める外国人区分の割合',
       }),
     ).toBeVisible();
-    expect(within(section).getByText(/2015–2024年/)).toBeVisible();
+    expect(
+      within(section).getByText('2015–2024年', { selector: 'span' }),
+    ).toBeVisible();
     expect(within(section).getByTestId('clearance-share-chart')).toBeVisible();
-    expect(within(section).getByTestId('clearance-share-table')).toHaveTextContent(
-      /2024.*287,273.*18,861.*6\.57%.*13,405.*4\.67%/,
-    );
+    expect(
+      within(section).getByTestId('clearance-share-table'),
+    ).toHaveTextContent(/2024.*287,273.*18,861.*6\.57%.*13,405.*4\.67%/);
 
-    await user.click(
-      within(section).getByRole('button', { name: '検挙人員' }),
-    );
-    expect(within(section).getByTestId('clearance-share-table')).toHaveTextContent(
-      /2024.*191,826.*10,464.*5\.46%.*6,368.*3\.32%/,
-    );
+    await user.click(within(section).getByRole('button', { name: '検挙人員' }));
+    expect(
+      within(section).getByTestId('clearance-share-table'),
+    ).toHaveTextContent(/2024.*191,826.*10,464.*5\.45%.*6,368.*3\.32%/);
   });
 
   it('shows all nationality offense patterns as a clustered heatmap and 100% bars', async () => {
@@ -432,14 +432,14 @@ describe('CrimeAtlasDashboard', () => {
     );
     expect(within(section).getByText('7区分は未算出')).toBeVisible();
 
-    const orderedPlot = within(section).getByTestId(
-      'nationality-ordered-plot',
-    );
-    expect(within(orderedPlot).getAllByTestId('nationality-order-row')).toHaveLength(
-      25,
-    );
+    const orderedPlot = within(section).getByTestId('nationality-ordered-plot');
     expect(
-      within(orderedPlot).getByTestId('nationality-order-japanese'),
+      within(orderedPlot).getAllByTestId('nationality-order-row'),
+    ).toHaveLength(25);
+    expect(
+      within(orderedPlot)
+        .getByTestId('nationality-order-japanese')
+        .closest('.nationality-order-row'),
     ).toHaveTextContent(/日本（対応する公表分子なし）.*未算出/);
   });
 

@@ -1,6 +1,17 @@
 {
-  "compact_export_schema_version": 5,
+  "compact_export_schema_version": 6,
   "definitions": {
+    "clearance_share_ids": {
+      "national_criminal_code_clearance_foreign_share": {
+        "display_multiplier": 100,
+        "display_unit_label_ja": "%",
+        "interpretation_policy": "share_of_clearances_not_population_risk",
+        "label_en": "Foreign-scope share of nationwide criminal-code clearances including Japanese and others",
+        "label_ja": "全国の刑法犯検挙（日本人等を含む）に占める外国人区分の割合",
+        "national_clearance_share_schema_version": 1,
+        "ui_caveat": "分母は日本人等を含む全国の刑法犯検挙総数、分子は警察庁の「外国人」または「来日外国人」区分である。検挙全体に占める構成比であり、人口当たりの犯罪率、犯罪の発生率、個人のriskを示さない。「来日外国人」には短期滞在者や不法滞在者等が含まれ得るため、在留外国人人口とは範囲が一致しない。"
+      }
+    },
     "context_ids": {
       "all_resident_cleared_cases": {
         "all_resident_context_schema_version": 1,
@@ -403,8 +414,9 @@
       }
     }
   },
-  "generated_at": "2026-09-03T23:15:49+09:00",
+  "generated_at": "2026-09-05T22:35:00+09:00",
   "publication_policy": {
+    "clearance_share_view": "national_criminal_code_clearance_foreign_share",
     "composition_view": "offense_composition",
     "count_and_reference_ratio_toggle_required": true,
     "derived_value_label_en": "public-data-derived reference ratio",
@@ -12944,6 +12956,1808 @@
         "reference_date": "2024-12-31",
         "refusal_reason": "individual_nationality_prefecture_numerator_unpublished",
         "targets_complete": false,
+        "year": 2024
+      }
+    ],
+    "clearance_share_trends": [
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 357484,
+        "derivation_formula": "S08.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 4.480480245269718,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 16017,
+        "quotient": 0.04480480245269718,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 8,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 16017
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 9,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 357484
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2015
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 239355,
+        "derivation_formula": "S08.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 4.614902550604751,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 11046,
+        "quotient": 0.046149025506047506,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 8,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 11046
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 9,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 239355
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2015
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 357484,
+        "derivation_formula": "S09.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 2.6342437703505612,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 9417,
+        "quotient": 0.02634243770350561,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 6,
+            "source_id": "S09",
+            "source_row": 8,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 9417
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 9,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 357484
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2015
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 239355,
+        "derivation_formula": "S09.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 2.5848634872887555,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 6187,
+        "quotient": 0.025848634872887553,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S09",
+            "source_row": 8,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 6187
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 9,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 239355
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2015
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 337066,
+        "derivation_formula": "S08.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 4.532050102947197,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 15276,
+        "quotient": 0.04532050102947197,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 9,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 15276
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 10,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 337066
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2016
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 226376,
+        "derivation_formula": "S08.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 4.748736615188889,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 10750,
+        "quotient": 0.04748736615188889,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 9,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 10750
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 10,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 226376
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2016
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 337066,
+        "derivation_formula": "S09.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 2.6828573632463675,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 9043,
+        "quotient": 0.026828573632463673,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 6,
+            "source_id": "S09",
+            "source_row": 9,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 9043
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 10,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 337066
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2016
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 226376,
+        "derivation_formula": "S09.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 2.693306710958759,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 6097,
+        "quotient": 0.02693306710958759,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S09",
+            "source_row": 9,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 6097
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 10,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 226376
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2016
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 327081,
+        "derivation_formula": "S08.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.245183914687799,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 17156,
+        "quotient": 0.05245183914687799,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 10,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 17156
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 11,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 327081
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2017
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 215003,
+        "derivation_formula": "S08.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 4.92086156937345,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 10580,
+        "quotient": 0.049208615693734505,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 10,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 10580
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 11,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 215003
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2017
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 327081,
+        "derivation_formula": "S09.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 3.3667501322302424,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 11012,
+        "quotient": 0.03366750132230242,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 6,
+            "source_id": "S09",
+            "source_row": 10,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 11012
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 11,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 327081
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2017
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 215003,
+        "derivation_formula": "S09.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 2.843216141170123,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 6113,
+        "quotient": 0.028432161411701233,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S09",
+            "source_row": 10,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 6113
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 11,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 215003
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2017
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 309409,
+        "derivation_formula": "S08.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.025387108972266,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 15549,
+        "quotient": 0.050253871089722665,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 11,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 15549
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 12,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 309409
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2018
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 206094,
+        "derivation_formula": "S08.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 4.883693848438091,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 10065,
+        "quotient": 0.048836938484380914,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 11,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 10065
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 12,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 206094
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2018
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 309409,
+        "derivation_formula": "S09.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 3.093963006893788,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 9573,
+        "quotient": 0.03093963006893788,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 6,
+            "source_id": "S09",
+            "source_row": 11,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 9573
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 12,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 309409
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2018
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 206094,
+        "derivation_formula": "S09.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 2.8355992896445312,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 5844,
+        "quotient": 0.02835599289644531,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S09",
+            "source_row": 11,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 5844
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 12,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 206094
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2018
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 294206,
+        "derivation_formula": "S08.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.026749964310722,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 14789,
+        "quotient": 0.050267499643107214,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 12,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 14789
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 13,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 294206
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2019
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 192607,
+        "derivation_formula": "S08.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 4.985800100723234,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 9603,
+        "quotient": 0.049858001007232346,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 12,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 9603
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 13,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 192607
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2019
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 294206,
+        "derivation_formula": "S09.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 3.109385940463485,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 9148,
+        "quotient": 0.031093859404634848,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 6,
+            "source_id": "S09",
+            "source_row": 12,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 9148
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 13,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 294206
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2019
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 192607,
+        "derivation_formula": "S09.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 2.888264704813428,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 5563,
+        "quotient": 0.028882647048134282,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S09",
+            "source_row": 12,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 5563
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 13,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 192607
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2019
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 279185,
+        "derivation_formula": "S08.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.20658344825116,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 14536,
+        "quotient": 0.0520658344825116,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 13,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 14536
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 14,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 279185
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2020
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 182582,
+        "derivation_formula": "S08.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.219024876493849,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 9529,
+        "quotient": 0.052190248764938496,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 13,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 9529
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 14,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 182582
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2020
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 279185,
+        "derivation_formula": "S09.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 3.4070598348765158,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 9512,
+        "quotient": 0.034070598348765156,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 6,
+            "source_id": "S09",
+            "source_row": 13,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 9512
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 14,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 279185
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2020
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 182582,
+        "derivation_formula": "S09.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 3.085736819620773,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 5634,
+        "quotient": 0.03085736819620773,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S09",
+            "source_row": 13,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 5634
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 14,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 182582
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2020
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 264485,
+        "derivation_formula": "S08.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.31221052233586,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 14050,
+        "quotient": 0.053122105223358605,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 14,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 14050
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 15,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 264485
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2021
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 175041,
+        "derivation_formula": "S08.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.372455596117481,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 9404,
+        "quotient": 0.053724555961174814,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 14,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 9404
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 15,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 175041
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2021
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 264485,
+        "derivation_formula": "S09.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 3.442539274439004,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 9105,
+        "quotient": 0.03442539274439004,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 6,
+            "source_id": "S09",
+            "source_row": 14,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 9105
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 15,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 264485
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2021
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 175041,
+        "derivation_formula": "S09.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 3.183825503739124,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 5573,
+        "quotient": 0.03183825503739124,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S09",
+            "source_row": 14,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 5573
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 15,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 175041
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2021
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 250350,
+        "derivation_formula": "S08.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.17155981625724,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 12947,
+        "quotient": 0.0517155981625724,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 15,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 12947
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 16,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 250350
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2022
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 169409,
+        "derivation_formula": "S08.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.136681050003246,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 8702,
+        "quotient": 0.051366810500032466,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 15,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 8702
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 16,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 169409
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2022
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 250350,
+        "derivation_formula": "S09.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 3.4144198122628318,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 8548,
+        "quotient": 0.03414419812262832,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 6,
+            "source_id": "S09",
+            "source_row": 15,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 8548
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 16,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 250350
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2022
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 169409,
+        "derivation_formula": "S09.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 2.9597010784550997,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 5014,
+        "quotient": 0.029597010784550997,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S09",
+            "source_row": 15,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 5014
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 16,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 169409
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2022
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 269550,
+        "derivation_formula": "S08.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.765535151177889,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 15541,
+        "quotient": 0.05765535151177889,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 16,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 15541
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 17,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 269550
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2023
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 183269,
+        "derivation_formula": "S08.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.306953167202309,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 9726,
+        "quotient": 0.05306953167202309,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 16,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 9726
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 17,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 183269
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2023
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 269550,
+        "derivation_formula": "S09.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 3.7247263958449266,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 10040,
+        "quotient": 0.03724726395844927,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 6,
+            "source_id": "S09",
+            "source_row": 16,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 10040
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 17,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 269550
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2023
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 183269,
+        "derivation_formula": "S09.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 3.12927991095057,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 5735,
+        "quotient": 0.0312927991095057,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S09",
+            "source_row": 16,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 5735
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 17,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 183269
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2023
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 287273,
+        "derivation_formula": "S08.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 6.56553174158379,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 18861,
+        "quotient": 0.0656553174158379,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 17,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 18861
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 18,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 287273
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2024
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 191826,
+        "derivation_formula": "S08.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.454943542585468,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S08",
+        "numerator_value": 10464,
+        "quotient": 0.05454943542585468,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 17,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 10464
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 18,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 191826
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2024
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 287273,
+        "derivation_formula": "S09.cleared_cases / S15.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 4.6662930383293935,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 13405,
+        "quotient": 0.04666293038329394,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 6,
+            "source_id": "S09",
+            "source_row": 17,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 13405
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 18,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 287273
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2024
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S15",
+        "denominator_value": 191826,
+        "derivation_formula": "S09.cleared_persons / S15.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 3.3196751222462026,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S09",
+        "numerator_value": 6368,
+        "quotient": 0.033196751222462025,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S09",
+            "source_row": 17,
+            "source_sheet": "01",
+            "source_table": "131",
+            "value": 6368
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 18,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 191826
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
         "year": 2024
       }
     ],
@@ -36423,6 +38237,27 @@
       },
       "summary_path": "20260901_225500_all_resident_context/summary.json",
       "summary_sha256": "c60a66b2136c9cda76a5b70139d6be7fadabe80cabc747ff618492f684e35437"
+    },
+    "clearance_share_trend": {
+      "latest_manifest": {
+        "clearance_share_records_csv_sha256": "da108146c9aca7ce516c188df4d52b60e5c4e9d25a068f7efea5e5afa05b9542",
+        "clearance_share_records_sha256": "9e38ec34df2c7116af85108fd745dc72b85914e0728e4fa5e6570f3364ad439d",
+        "generated_at": "2026-09-05T22:26:48+09:00",
+        "national_clearance_share_schema_version": 1,
+        "run_relpath": "20260905_222648_clearance_share_trend",
+        "summary_sha256": "c67ea1a8070a75ae4d008b743df474f8d0bc9db469818b9a2b743fc972705f4e"
+      },
+      "latest_path": "latest.json",
+      "latest_sha256": "5d151b5d5f28dfa79a35872f2afdde65c87c48c697c10b7d530f893f3125ce79",
+      "record_count": 40,
+      "records_path": "20260905_222648_clearance_share_trend/clearance_share_records.jsonl",
+      "records_sha256": "9e38ec34df2c7116af85108fd745dc72b85914e0728e4fa5e6570f3364ad439d",
+      "status_counts": {
+        "calculated": 40,
+        "refused": 0
+      },
+      "summary_path": "20260905_222648_clearance_share_trend/summary.json",
+      "summary_sha256": "c67ea1a8070a75ae4d008b743df474f8d0bc9db469818b9a2b743fc972705f4e"
     },
     "nationality_comparison": {
       "latest_manifest": {

@@ -64,6 +64,9 @@ export const NATIONALITY_CASES_COMPARISON_ID =
 export const OFFENSE_COMPOSITION_ID =
   'nationality_criminal_code_offense_composition' as const;
 
+export const CLEARANCE_SHARE_TREND_ID =
+  'national_criminal_code_clearance_foreign_share' as const;
+
 export const NATIONALITY_PERSPECTIVES = [
   {
     id: NATIONALITY_COMPARISON_ID,
@@ -114,6 +117,7 @@ export type NationalityPerspectiveId =
 export type ValueMode = 'ratio' | 'count';
 export type OffenseCompositionMetric = 'cleared_persons' | 'cleared_cases';
 export type OffenseCompositionOrder = 'cluster' | 'source';
+export type ClearanceShareMetric = 'cleared_cases' | 'cleared_persons';
 
 const COMPARISON_SIDE_SIZE = 5;
 
@@ -178,6 +182,15 @@ interface OffenseCategoryDefinition {
   official_severity_role:
     | 'official_high_severity_category'
     | 'not_a_project_severity_classification';
+}
+
+interface ClearanceShareDefinition {
+  label_ja: string;
+  label_en: string;
+  interpretation_policy: 'share_of_clearances_not_population_risk';
+  ui_caveat: string;
+  display_multiplier: 100;
+  display_unit_label_ja: '%';
 }
 
 interface ContextRow {
@@ -276,6 +289,26 @@ interface OffenseCompositionRow {
   display_included: boolean;
 }
 
+interface ClearanceShareRow {
+  trend_id: string;
+  year: number;
+  foreign_scope: 'all_foreign' | 'visiting_foreign';
+  foreign_scope_label_ja: string;
+  metric: ClearanceShareMetric;
+  metric_label_ja: string;
+  numerator_value: number;
+  denominator_value: number;
+  quotient: number;
+  display_value: number;
+  calculation_status: 'calculated';
+  refusal_reason: null;
+  numerator_source_id: string;
+  denominator_source_id: string;
+  derivation_method: string;
+  derivation_formula: string;
+  mismatch_flags: string[];
+}
+
 interface PublicSource {
   dataset: string;
   publisher: string;
@@ -289,7 +322,7 @@ interface PublicSource {
 }
 
 export interface DashboardData {
-  compact_export_schema_version: 5;
+  compact_export_schema_version: 6;
   generated_at: string;
   definitions: {
     context_ids: Record<string, ContextDefinition>;
@@ -297,12 +330,14 @@ export interface DashboardData {
     nationality_comparison_ids: Record<string, NationalityComparisonDefinition>;
     offense_composition_ids: Record<string, OffenseCompositionDefinition>;
     offense_category_ids: Record<string, OffenseCategoryDefinition>;
+    clearance_share_ids: Record<string, ClearanceShareDefinition>;
   };
   records: {
     all_resident_context: ContextRow[];
     nationality_indicators: NationalityIndicatorRow[];
     nationality_comparison: NationalityComparisonRow[];
     offense_composition: OffenseCompositionRow[];
+    clearance_share_trends: ClearanceShareRow[];
   };
   sources: Record<string, PublicSource>;
 }
@@ -426,6 +461,7 @@ export interface NationalityComparisonViewModel {
   uiCaveat: string;
   rows: NationalityComparisonDatum[];
   calculatedRows: NationalityComparisonDatum[];
+  orderedRows: NationalityComparisonDatum[];
   highRows: NationalityComparisonDatum[];
   lowRows: NationalityComparisonDatum[];
   japaneseReference: NationalityComparisonDatum;
@@ -433,6 +469,29 @@ export interface NationalityComparisonViewModel {
   refusalReasons: Array<{ reason: string; count: number }>;
   warningCodes: string[];
   mismatchCodes: string[];
+  sources: DashboardSource[];
+}
+
+export interface ClearanceShareTrendPoint {
+  year: number;
+  allPersonsTotal: number;
+  allForeignCount: number;
+  allForeignShare: number;
+  visitingForeignCount: number;
+  visitingForeignShare: number;
+}
+
+export interface ClearanceShareTrendViewModel {
+  trendId: typeof CLEARANCE_SHARE_TREND_ID;
+  metric: ClearanceShareMetric;
+  metricLabel: string;
+  unitLabel: '件' | '人';
+  label: string;
+  years: number[];
+  points: ClearanceShareTrendPoint[];
+  uiCaveat: string;
+  interpretationPolicy: 'share_of_clearances_not_population_risk';
+  warningCodes: string[];
   sources: DashboardSource[];
 }
 
@@ -495,7 +554,7 @@ function isObject(value: unknown): value is JsonObject {
 }
 
 export function parseDashboardData(value: unknown): DashboardData {
-  if (!isObject(value) || value.compact_export_schema_version !== 5) {
+  if (!isObject(value) || value.compact_export_schema_version !== 6) {
     throw new Error('Unsupported compact export schema version.');
   }
 
@@ -509,11 +568,13 @@ export function parseDashboardData(value: unknown): DashboardData {
     !isObject(definitions.nationality_comparison_ids) ||
     !isObject(definitions.offense_composition_ids) ||
     !isObject(definitions.offense_category_ids) ||
+    !isObject(definitions.clearance_share_ids) ||
     !isObject(records) ||
     !Array.isArray(records.all_resident_context) ||
     !Array.isArray(records.nationality_indicators) ||
     !Array.isArray(records.nationality_comparison) ||
     !Array.isArray(records.offense_composition) ||
+    !Array.isArray(records.clearance_share_trends) ||
     !isObject(sources)
   ) {
     throw new Error('Compact export is missing the regional dashboard data.');
@@ -862,6 +923,26 @@ function selectNationalitySides(rows: NationalityComparisonDatum[]): {
   };
 }
 
+function orderNationalityReferenceRatios(
+  rows: NationalityComparisonDatum[],
+): NationalityComparisonDatum[] {
+  return [...rows].sort((left, right) => {
+    if (left.referenceRatio === null && right.referenceRatio === null) {
+      return (
+        left.sourceOrder - right.sourceOrder ||
+        left.name.localeCompare(right.name, 'ja')
+      );
+    }
+    if (left.referenceRatio === null) return 1;
+    if (right.referenceRatio === null) return -1;
+    return (
+      right.referenceRatio - left.referenceRatio ||
+      left.sourceOrder - right.sourceOrder ||
+      left.name.localeCompare(right.name, 'ja')
+    );
+  });
+}
+
 function countComparisonRefusalReasons(
   rows: NationalityComparisonDatum[],
 ): Array<{ reason: string; count: number }> {
@@ -935,6 +1016,7 @@ export function buildNationalityComparisonViewModel(
     uiCaveat: definition.ui_caveat,
     rows,
     calculatedRows,
+    orderedRows: orderNationalityReferenceRatios(rows),
     highRows,
     lowRows,
     japaneseReference: japaneseRows[0],
@@ -1099,6 +1181,7 @@ function buildNationalityCasesComparisonViewModel(
       '公表された刑法犯検挙件数と対応人口を機械的に組み合わせた参考比率。日本は全件数から全外国人の件数を差し引いた残差による参考値であり、集団の本質、因果、個人riskを示さない。',
     rows,
     calculatedRows,
+    orderedRows: orderNationalityReferenceRatios(rows),
     highRows,
     lowRows,
     japaneseReference: japaneseRows[0],
@@ -1273,6 +1356,7 @@ function buildPublishedIndicatorComparisonViewModel(
     uiCaveat: `${definition.ui_caveat} 対応する日本国籍分子は推計せず、未算出として表示する。`,
     rows,
     calculatedRows,
+    orderedRows: orderNationalityReferenceRatios(rows),
     highRows,
     lowRows,
     japaneseReference,
@@ -1303,6 +1387,120 @@ export function buildSelectableNationalityViewModel(
     perspectiveId,
     mode,
   );
+}
+
+function requireClearanceShareRow(
+  row: ClearanceShareRow,
+  definition: ClearanceShareDefinition,
+): void {
+  if (
+    row.calculation_status !== 'calculated' ||
+    row.refusal_reason !== null ||
+    !Number.isSafeInteger(row.numerator_value) ||
+    !Number.isSafeInteger(row.denominator_value) ||
+    row.numerator_value < 0 ||
+    row.denominator_value <= 0 ||
+    row.numerator_value > row.denominator_value
+  ) {
+    throw new Error(
+      `Invalid clearance-share counts for ${row.metric}/${row.foreign_scope}/${row.year}.`,
+    );
+  }
+  const expectedQuotient = row.numerator_value / row.denominator_value;
+  const expectedDisplay = expectedQuotient * definition.display_multiplier;
+  if (
+    Math.abs(row.quotient - expectedQuotient) > 1e-12 ||
+    Math.abs(row.display_value - expectedDisplay) > 1e-10
+  ) {
+    throw new Error(
+      `Clearance-share arithmetic conflicts for ${row.metric}/${row.foreign_scope}/${row.year}.`,
+    );
+  }
+}
+
+export function buildClearanceShareTrendViewModel(
+  dashboard: DashboardData,
+  metric: ClearanceShareMetric = 'cleared_cases',
+): ClearanceShareTrendViewModel {
+  const definition =
+    dashboard.definitions.clearance_share_ids[CLEARANCE_SHARE_TREND_ID];
+  if (!definition) {
+    throw new Error(
+      `Clearance-share definition is missing: ${CLEARANCE_SHARE_TREND_ID}`,
+    );
+  }
+  const selectedRows = dashboard.records.clearance_share_trends.filter(
+    (row) => row.trend_id === CLEARANCE_SHARE_TREND_ID && row.metric === metric,
+  );
+  if (selectedRows.length === 0) {
+    throw new Error(`No clearance-share rows exist for ${metric}.`);
+  }
+
+  const rowsByYear = new Map<number, Map<string, ClearanceShareRow>>();
+  for (const row of selectedRows) {
+    requireClearanceShareRow(row, definition);
+    const scopeRows = rowsByYear.get(row.year) ?? new Map();
+    if (scopeRows.has(row.foreign_scope)) {
+      throw new Error(
+        `Duplicate clearance-share row for ${metric}/${row.foreign_scope}/${row.year}.`,
+      );
+    }
+    scopeRows.set(row.foreign_scope, row);
+    rowsByYear.set(row.year, scopeRows);
+  }
+
+  const years = [...rowsByYear.keys()].sort((left, right) => left - right);
+  const points = years.map((year): ClearanceShareTrendPoint => {
+    const scopeRows = rowsByYear.get(year);
+    const allForeign = scopeRows?.get('all_foreign');
+    const visitingForeign = scopeRows?.get('visiting_foreign');
+    if (!allForeign || !visitingForeign || scopeRows?.size !== 2) {
+      throw new Error(
+        `Clearance-share scopes are incomplete for ${metric}/${year}.`,
+      );
+    }
+    if (
+      allForeign.denominator_value !== visitingForeign.denominator_value ||
+      allForeign.denominator_source_id !== visitingForeign.denominator_source_id
+    ) {
+      throw new Error(
+        `Clearance-share denominators conflict for ${metric}/${year}.`,
+      );
+    }
+    if (visitingForeign.numerator_value > allForeign.numerator_value) {
+      throw new Error(
+        `Visiting-foreign clearances exceed all-foreign clearances for ${metric}/${year}.`,
+      );
+    }
+    return {
+      year,
+      allPersonsTotal: allForeign.denominator_value,
+      allForeignCount: allForeign.numerator_value,
+      allForeignShare: allForeign.display_value,
+      visitingForeignCount: visitingForeign.numerator_value,
+      visitingForeignShare: visitingForeign.display_value,
+    };
+  });
+
+  const sourceIds = selectedRows.flatMap((row) => [
+    row.numerator_source_id,
+    row.denominator_source_id,
+  ]);
+  return {
+    trendId: CLEARANCE_SHARE_TREND_ID,
+    metric,
+    metricLabel: selectedRows[0].metric_label_ja,
+    unitLabel: metric === 'cleared_cases' ? '件' : '人',
+    label: definition.label_ja,
+    years,
+    points,
+    uiCaveat: definition.ui_caveat,
+    interpretationPolicy: definition.interpretation_policy,
+    warningCodes: [
+      ...new Set(selectedRows.flatMap((row) => row.mismatch_flags)),
+    ].sort(),
+    sources: collectSources(dashboard, sourceIds),
+  };
 }
 
 function requireOffenseEntity(
