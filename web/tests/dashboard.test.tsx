@@ -79,9 +79,7 @@ describe('CrimeAtlasDashboard', () => {
     expect(
       screen.queryByRole('heading', { name: /東京と埼玉/ }),
     ).not.toBeInTheDocument();
-    expect(screen.getByTestId('tokyo-comparison')).toHaveTextContent(
-      '東京都',
-    );
+    expect(screen.getByTestId('tokyo-comparison')).toHaveTextContent('東京都');
     expect(screen.getByTestId('saitama-comparison')).toHaveTextContent(
       '埼玉県',
     );
