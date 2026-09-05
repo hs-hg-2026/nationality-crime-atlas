@@ -411,6 +411,111 @@ def test_project_quality_profile_pins_intercensal_population_edition():
     assert profile["anchors"][1]["expect"]["source_value"] == 123399
 
 
+def test_project_quality_profiles_pin_nationality_population_total_editions():
+    profiles = load_quality_profiles("config/quality_profiles.json")
+    expected = {
+        "S19_2016": (
+            "9c22453746ec6cc1e696db9e5b338e5c76b422aac23a1e9678a3f8a7ee872481",
+            204,
+            2382822,
+            199990,
+            695522,
+            3,
+        ),
+        "S19_2017": (
+            "ab1773d57f0dafc9f8e77273ac3bfa317a28b0081f09cb8ea9e051de63c0f0c2",
+            203,
+            2561848,
+            262405,
+            730890,
+            3,
+        ),
+        "S19_2018": (
+            "247a2ae232ec04d1360920148aa8d0d01c7c1d802b11b3c050c854919c4c4185",
+            203,
+            2731093,
+            330835,
+            764720,
+            3,
+        ),
+        "S19_2019": (
+            "b4c9774ee641ad02ba96c5117b254ded4e16bb4ad19b844148015c2f31883792",
+            203,
+            2933137,
+            411968,
+            813675,
+            3,
+        ),
+        "S19_2020": (
+            "b798ad3f892d4da60fd0925ced185eab30b134aab5f5cbb238b04afba52c91a1",
+            202,
+            2887116,
+            448053,
+            778112,
+            3,
+        ),
+        "S19_2021": (
+            "2a2253ef440d0444d1f901cadb7798fb334b44994745c9fcf2a282cdd01fc619",
+            202,
+            2760635,
+            432934,
+            716606,
+            3,
+        ),
+        "S19_2022": (
+            "2acb2d84748d533ffc8b5bf37f99667ac06c924b9a0fdb2da82c38a970817e25",
+            203,
+            3075213,
+            489312,
+            761563,
+            3,
+        ),
+        "S19_2023": (
+            "16f703a47b83448902c332b4a268dc4ade95acf0ec45facecb306d2abf8efcab",
+            206,
+            3410992,
+            565026,
+            821838,
+            4,
+        ),
+        "S19_2024": (
+            "d400d8e2b46d2e6384eb6787ad04568e8bfe2b7a5e89f2d2191d5d079c4f4306",
+            206,
+            3768977,
+            634361,
+            873286,
+            4,
+        ),
+        "S19_2025": (
+            "cef9a02be7b4c289017e763579fdab4e347e9830aebaeee73be91743ef00d62c",
+            207,
+            4125395,
+            681100,
+            930428,
+            4,
+        ),
+    }
+
+    for source_id, (
+        artifact_hash,
+        record_count,
+        national_total,
+        vietnam,
+        china,
+        row_kind_count,
+    ) in expected.items():
+        year = int(source_id.removeprefix("S19_"))
+        profile = profiles[source_id]
+        assert profile["record_type"] == "nationality_population_total"
+        assert profile["expected_artifact_sha256"] == artifact_hash
+        assert profile["expected_record_count"] == record_count
+        assert profile["expected_periods"] == [f"{year}-12-31"]
+        assert profile["expected_distinct_counts"]["row_kind"] == row_kind_count
+        assert profile["anchors"][0]["expect"]["population"] == national_total
+        assert profile["anchors"][1]["expect"]["population"] == vietnam
+        assert profile["anchors"][2]["expect"]["population"] == china
+
+
 def test_all_resident_context_record_types_pass_quality_validation(tmp_path):
     crime_records = [
         OverallPrefectureCrimeRecord(
