@@ -34,6 +34,16 @@ def test_project_registry_declares_all_current_sources():
         "S17_2022",
         "S17_2023",
         "S18",
+        "S19_2016",
+        "S19_2017",
+        "S19_2018",
+        "S19_2019",
+        "S19_2020",
+        "S19_2021",
+        "S19_2022",
+        "S19_2023",
+        "S19_2024",
+        "S19_2025",
     }
     assert registry["S14"]["parser"] == "population-t1"
     assert registry["S14"]["series_id"] == "isa-resident-foreigner-population-t1"
@@ -131,6 +141,35 @@ def test_project_registry_pins_intercensal_population_edition():
         "9e28da4c0ef8c2680577ad5ef0b0a78023d389113f66c85ab9e52bdbed89a1fc"
     )
     assert metadata["verified_at"] == "2026-09-05"
+
+
+def test_project_registry_pins_nationality_population_total_editions():
+    registry = load_source_registry("config/sources.json")
+    expected = {
+        2016: ("000031557945", 0, "9c22453746ec6cc1e696db9e5b338e5c76b422aac23a1e9678a3f8a7ee872481"),
+        2017: ("000031669224", 0, "ab1773d57f0dafc9f8e77273ac3bfa317a28b0081f09cb8ea9e051de63c0f0c2"),
+        2018: ("000031832809", 0, "247a2ae232ec04d1360920148aa8d0d01c7c1d802b11b3c050c854919c4c4185"),
+        2019: ("000031964914", 0, "b4c9774ee641ad02ba96c5117b254ded4e16bb4ad19b844148015c2f31883792"),
+        2020: ("000032104290", 4, "b798ad3f892d4da60fd0925ced185eab30b134aab5f5cbb238b04afba52c91a1"),
+        2021: ("000032212359", 4, "2a2253ef440d0444d1f901cadb7798fb334b44994745c9fcf2a282cdd01fc619"),
+        2022: ("000040068461", 0, "2acb2d84748d533ffc8b5bf37f99667ac06c924b9a0fdb2da82c38a970817e25"),
+        2023: ("000040186952", 0, "16f703a47b83448902c332b4a268dc4ade95acf0ec45facecb306d2abf8efcab"),
+        2024: ("000040292366", 0, "d400d8e2b46d2e6384eb6787ad04568e8bfe2b7a5e89f2d2191d5d079c4f4306"),
+        2025: ("000040472260", 0, "cef9a02be7b4c289017e763579fdab4e347e9830aebaeee73be91743ef00d62c"),
+    }
+
+    for year, (stat_inf_id, file_kind, artifact_hash) in expected.items():
+        metadata = registry[f"S19_{year}"]
+        assert metadata["series_id"] == "isa-resident-foreigner-population-total"
+        assert metadata["parser"] == "population-nationality-totals"
+        assert metadata["source_table"] == "1"
+        assert metadata["coverage_periods"] == [f"{year}-12-31"]
+        assert metadata["stable_ids"]["e_stat_stat_inf_id"] == stat_inf_id
+        assert metadata["download_url"].endswith(
+            f"statInfId={stat_inf_id}&fileKind={file_kind}"
+        )
+        assert metadata["expected_sha256"] == artifact_hash
+        assert metadata["verified_at"] == "2026-09-05"
 
 
 def test_registry_rejects_missing_required_metadata(tmp_path):
