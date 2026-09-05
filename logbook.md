@@ -294,3 +294,10 @@
 - **なぜ**: package metadataの`0.1.0`と公開版のtagを一致させ、何を検証して公開した版かを固定するため。Release本文から不要な個人情報が再流入する経路を作らないため。
 - **検証結果**: GitHub APIでdraft=false、prerelease=false、latest=`v0.1.0`、tag objectがcommit `e9785c13869635ada528b3f64028fe77fe7e8b87`を直接参照することを再確認した。公開後の本文scanでもemail、禁止private marker、代表的secretは0件だった。
 - **関連URL**: `https://github.com/hs-hg-2026/nationality-crime-atlas/releases/tag/v0.1.0`
+
+## 2026-09-05 2025年dataの収録範囲と未統合sourceを再確認
+- **何が**: GitHub公開物とlocal data inventoryを再確認した。GitHub追跡のcompact exportは2024年だけではなく、2025年の都道府県等別・来日外国人指標も含む。local `data/raw/`／`data/processed/`には2024–2025年の8 editionがあり、2025年はS02（2024年比較を含む犯罪統計）とS14（2025年末在留外国人数）を収録している。一方、全住民地域context、国籍別比較、国籍別犯罪構成のcurrent outputは2024年である。
+- **どう判断**: 「2025年なし」ではなく、「2025年は一部収録済みだが、表示単位ごとの同等source setが揃っていない」と説明する。公式には2025年犯罪統計確定値、2025年末在留外国人統計、2025年刑法犯資料が公表済みだが、後者はcurrent R06 table 130／131とは国籍抽出条件・中国の集計定義・table layoutが異なるため、単純置換しない。
+- **なぜ**: source yearとUI yearを一括して扱うと、未収録と未公表、または同じ名前で定義が変わった時系列を混同するため。2025年の総人口分母も国勢調査年であり、通常の人口推計ではなく国勢調査結果をreviewする必要がある。
+- **次**: 2025年sourceを新editionとして取得・固定し、R07用parser、共通国籍集合とdefinition breakの表示、2025年国勢調査分母の採用可否を独立reviewしてから時系列へ追加する。
+- **関連パス**: `config/sources.json`, `data/processed/_catalog/artifacts.jsonl`, `web/public/data/dashboard_export.json`
