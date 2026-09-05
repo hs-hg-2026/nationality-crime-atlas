@@ -16,8 +16,8 @@ from .errors import IntegrityError, SchemaError
 from .provenance import sha256_file
 
 
-COMPACT_EXPORT_SCHEMA_VERSION = 5
-LATEST_SCHEMA_VERSION = 5
+COMPACT_EXPORT_SCHEMA_VERSION = 6
+LATEST_SCHEMA_VERSION = 6
 CALCULATION_STATUSES = ("calculated", "refused")
 SAME_YEAR_GAP_CONTEXT_ID = "all_resident_same_year_recognition_clearance_gap"
 RECOGNIZED_CONTEXT_ID = "all_resident_recognized_cases"
@@ -89,6 +89,16 @@ _OFFENSE_CATEGORY_DEFINITION_FIELDS = (
     "category_display_order",
     "category_color",
     "official_severity_role",
+)
+_CLEARANCE_SHARE_DEFINITION_FIELDS = (
+    "national_clearance_share_schema_version",
+    "trend_id",
+    "label_ja",
+    "label_en",
+    "interpretation_policy",
+    "ui_caveat",
+    "display_multiplier",
+    "display_unit_label_ja",
 )
 _SAFE_RELATIVE_PATH_KEYS = ("run_relpath",)
 _PUBLIC_SOURCE_FIELDS = (
@@ -717,6 +727,73 @@ def _validate_offense_composition_bundle(bundle: _DatasetBundle) -> None:
             raise SchemaError("offense composition cluster order is incomplete")
 
 
+def _validate_clearance_share_bundle(bundle: _DatasetBundle) -> None:
+    years = bundle.summary.get("years")
+    year_count = bundle.summary.get("year_count")
+    if (
+        not isinstance(years, list)
+        or not years
+        or any(isinstance(year, bool) or not isinstance(year, int) for year in years)
+        or years != sorted(set(years))
+    ):
+        raise SchemaError("clearance share years must be ascending unique integers")
+    if year_count != len(years):
+        raise SchemaError("clearance share summary year_count differs")
+
+    seen = set()
+    expected_scopes = {"all_foreign", "visiting_foreign"}
+    expected_metrics = {"cleared_cases", "cleared_persons"}
+    for index, row in enumerate(bundle.records, start=1):
+        year = row.get("year")
+        scope = row.get("foreign_scope")
+        metric = row.get("metric")
+        key = (year, scope, metric)
+        if key in seen:
+            raise SchemaError("Duplicate clearance share row: %r" % (key,))
+        seen.add(key)
+        if year not in years or scope not in expected_scopes or metric not in expected_metrics:
+            raise SchemaError("Unsupported clearance share dimensions at row %d" % index)
+        numerator = row.get("numerator_value")
+        denominator = row.get("denominator_value")
+        quotient = row.get("quotient")
+        display_multiplier = row.get("display_multiplier")
+        display_value = row.get("display_value")
+        if (
+            isinstance(numerator, bool)
+            or not isinstance(numerator, int)
+            or numerator < 0
+            or isinstance(denominator, bool)
+            or not isinstance(denominator, int)
+            or denominator <= 0
+            or numerator > denominator
+        ):
+            raise SchemaError("Invalid clearance share component counts at row %d" % index)
+        expected_quotient = numerator / denominator
+        if (
+            isinstance(quotient, bool)
+            or not isinstance(quotient, (int, float))
+            or not math.isclose(quotient, expected_quotient, rel_tol=1e-12, abs_tol=1e-12)
+            or display_multiplier != 100
+            or isinstance(display_value, bool)
+            or not isinstance(display_value, (int, float))
+            or not math.isclose(
+                display_value,
+                expected_quotient * display_multiplier,
+                rel_tol=1e-12,
+                abs_tol=1e-12,
+            )
+        ):
+            raise SchemaError("Clearance share arithmetic differs at row %d" % index)
+    expected = {
+        (year, scope, metric)
+        for year in years
+        for scope in expected_scopes
+        for metric in expected_metrics
+    }
+    if seen != expected:
+        raise SchemaError("Clearance share year/scope/metric grid is incomplete")
+
+
 def _public_sources(
     bundles: Sequence[_DatasetBundle],
 ) -> Mapping[str, Mapping[str, object]]:
@@ -732,6 +809,8 @@ def _public_sources(
             artifact = {}
             for field in _PUBLIC_SOURCE_FIELDS:
                 value = raw_artifact.get(field)
+                if field == "normalized_sha256" and value is None:
+                    continue
                 if field in {"sha256", "normalized_sha256"}:
                     artifact[field] = _require_sha256(
                         value, "source_artifacts[%s].%s" % (source_id, field)
@@ -741,9 +820,21 @@ def _public_sources(
                         value, "source_artifacts[%s].%s" % (source_id, field)
                     )
             existing = sources.get(source_id)
-            if existing is not None and existing != artifact:
-                raise SchemaError("Conflicting public source metadata for %s" % source_id)
-            sources[source_id] = artifact
+            if existing is not None:
+                conflicts = {
+                    field
+                    for field in set(existing) & set(artifact)
+                    if existing[field] != artifact[field]
+                }
+                if conflicts:
+                    raise SchemaError(
+                        "Conflicting public source metadata for %s" % source_id
+                    )
+                merged = dict(existing)
+                merged.update(artifact)
+                sources[source_id] = merged
+            else:
+                sources[source_id] = artifact
     return dict(sorted(sources.items()))
 
 
@@ -786,6 +877,7 @@ def _publication_policy() -> Mapping[str, object]:
         "secondary_view": "nationality_comparison",
         "supplementary_view": "nationality_indicators",
         "composition_view": "offense_composition",
+        "clearance_share_view": "national_criminal_code_clearance_foreign_share",
         "same_year_gap_view": SAME_YEAR_GAP_CONTEXT_ID,
         "same_year_gap_is_unresolved_cohort": False,
         "derived_value_label_ja": "公表統計由来の参考比率",
@@ -801,6 +893,7 @@ def generate_compact_export(
     all_resident_latest_path: Path,
     nationality_comparison_latest_path: Path,
     offense_composition_latest_path: Path,
+    clearance_share_latest_path: Path,
     output_root: Path,
     generated_at: str,
 ) -> CompactExportReport:
@@ -842,7 +935,17 @@ def generate_compact_export(
         records_hash_key="offense_composition_records_sha256",
         summary_record_count_key="record_count",
     )
+    clearance_share_bundle = _load_dataset_bundle(
+        name="clearance_share_trend",
+        latest_path=clearance_share_latest_path,
+        schema_key="national_clearance_share_schema_version",
+        expected_schema_version=1,
+        records_filename="clearance_share_records.jsonl",
+        records_hash_key="clearance_share_records_sha256",
+        summary_record_count_key="record_count",
+    )
     _validate_offense_composition_bundle(offense_bundle)
+    _validate_clearance_share_bundle(clearance_share_bundle)
     gap_definition, gap_records = derive_same_year_recognition_clearance_gap(
         all_resident_bundle.records
     )
@@ -873,6 +976,12 @@ def generate_compact_export(
         id_field="composition_id",
         definition_fields=_OFFENSE_COMPOSITION_DEFINITION_FIELDS,
         label="offense composition",
+    )
+    clearance_share_definitions = _collect_definitions(
+        clearance_share_bundle.records,
+        id_field="trend_id",
+        definition_fields=_CLEARANCE_SHARE_DEFINITION_FIELDS,
+        label="clearance share trend",
     )
     raw_offense_category_definitions = _collect_definitions(
         offense_bundle.records,
@@ -931,12 +1040,18 @@ def generate_compact_export(
         definition_fields=_NATIONALITY_COMPARISON_DEFINITION_FIELDS,
     )
     compact_offense_rows = _compact_offense_rows(offense_bundle.records)
+    compact_clearance_share_rows = _compact_rows(
+        clearance_share_bundle.records,
+        id_field="trend_id",
+        definition_fields=_CLEARANCE_SHARE_DEFINITION_FIELDS,
+    )
     public_sources = _public_sources(
         (
             indicator_bundle,
             all_resident_bundle,
             comparison_bundle,
             offense_bundle,
+            clearance_share_bundle,
         )
     )
     _validate_record_source_links(
@@ -963,11 +1078,17 @@ def generate_compact_export(
         scalar_fields=(),
         array_fields=("numerator_source_ids",),
     )
+    _validate_record_source_links(
+        clearance_share_bundle.records,
+        public_sources,
+        label="clearance_share_trend",
+    )
     record_counts = {
         "nationality_indicators": len(compact_indicator_rows),
         "all_resident_context": len(compact_context_rows),
         "nationality_comparison": len(compact_comparison_rows),
         "offense_composition": len(compact_offense_rows),
+        "clearance_share_trends": len(compact_clearance_share_rows),
     }
     source_runs = {
         "nationality_indicators": {
@@ -1018,6 +1139,21 @@ def generate_compact_export(
             "record_count": len(offense_bundle.records),
             "status_counts": _status_counts(offense_bundle.records),
         },
+        "clearance_share_trend": {
+            "latest_path": clearance_share_bundle.latest_path.name,
+            "latest_sha256": clearance_share_bundle.latest_sha256,
+            "latest_manifest": dict(clearance_share_bundle.latest_manifest),
+            "summary_path": "%s/summary.json" % clearance_share_bundle.run_dir.name,
+            "summary_sha256": clearance_share_bundle.summary_sha256,
+            "records_path": "%s/%s"
+            % (
+                clearance_share_bundle.run_dir.name,
+                clearance_share_bundle.records_path.name,
+            ),
+            "records_sha256": clearance_share_bundle.records_sha256,
+            "record_count": len(clearance_share_bundle.records),
+            "status_counts": _status_counts(clearance_share_bundle.records),
+        },
     }
     payload = {
         "compact_export_schema_version": COMPACT_EXPORT_SCHEMA_VERSION,
@@ -1031,12 +1167,14 @@ def generate_compact_export(
             "nationality_comparison_ids": comparison_definitions,
             "offense_composition_ids": offense_composition_definitions,
             "offense_category_ids": offense_category_definitions,
+            "clearance_share_ids": clearance_share_definitions,
         },
         "records": {
             "nationality_indicators": compact_indicator_rows,
             "all_resident_context": compact_context_rows,
             "nationality_comparison": compact_comparison_rows,
             "offense_composition": compact_offense_rows,
+            "clearance_share_trends": compact_clearance_share_rows,
         },
     }
 
@@ -1067,6 +1205,7 @@ def generate_compact_export(
                         offense_composition_definitions
                     ),
                     "offense_category_ids": len(offense_category_definitions),
+                    "clearance_share_ids": len(clearance_share_definitions),
                 },
                 "source_count": len(public_sources),
                 "dashboard_export_sha256": sha256_file(export_path),
