@@ -446,3 +446,29 @@ def test_project_mapping_config_is_valid():
 
     assert config["schema_version"] == 1
     assert config["mapping_scope"].startswith("Label/category crosswalk only")
+
+
+def test_project_mapping_rules_cover_all_reviewed_npa_nationality_editions():
+    config = load_dimension_mapping_config(Path("config/dimension_mappings.json"))
+    expected_source_ids = {
+        "S08",
+        "S08_2020",
+        "S08_2021",
+        "S08_2022",
+        "S08_2023",
+        "S09",
+        "S09_2020",
+        "S09_2021",
+        "S09_2022",
+        "S09_2023",
+    }
+
+    nationality = config["nationality"]
+    for rule_group in (
+        "aliases",
+        "composites",
+        "unmatched",
+        "region_code_prefixes",
+    ):
+        for rule in nationality[rule_group].values():
+            assert set(rule["source_ids"]) == expected_source_ids
