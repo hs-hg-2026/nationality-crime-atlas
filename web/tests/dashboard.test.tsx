@@ -72,6 +72,19 @@ describe('CrimeAtlasDashboard', () => {
   it('opens on a useful all-resident comparison with permanent cautions', () => {
     render(<CrimeAtlasDashboard dashboard={dashboard} />);
 
+    expect(screen.getByText('地域比較の例')).toBeVisible();
+    expect(
+      screen.getByRole('heading', { name: '人口規模をそろえて比較' }),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole('heading', { name: /東京と埼玉/ }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId('tokyo-comparison')).toHaveTextContent(
+      '東京都',
+    );
+    expect(screen.getByTestId('saitama-comparison')).toHaveTextContent(
+      '埼玉県',
+    );
     expect(
       screen.getByRole('heading', { name: '全国犯罪統計地図' }),
     ).toBeInTheDocument();
@@ -221,6 +234,11 @@ describe('CrimeAtlasDashboard', () => {
     expect(
       screen.getByRole('heading', {
         name: '認知件数と検挙件数の同年差',
+      }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('heading', {
+        name: '同年差分の件数と割合を比較',
       }),
     ).toBeVisible();
     expect(screen.getByText('「未解決率」ではありません')).toBeVisible();
