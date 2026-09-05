@@ -7,10 +7,11 @@ from nationality_crime_atlas.errors import PipelineConflictError, QualityGateErr
 from nationality_crime_atlas.npa_nationality import parse_npa_nationality_totals
 from nationality_crime_atlas.npa_prefecture import parse_npa_prefecture_table13
 from nationality_crime_atlas.pipeline import run_offline_pipeline
+from nationality_crime_atlas.population import parse_population_nationality_totals
 
 
 def _metadata(parser, expected_format, source_table):
-    edition_id = {"13": "S02", "130": "S08", "131": "S09"}.get(
+    edition_id = {"13": "S02", "130": "S08", "131": "S09", "1-total": "S19"}.get(
         source_table,
         "S14",
     )
@@ -214,3 +215,45 @@ def test_pipeline_dispatches_both_crime_parser_families(
     assert run_manifest["parser_contract_version"] == (
         2 if kind == "nationality" else 1
     )
+
+
+def test_pipeline_dispatches_nationality_population_totals(
+    nationality_population_totals_file,
+    tmp_path,
+):
+    records = parse_population_nationality_totals(
+        nationality_population_totals_file,
+        source_id="S19",
+    )
+    result = run_offline_pipeline(
+        nationality_population_totals_file,
+        source_id="S19",
+        source_metadata=_metadata(
+            "population-nationality-totals",
+            "xlsx",
+            "1-total",
+        ),
+        quality_profile={
+            "record_type": "nationality_population_total",
+            "expected_record_count": len(records),
+            "expected_periods": ["2024-12-31"],
+            "allowed_values": {
+                "row_kind": [
+                    "national_total",
+                    "region_total",
+                    "country_or_area",
+                    "subcategory",
+                ]
+            },
+            "expected_distinct_counts": {},
+            "expected_sums": {},
+            "anchors": [],
+        },
+        retrieved_at="2026-09-05T20:00:00+09:00",
+        raw_root=tmp_path / "raw",
+        processed_root=tmp_path / "processed",
+    )
+
+    run_manifest = json.loads(result.run_manifest_path.read_text())
+    assert run_manifest["parser_contract_version"] == 1
+    assert json.loads(result.quality_report_path.read_text())["passed"] is True

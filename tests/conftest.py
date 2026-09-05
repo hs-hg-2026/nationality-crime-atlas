@@ -65,6 +65,28 @@ def malformed_population_file(tmp_path: Path) -> Path:
     return path
 
 
+@pytest.fixture
+def nationality_population_totals_file(tmp_path: Path) -> Path:
+    path = tmp_path / "24-12-01-1.xlsx"
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "24-12-01m"
+    worksheet.append(("統計名：", "在留外国人統計"))
+    worksheet.append(("統計表番号：", "第1表"))
+    worksheet.append(("表題：", "国籍・地域別 在留資格別 在留外国人"))
+    worksheet.append(("時点", "州", "国籍・地域", "在留資格", "在留外国人数"))
+    worksheet.append(("令和6年12月末", "総数", "総数", "総数", 100))
+    worksheet.append(("令和6年12月末", "アジア", "総数", "総数", 80))
+    worksheet.append(("令和6年12月末", "アジア", "ベトナム", "総数", 50))
+    worksheet.append(("令和6年12月末", "アジア", "中国", "総数", 30))
+    worksheet.append(("令和6年12月末", "北アメリカ", "総数", "総数", 20))
+    worksheet.append(("令和6年12月末", "北アメリカ", "米国", "総数", 20))
+    worksheet.append(("令和6年12月末", "無国籍", "総数", "総数", 0))
+    worksheet.append(("令和6年12月末", "アジア", "うち中国〔香港〕", "総数", 5))
+    workbook.save(path)
+    return path
+
+
 def _write_nationality_fixture(path: Path, table_id: str) -> None:
     workbook = Workbook()
     worksheet = workbook.active

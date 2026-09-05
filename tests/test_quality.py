@@ -7,7 +7,10 @@ from nationality_crime_atlas.models import (
     PrefecturePopulationRecord,
 )
 from nationality_crime_atlas.npa_prefecture import parse_npa_prefecture_table13
-from nationality_crime_atlas.population import parse_population_t1
+from nationality_crime_atlas.population import (
+    parse_population_nationality_totals,
+    parse_population_t1,
+)
 from nationality_crime_atlas.quality import load_quality_profiles, validate_jsonl
 
 
@@ -69,6 +72,49 @@ def test_valid_population_jsonl_passes_all_profile_checks(
     assert report["sums"] == {"value": 15}
     assert report["anchors_checked"] == 1
     assert report["errors"] == []
+
+
+def test_valid_nationality_population_totals_pass_quality_profile(
+    nationality_population_totals_file,
+    tmp_path,
+):
+    records = parse_population_nationality_totals(
+        nationality_population_totals_file,
+        source_id="S19_2024",
+    )
+    normalized = tmp_path / "nationality_population_totals.jsonl"
+    _write_records(normalized, records)
+
+    report = validate_jsonl(
+        normalized,
+        source_id="S19_2024",
+        profile={
+            "record_type": "nationality_population_total",
+            "expected_record_count": 8,
+            "expected_periods": ["2024-12-31"],
+            "allowed_values": {
+                "row_kind": [
+                    "national_total",
+                    "region_total",
+                    "country_or_area",
+                    "subcategory",
+                ]
+            },
+            "expected_distinct_counts": {"source_nationality": 5},
+            "expected_sums": {},
+            "anchors": [
+                {
+                    "where": {"row_kind": "national_total"},
+                    "expect": {"population": 100},
+                    "expected_matches": 1,
+                }
+            ],
+        },
+    )
+
+    assert report["passed"] is True
+    assert report["observed_periods"] == ["2024-12-31"]
+    assert report["record_count"] == 8
 
 
 def test_duplicate_dimensions_fail_even_when_source_rows_differ(
