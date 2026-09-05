@@ -393,11 +393,12 @@ describe('all-nationality comparison model', () => {
 
 describe('selectable all-nationality comparison model', () => {
   it('offers every currently exported numerator and scope perspective', () => {
-    expect(NATIONALITY_PERSPECTIVES).toHaveLength(9);
+    expect(NATIONALITY_PERSPECTIVES).toHaveLength(10);
     expect(
       NATIONALITY_PERSPECTIVES.map((perspective) => perspective.id),
     ).toEqual([
       'nationality_criminal_code_cleared_persons',
+      'nationality_criminal_code_cleared_cases',
       'x_cleared_persons_exact',
       'x_cleared_cases_exact',
       'y_cleared_persons_exact',
@@ -407,6 +408,35 @@ describe('selectable all-nationality comparison model', () => {
       'y_cleared_persons_as_published_mismatch',
       'y_cleared_cases_as_published_mismatch',
     ]);
+  });
+
+  it('builds the Japanese-inclusive criminal-code cleared-case perspective', () => {
+    const dashboard = parseDashboardData(dashboardFixture);
+    const view = buildSelectableNationalityViewModel(
+      dashboard,
+      'nationality_criminal_code_cleared_cases',
+      'ratio',
+    );
+
+    expect(view.rows).toHaveLength(26);
+    expect(view.calculatedRows).toHaveLength(22);
+    expect(view.refusedCount).toBe(4);
+    expect(view.numeratorLabel).toBe('検挙件数');
+    expect(view.rawUnitLabel).toBe('件');
+    expect(view.scopeLabel).toMatch(/刑法犯.*検挙件数.*日本/);
+    expect(view.japaneseReference).toMatchObject({
+      numerator: 268_412,
+      denominator: 120_296_000,
+      referenceRatio: 2.231262884883953,
+      calculationStatus: 'calculated',
+      derivationMethod: 'residual_subtraction',
+    });
+    expect(
+      view.rows.find((row) => row.publishedLabel === 'ベトナム'),
+    ).toMatchObject({
+      numerator: 6_164,
+      numeratorSourceIds: ['S08', 'S15'],
+    });
   });
 
   it('keeps the Japanese-inclusive criminal-code view as the default perspective', () => {
@@ -524,13 +554,20 @@ describe('selectable all-nationality comparison model', () => {
           ? dashboard.records.nationality_comparison.filter(
               (row) => row.comparison_id === perspective.id,
             ).length
+          : perspective.id === 'nationality_criminal_code_cleared_cases'
+            ? new Set(
+                dashboard.records.offense_composition.map(
+                  (row) => row.entity_id,
+                ),
+              ).size
           : dashboard.records.nationality_indicators.filter(
               (row) => row.indicator_id === perspective.id,
             ).length;
 
       expect(view.rows).toHaveLength(
         serializedCount +
-          (perspective.id === 'nationality_criminal_code_cleared_persons'
+          (perspective.id === 'nationality_criminal_code_cleared_persons' ||
+          perspective.id === 'nationality_criminal_code_cleared_cases'
             ? 0
             : 1),
       );

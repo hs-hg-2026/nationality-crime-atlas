@@ -420,4 +420,26 @@ describe('CrimeAtlasDashboard', () => {
       ),
     ).toBeVisible();
   });
+
+  it('selects Japanese-inclusive criminal-code cleared cases', async () => {
+    const user = userEvent.setup();
+    render(<CrimeAtlasDashboard dashboard={dashboard} />);
+
+    const selector = screen.getByRole('combobox', {
+      name: '国籍等別の分子・対象範囲',
+    });
+    await user.selectOptions(
+      selector,
+      'nationality_criminal_code_cleared_cases',
+    );
+
+    expect(
+      screen.getByRole('option', {
+        name: '刑法犯の検挙件数（日本を含む）',
+        selected: true,
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/日本（残差による参考値）/)).toBeVisible();
+    expect(screen.getByText('268,412')).toBeVisible();
+  });
 });
