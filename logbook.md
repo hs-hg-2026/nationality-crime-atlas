@@ -280,3 +280,10 @@
 - **検証結果**: 一般化した2見出しと東京・埼玉cardの保持を要求するcomponent testで2件のREDを確認後、focused 10 tests、full 70 testsをGREEN化。statement coverage 90.63%、branch coverage 84.34%、typecheck、lint、format、data hash、map determinism、production build、32-file Pages artifact検証をpassした。
 - **release状態**: `web/package.json`のpackage versionは`0.1.0`だが、GitHub tag／Releaseは未作成。今回の修正を含むCI成功commitを`v0.1.0`候補とする。
 - **関連パス**: `web/components/crime-atlas-dashboard.tsx`, `web/tests/dashboard.test.tsx`
+
+## 2026-09-05 v0.1.0前のdependency security audit
+- **何が**: GitHub Release前に`npm audit`を実行し、full treeで11件（low 1／moderate 2／high 8）、`--omit=dev`でも6件（low 1／high 5）のadvisoryを検出した。Dependabot alertsはrepository設定で無効、secret-scanningのopen alertは0件だった。
+- **どう判断**: `npm audit fix --force`はdirect dependencyのrange外更新を要求するため、release直前に無検証で適用しない。公式advisoryとdependency treeを照合し、該当attack surfaceはReact Server Functions、network公開したWindows development server、Node側のuntrusted image処理、SOCKS proxy／WebSocket等だった。v0.1.0が配信するのはGitHub Pagesの32-file static client artifactだけで、server endpoint、development server、画像upload処理を公開しないため、deployed siteのrelease blockerとはしない。
+- **なぜ**: advisoryを無視せず、実際に配信するattack surfaceとsource／development dependencyのriskを分離するため。強制更新で公開済みdata／buildの再現性を壊さず、dependency更新を独立した検証単位にするため。
+- **次**: React Server DOM 19.2.8以上、Vite 8.0.16以上、undici／ws／sharpを含むtoolchain、修正版のない`image-size`を含むvinext更新を別taskで検証する。Dependabot alertsの有効化も検討する。static-onlyという前提が変わりserver機能やuntrusted uploadを追加する前には、未解消advisoryをrelease blockerとして再評価する。
+- **関連情報**: `web/package.json`, `web/package-lock.json`, `.github/workflows/pages.yml`, GitHub Advisory Database `GHSA-wx67-qw84-cm4g`, `GHSA-fx2h-pf6j-xcff`, `GHSA-w3rx-r6r6-pgpr`, `GHSA-f88m-g3jw-g9cj`
