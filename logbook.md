@@ -301,3 +301,12 @@
 - **なぜ**: source yearとUI yearを一括して扱うと、未収録と未公表、または同じ名前で定義が変わった時系列を混同するため。2025年の総人口分母も国勢調査年であり、通常の人口推計ではなく国勢調査結果をreviewする必要がある。
 - **次**: 2025年sourceを新editionとして取得・固定し、R07用parser、共通国籍集合とdefinition breakの表示、2025年国勢調査分母の採用可否を独立reviewしてから時系列へ追加する。
 - **関連パス**: `config/sources.json`, `data/processed/_catalog/artifacts.jsonl`, `web/public/data/dashboard_export.json`
+
+## 2026-09-05 時系列source inventoryとcanonical方針を確定
+- **何が**: 警察庁R02–R07概要表、既存R06詳細表3／130／131／144、総務省統計局の人口推計、出入国在留管理庁の2016–2025年末在留外国人統計をinventoryし、edition overlapと人口vintage差を監査した。Lunaにmechanical inventory／diffを分担し、利用上限で停止した2件は主agent側の実file確認で補完した。
+- **どう判断**: 最初の時系列は、既存R06詳細表に収録済みの2015–2024年10点をprimary inputとする。2015–2020年人口は後発のofficial補間補正版をcanonicalにし、初回年次版はrevision evidenceとして保持する。R07概要表は選択条件付きの別series候補、R04 sheet 3-3-3は原因未確立の差分があるためquarantineとする。
+- **なぜ**: 過去年版を重複取得しなくても5点以上を満たせる一方、単一年だけを出すcurrent parserがcoverageを隠していたため。revisionと実際の年次変化、掲載対象外と0、詳細表と概要表を混同しないため。
+- **2025年boundary**: 令和7年1～12月の確定値とR07概要図表は確認済みだが、R06と同じ詳細表3／130／131／144は2026-09-05時点で確認できない。2025年国勢調査速報は総人口のみで、日本人人口を含む人口等基本集計は2026-09-29公表予定。揃わない比率は直近値で代用せず`refused`とする。
+- **検証結果**: 既存4 workbookはいずれも2015–2024年を実fileで確認。R06→R07概要表は3,582／3,582、R05→R07は2,992／2,992共通cellが一致し、49差分はすべてR04 sheet 3-3-3を含むpairに限定。人口初回版対補間補正版は384 cell中331 cellが異なった。
+- **次**: failure testを先に追加し、既存R06 parserをmulti-year化する。その後、在留外国人数2016–2024、補間補正版＋2021–2024人口、multi-year contract、trend export／UIの順に進める。
+- **関連パス**: `docs/20260905_154001_time_series_source_inventory.md`, `config/sources.json`, `src/nationality_crime_atlas/npa_all_residents.py`, `src/nationality_crime_atlas/npa_nationality.py`, `src/nationality_crime_atlas/population.py`
