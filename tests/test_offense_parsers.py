@@ -41,6 +41,15 @@ def test_nationality_annual_clearance_parser_preserves_every_published_year(
 def test_all_person_annual_clearance_parser_preserves_every_published_year(
     all_person_offense_file,
 ):
+    from openpyxl import load_workbook
+
+    workbook = load_workbook(all_person_offense_file)
+    workbook["刑法犯総数"].cell(
+        2,
+        2,
+        "3 年次別 都道府県別 罪種別 認知・検挙件数及び検挙人員",
+    )
+    workbook.save(all_person_offense_file)
     records = parse_npa_all_person_annual_clearances(
         all_person_offense_file,
         source_id="S15",

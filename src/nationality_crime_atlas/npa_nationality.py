@@ -7,7 +7,7 @@ from typing import List, Optional, Tuple
 from openpyxl import load_workbook
 
 from .errors import SchemaError
-from .models import NationalityCrimeRecord
+from .models import NationalClearanceAnnualRecord, NationalityCrimeRecord
 
 
 VALID_TABLES = {
@@ -67,16 +67,26 @@ def _validate_table_title(worksheet, table_id: str) -> None:
 
 
 def _latest_year_and_row(worksheet, metric_column: int) -> Tuple[int, int]:
+    year_rows = _annual_year_rows(worksheet, metric_column)
+    if not year_rows:
+        raise SchemaError("Annual rows were not found before the nationality breakdown")
+    return max(year_rows)
+
+
+def _annual_year_rows(worksheet, metric_column: int) -> List[Tuple[int, int]]:
     year_rows = []
+    seen_years = set()
     for row_index, row in enumerate(worksheet.iter_rows(values_only=True), start=1):
         for value in row[:metric_column]:
             match = re.fullmatch(r"\s*(\d{4})年\s*", str(value or ""))
             if match:
-                year_rows.append((int(match.group(1)), row_index))
+                year = int(match.group(1))
+                if year in seen_years:
+                    raise SchemaError("Duplicate annual row for %d" % year)
+                seen_years.add(year)
+                year_rows.append((year, row_index))
                 break
-    if not year_rows:
-        raise SchemaError("Annual rows were not found before the nationality breakdown")
-    return max(year_rows)
+    return sorted(year_rows)
 
 
 def _integer(value: object, source_row: int) -> int:
@@ -177,6 +187,55 @@ def parse_npa_nationality_totals(
                     source_table=table_id,
                     source_sheet=worksheet.title.strip(),
                     source_row=source_row,
+                )
+            )
+        return records
+    finally:
+        workbook.close()
+
+
+def parse_npa_nationality_annual_clearances(
+    path: Path,
+    *,
+    table_id: str,
+    source_id: str,
+) -> List[NationalClearanceAnnualRecord]:
+    """Parse every published national criminal-code annual total in Table 130/131."""
+
+    if table_id not in VALID_TABLES:
+        raise ValueError("table_id must be one of: 130, 131")
+
+    workbook = load_workbook(Path(path), read_only=True, data_only=True)
+    try:
+        worksheet = workbook.worksheets[0]
+        _validate_table_title(worksheet, table_id)
+        cases_column, persons_column = _find_criminal_code_metric_columns(worksheet)
+        annual_rows = _annual_year_rows(worksheet, cases_column)
+        if not annual_rows:
+            raise SchemaError("Annual criminal-code totals were not found")
+
+        records = []
+        for year, source_row in annual_rows:
+            records.append(
+                NationalClearanceAnnualRecord(
+                    year=year,
+                    population_scope=VALID_TABLES[table_id],
+                    offense_scope="criminal_code_figure4_basis",
+                    geography="日本全国",
+                    cleared_cases=_integer(
+                        worksheet.cell(source_row, cases_column + 1).value,
+                        source_row,
+                    ),
+                    cleared_persons=_integer(
+                        worksheet.cell(source_row, persons_column + 1).value,
+                        source_row,
+                    ),
+                    source_id=source_id,
+                    source_table=table_id,
+                    source_sheet=worksheet.title.strip(),
+                    source_row=source_row,
+                    source_cases_column=cases_column + 1,
+                    source_persons_column=persons_column + 1,
                 )
             )
         return records

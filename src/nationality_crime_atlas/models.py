@@ -66,6 +66,24 @@ class NationalityCrimeRecord:
 
 
 @dataclass(frozen=True)
+class NationalClearanceAnnualRecord:
+    """One published nationwide annual criminal-code clearance total."""
+
+    year: int
+    population_scope: str
+    offense_scope: str
+    geography: str
+    cleared_cases: int
+    cleared_persons: int
+    source_id: str
+    source_table: str
+    source_sheet: str
+    source_row: int
+    source_cases_column: int
+    source_persons_column: int
+
+
+@dataclass(frozen=True)
 class NationalityOffenseGroupRecord:
     """One published nationwide nationality row for one official offense group."""
 

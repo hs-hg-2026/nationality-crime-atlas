@@ -7,7 +7,11 @@ from typing import Dict, List, Optional, Tuple
 from openpyxl import load_workbook
 
 from .errors import SchemaError
-from .models import OverallPrefectureCrimeRecord, PrefecturePopulationRecord
+from .models import (
+    NationalClearanceAnnualRecord,
+    OverallPrefectureCrimeRecord,
+    PrefecturePopulationRecord,
+)
 
 
 PREFECTURE_BASE_LABELS = (
@@ -153,7 +157,15 @@ def _workbook_title(worksheet, *, max_row: int = 5) -> str:
 
 
 def _latest_national_row(worksheet) -> Tuple[int, int]:
+    year_rows = _annual_national_rows(worksheet)
+    if not year_rows:
+        raise SchemaError("Table 3 annual total rows were not found")
+    return max(year_rows)
+
+
+def _annual_national_rows(worksheet) -> List[Tuple[int, int]]:
     year_rows = []
+    seen_years = set()
     for source_row in range(1, worksheet.max_row + 1):
         value = worksheet.cell(source_row, 2).value
         match = re.search(r"(?:^|\D)(\d{4})(?:\D|$)", str(value or ""))
@@ -161,10 +173,66 @@ def _latest_national_row(worksheet) -> Tuple[int, int]:
             worksheet.cell(source_row, column).value not in (None, "")
             for column in (3, 5, 6)
         ):
-            year_rows.append((int(match.group(1)), source_row))
-    if not year_rows:
-        raise SchemaError("Table 3 annual total rows were not found")
-    return max(year_rows)
+            year = int(match.group(1))
+            if year in seen_years:
+                raise SchemaError("Duplicate Table 3 annual row for %d" % year)
+            seen_years.add(year)
+            year_rows.append((year, source_row))
+    return sorted(year_rows)
+
+
+def _criminal_code_total_worksheet(workbook):
+    if "刑法犯総数" not in workbook.sheetnames:
+        raise SchemaError("Table 3 刑法犯総数 sheet was not found")
+    worksheet = workbook["刑法犯総数"]
+    title = _workbook_title(worksheet)
+    if "年次別都道府県別" not in title or "認知・検挙件数及び検挙人員" not in title:
+        raise SchemaError("Table 3 title was not recognized")
+    if "刑法犯総数（交通業過を除く）" not in title:
+        raise SchemaError("Table 3 offense scope was not recognized")
+    return worksheet
+
+
+def parse_npa_all_person_annual_clearances(
+    path: Path,
+    *,
+    source_id: str,
+) -> List[NationalClearanceAnnualRecord]:
+    """Parse every published national criminal-code annual total in Table 3."""
+
+    workbook = load_workbook(Path(path), read_only=True, data_only=True)
+    try:
+        worksheet = _criminal_code_total_worksheet(workbook)
+        annual_rows = _annual_national_rows(worksheet)
+        if not annual_rows:
+            raise SchemaError("Table 3 annual total rows were not found")
+        return [
+            NationalClearanceAnnualRecord(
+                year=year,
+                population_scope="all_persons",
+                offense_scope="criminal_code_excluding_traffic_negligence",
+                geography="日本全国",
+                cleared_cases=_integer(
+                    worksheet.cell(source_row, 5).value,
+                    label="cleared cases",
+                    source_row=source_row,
+                ),
+                cleared_persons=_integer(
+                    worksheet.cell(source_row, 6).value,
+                    label="cleared persons",
+                    source_row=source_row,
+                ),
+                source_id=source_id,
+                source_table="3",
+                source_sheet=worksheet.title,
+                source_row=source_row,
+                source_cases_column=5,
+                source_persons_column=6,
+            )
+            for year, source_row in annual_rows
+        ]
+    finally:
+        workbook.close()
 
 
 def _crime_geography(label: str) -> Tuple[str, str, Optional[str]]:
@@ -187,14 +255,7 @@ def parse_npa_overall_prefecture_crime(
 
     workbook = load_workbook(Path(path), read_only=True, data_only=True)
     try:
-        if "刑法犯総数" not in workbook.sheetnames:
-            raise SchemaError("Table 3 刑法犯総数 sheet was not found")
-        worksheet = workbook["刑法犯総数"]
-        title = _workbook_title(worksheet)
-        if "年次別都道府県別" not in title or "認知・検挙件数及び検挙人員" not in title:
-            raise SchemaError("Table 3 title was not recognized")
-        if "刑法犯総数（交通業過を除く）" not in title:
-            raise SchemaError("Table 3 offense scope was not recognized")
+        worksheet = _criminal_code_total_worksheet(workbook)
 
         year, national_row = _latest_national_row(worksheet)
         records = [
