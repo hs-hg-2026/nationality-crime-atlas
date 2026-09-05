@@ -51,6 +51,34 @@ RECORD_SPECS = {
         "metric_fields": ("value",),
         "period_field": "period_end",
     },
+    "nationality_population_total": {
+        "fields": {
+            "period_end",
+            "region",
+            "nationality",
+            "row_kind",
+            "population",
+            "source_region",
+            "source_nationality",
+            "source_id",
+            "source_table",
+            "source_sheet",
+            "source_row",
+            "source_column",
+        },
+        "key_fields": (
+            "period_end",
+            "region",
+            "nationality",
+            "row_kind",
+            "source_region",
+            "source_nationality",
+            "source_id",
+            "source_table",
+        ),
+        "metric_fields": ("population",),
+        "period_field": "period_end",
+    },
     "nationality_crime": {
         "fields": {
             "year",
@@ -405,14 +433,18 @@ def validate_jsonl(
                 % (manifest_count, record_count)
             )
 
+    date_period_record = record_type in (
+        "population",
+        "nationality_population_total",
+    )
     expected_periods = profile.get(
-        "expected_periods" if record_type == "population" else "expected_years"
+        "expected_periods" if date_period_record else "expected_years"
     )
     if expected_periods is not None and set(expected_periods) != periods:
         errors.add(
             "expected %s %r but observed %r"
             % (
-                "periods" if record_type == "population" else "years",
+                "periods" if date_period_record else "years",
                 _sorted_values(set(expected_periods)),
                 _sorted_values(periods),
             )
@@ -448,7 +480,7 @@ def validate_jsonl(
         "artifact_sha256": actual_artifact_hash,
         "record_count": record_count,
         "duplicate_count": duplicate_count,
-        "observed_periods" if record_type == "population" else "observed_years": observed_periods,
+        "observed_periods" if date_period_record else "observed_years": observed_periods,
         "observed_values": {
             field: _sorted_values(values) for field, values in observed_allowed.items()
         },

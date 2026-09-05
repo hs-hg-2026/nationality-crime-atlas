@@ -15,7 +15,7 @@ from .npa_all_residents import (
 )
 from .npa_nationality import parse_npa_nationality_totals
 from .npa_prefecture import parse_npa_prefecture_table13
-from .population import parse_population_t1
+from .population import parse_population_nationality_totals, parse_population_t1
 from .provenance import build_manifest
 
 
@@ -36,6 +36,9 @@ def _argument_parser() -> argparse.ArgumentParser:
     population = commands.add_parser("population-t1")
     _common_arguments(population)
     population.add_argument("--period-end")
+
+    population_totals = commands.add_parser("population-nationality-totals")
+    _common_arguments(population_totals)
 
     nationality = commands.add_parser("npa-nationality")
     _common_arguments(nationality)
@@ -82,6 +85,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             arguments.input,
             source_id=arguments.source_id,
             period_end=arguments.period_end,
+        )
+    elif arguments.command == "population-nationality-totals":
+        records = parse_population_nationality_totals(
+            arguments.input,
+            source_id=arguments.source_id,
         )
     elif arguments.command == "npa-nationality":
         records = parse_npa_nationality_totals(

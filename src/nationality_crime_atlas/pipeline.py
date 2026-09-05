@@ -17,7 +17,7 @@ from .npa_all_residents import (
 )
 from .npa_nationality import parse_npa_nationality_totals
 from .npa_prefecture import parse_npa_prefecture_table13
-from .population import parse_population_t1
+from .population import parse_population_nationality_totals, parse_population_t1
 from .provenance import sha256_file
 from .quality import validate_jsonl
 from .snapshot import RawSnapshot, snapshot_artifact
@@ -26,6 +26,7 @@ from .snapshot import RawSnapshot, snapshot_artifact
 PIPELINE_SCHEMA_VERSION = 2
 PARSER_CONTRACT_VERSIONS = {
     "population-t1": 1,
+    "population-nationality-totals": 1,
     "npa-nationality": 2,
     "npa-prefecture-table13": 1,
     "npa-overall-prefecture-crime": 1,
@@ -75,6 +76,8 @@ def _records_for_source(
     parser = source_metadata.get("parser")
     if parser == "population-t1":
         return parse_population_t1(artifact, source_id=source_id)
+    if parser == "population-nationality-totals":
+        return parse_population_nationality_totals(artifact, source_id=source_id)
     if parser == "npa-nationality":
         return parse_npa_nationality_totals(
             artifact,
