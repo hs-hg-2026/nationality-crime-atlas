@@ -12,10 +12,22 @@ def test_project_registry_declares_all_current_sources():
     assert set(registry) == {
         "S02",
         "S08",
+        "S08_2020",
+        "S08_2021",
+        "S08_2022",
+        "S08_2023",
         "S09",
+        "S09_2020",
+        "S09_2021",
+        "S09_2022",
+        "S09_2023",
         "S14",
         "S14_2024_12",
         "S15",
+        "S15_2020",
+        "S15_2021",
+        "S15_2022",
+        "S15_2023",
         "S16",
         "S17",
     }
@@ -39,6 +51,33 @@ def test_project_registry_declares_all_current_sources():
     assert registry["S17"]["expected_sha256"] == (
         "171c9930a3c881c42ded00fbaace83b4e6dd226d1a90cfddecd1daca2e376e82"
     )
+
+
+def test_project_registry_pins_historical_npa_detail_editions():
+    registry = load_source_registry("config/sources.json")
+    expected = {
+        "S15_2020": ("3", "R02_003.xlsx", "308cecb15fa3c33b13ecd4e5d5eaf08890aab326a796f5aed6dc8b7dc6bff956"),
+        "S15_2021": ("3", "R03_003.xlsx", "2f007c3d6ef700c3fbbe28f63f3f9ce7abadb67eb86e2207ef4344ed9b2e1270"),
+        "S15_2022": ("3", "R04_003.xlsx", "e05be7dcc58815eb894eafba4e24df5204ae67e78ba849c1750b7e786487d053"),
+        "S15_2023": ("3", "R05_003.xlsx", "4dfa94cfd558fc98fd571e79fb8a4e79c2ceebe2e8b2e12c5d14b75c1d50915a"),
+        "S08_2020": ("130", "R02_130.xlsx", "5e6ceb16a748f9d4be6313e9b4d3b5aed50e026cbf19e0677891c66ae86a2efd"),
+        "S08_2021": ("130", "R03_130.xlsx", "45a4bf1c58d5d0cb4b933d4bc9db5068f12fd66646acd401221fabc71df5f36f"),
+        "S08_2022": ("130", "R04_130.xlsx", "901cc0c472411468ba21e88de99d7aa9b3442fe4e6047360e6d3234744ead5ba"),
+        "S08_2023": ("130", "R05_130.xlsx", "b1a4a6c9351f77171fc40c57cfbdce4e9fb1e90a68156cab7fefd7cf33a8f9e5"),
+        "S09_2020": ("131", "R02_131.xlsx", "91c91a661e67f0ecf593766e45ecd8d29a4b8d06dbf858f72696ac11c995a519"),
+        "S09_2021": ("131", "R03_131.xlsx", "eabb1b97c0874adb8bb3227cb320aa828fbec3a8d7b954a4d4cc10743048f9ea"),
+        "S09_2022": ("131", "R04_131.xlsx", "585e3a413906349261b971485c95640582e916943e80d05bf910aa9eb5ca879c"),
+        "S09_2023": ("131", "R05_131.xlsx", "c4c29c849239552b14a9c9ba339c42fd661a3b39b2231cb14a7050f7397f27bb"),
+    }
+
+    for source_id, (table, filename, artifact_hash) in expected.items():
+        year = int(source_id[-4:])
+        metadata = registry[source_id]
+        assert metadata["source_table"] == table
+        assert metadata["filename"] == filename
+        assert metadata["coverage_periods"] == [str(year)]
+        assert metadata["expected_sha256"] == artifact_hash
+        assert metadata["verified_at"] == "2026-09-05"
 
 
 def test_registry_rejects_missing_required_metadata(tmp_path):

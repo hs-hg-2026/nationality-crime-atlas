@@ -294,6 +294,31 @@ def test_project_quality_profiles_pin_japanese_population_and_criminal_code_fiel
     assert s08_china["criminal_code_cleared_persons"] == 2393
 
 
+def test_project_quality_profiles_pin_historical_npa_detail_editions():
+    profiles = load_quality_profiles("config/quality_profiles.json")
+    expected = {
+        "S15_2020": (2020, "308cecb15fa3c33b13ecd4e5d5eaf08890aab326a796f5aed6dc8b7dc6bff956", 60),
+        "S15_2021": (2021, "2f007c3d6ef700c3fbbe28f63f3f9ce7abadb67eb86e2207ef4344ed9b2e1270", 60),
+        "S15_2022": (2022, "e05be7dcc58815eb894eafba4e24df5204ae67e78ba849c1750b7e786487d053", 60),
+        "S15_2023": (2023, "4dfa94cfd558fc98fd571e79fb8a4e79c2ceebe2e8b2e12c5d14b75c1d50915a", 60),
+        "S08_2020": (2020, "5e6ceb16a748f9d4be6313e9b4d3b5aed50e026cbf19e0677891c66ae86a2efd", 33),
+        "S08_2021": (2021, "45a4bf1c58d5d0cb4b933d4bc9db5068f12fd66646acd401221fabc71df5f36f", 33),
+        "S08_2022": (2022, "901cc0c472411468ba21e88de99d7aa9b3442fe4e6047360e6d3234744ead5ba", 33),
+        "S08_2023": (2023, "b1a4a6c9351f77171fc40c57cfbdce4e9fb1e90a68156cab7fefd7cf33a8f9e5", 33),
+        "S09_2020": (2020, "91c91a661e67f0ecf593766e45ecd8d29a4b8d06dbf858f72696ac11c995a519", 30),
+        "S09_2021": (2021, "eabb1b97c0874adb8bb3227cb320aa828fbec3a8d7b954a4d4cc10743048f9ea", 30),
+        "S09_2022": (2022, "585e3a413906349261b971485c95640582e916943e80d05bf910aa9eb5ca879c", 30),
+        "S09_2023": (2023, "c4c29c849239552b14a9c9ba339c42fd661a3b39b2231cb14a7050f7397f27bb", 30),
+    }
+
+    for source_id, (year, artifact_hash, record_count) in expected.items():
+        profile = profiles[source_id]
+        assert profile["expected_artifact_sha256"] == artifact_hash
+        assert profile["expected_record_count"] == record_count
+        assert profile["expected_years"] == [year]
+        assert profile["anchors"][0]["where"]["year"] == year
+
+
 def test_all_resident_context_record_types_pass_quality_validation(tmp_path):
     crime_records = [
         OverallPrefectureCrimeRecord(
