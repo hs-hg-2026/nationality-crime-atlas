@@ -310,3 +310,11 @@
 - **検証結果**: 既存4 workbookはいずれも2015–2024年を実fileで確認。R06→R07概要表は3,582／3,582、R05→R07は2,992／2,992共通cellが一致し、49差分はすべてR04 sheet 3-3-3を含むpairに限定。人口初回版対補間補正版は384 cell中331 cellが異なった。
 - **次**: failure testを先に追加し、既存R06 parserをmulti-year化する。その後、在留外国人数2016–2024、補間補正版＋2021–2024人口、multi-year contract、trend export／UIの順に進める。
 - **関連パス**: `docs/20260905_154001_time_series_source_inventory.md`, `config/sources.json`, `src/nationality_crime_atlas/npa_all_residents.py`, `src/nationality_crime_atlas/npa_nationality.py`, `src/nationality_crime_atlas/population.py`
+
+## 2026-09-05 時系列coverageの粒度を再確認し、直前の判断を訂正
+- **何が**: parser実装前にR06表3／130／131のrow配置まで確認したところ、2015–2024年のyear rowは全国合計であり、その後に続く地域別／国籍別内訳は2024年だけだった。表144は全国＋都道府県別の各年列を持つ。
+- **訂正**: 直前entryの「既存R06詳細表だけで地域別・国籍別の2015–2024年10点を得る」という範囲認識は誤り。全国合計と表144人口は10点を得られるが、地域別・国籍別・国籍別犯罪種類はR02–R06各editionの最新年内訳を連結して2020–2024年の5点を作る。
+- **原因**: year labelの存在確認をdimensionごとのcoverage確認として扱ってしまった。year × geography／nationalityのcell availabilityを確認すべきだった。
+- **検証結果**: R02–R05のofficial landing pageに、各年の表3／130／131／144 Excel linkが存在することを確認した。R04概要表3-3-3の異常はR04詳細表130の異常を意味しないため、詳細表は独立にreconciliationして採否を決める。
+- **次**: R02–R05表3／130／131をtemporary取得してhash・schema・anchorを監査し、registryへedition追加後にcanonical rawへ取得する。
+- **関連パス**: `docs/20260905_154001_time_series_source_inventory.md`, `config/sources.json`, `data/raw/`
