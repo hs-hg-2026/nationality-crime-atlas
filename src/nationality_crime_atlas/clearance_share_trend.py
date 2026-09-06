@@ -19,11 +19,13 @@ from .npa_nationality import parse_npa_nationality_annual_clearances
 from .provenance import sha256_file
 
 
-CLEARANCE_SHARE_TREND_SCHEMA_VERSION = 1
+CLEARANCE_SHARE_TREND_SCHEMA_VERSION = 2
 CONTRACT_SCHEMA_VERSION = 1
-LATEST_SCHEMA_VERSION = 1
+LATEST_SCHEMA_VERSION = 2
 SUPPORTED_METRICS = ("cleared_cases", "cleared_persons")
 SUPPORTED_FOREIGN_SCOPES = ("all_foreign", "visiting_foreign")
+DERIVED_FOREIGN_SCOPE = "all_foreign_minus_visiting_foreign"
+DERIVED_FOREIGN_SCOPE_LABEL_JA = "外国人全体−来日外国人（差分）"
 INTERPRETATION_POLICY = "share_of_clearances_not_population_risk"
 
 
@@ -78,6 +80,7 @@ class ClearanceShareTrendRecord:
     calculation_status: str
     refusal_reason: Optional[str]
     numerator_source_id: str
+    numerator_source_ids: Tuple[str, ...]
     denominator_source_id: str
     derivation_method: str
     derivation_formula: str
@@ -405,6 +408,7 @@ def _records(
                         calculation_status="calculated",
                         refusal_reason=None,
                         numerator_source_id=numerator_record.source_id,
+                        numerator_source_ids=(numerator_record.source_id,),
                         denominator_source_id=denominator_record.source_id,
                         derivation_method="direct_published_counts_division",
                         derivation_formula=(
@@ -426,6 +430,85 @@ def _records(
                         mismatch_flags=tuple(sorted(flags)),
                     )
                 )
+
+        all_foreign_record = foreign["all_foreign"][year]
+        visiting_foreign_record = foreign["visiting_foreign"][year]
+        for metric in contract.metrics:
+            all_foreign_value = getattr(all_foreign_record, metric)
+            visiting_foreign_value = getattr(visiting_foreign_record, metric)
+            if visiting_foreign_value > all_foreign_value:
+                raise SchemaError(
+                    "Visiting-foreign clearances exceed all-foreign clearances "
+                    "for %d %s" % (year, metric)
+                )
+            numerator = all_foreign_value - visiting_foreign_value
+            denominator = getattr(denominator_record, metric)
+            quotient = numerator / denominator
+            result.append(
+                ClearanceShareTrendRecord(
+                    national_clearance_share_schema_version=CLEARANCE_SHARE_TREND_SCHEMA_VERSION,
+                    trend_id=contract.trend_id,
+                    label_ja=contract.label_ja,
+                    label_en=contract.label_en,
+                    interpretation_policy=contract.interpretation_policy,
+                    ui_caveat=contract.ui_caveat,
+                    year=year,
+                    foreign_scope=DERIVED_FOREIGN_SCOPE,
+                    foreign_scope_label_ja=DERIVED_FOREIGN_SCOPE_LABEL_JA,
+                    metric=metric,
+                    metric_label_ja=metric_labels[metric],
+                    numerator_value=numerator,
+                    denominator_value=denominator,
+                    quotient=quotient,
+                    display_multiplier=contract.display_multiplier,
+                    display_unit_label_ja=contract.display_unit_label_ja,
+                    display_value=quotient * contract.display_multiplier,
+                    calculation_status="calculated",
+                    refusal_reason=None,
+                    numerator_source_id=all_foreign_record.source_id,
+                    numerator_source_ids=(
+                        all_foreign_record.source_id,
+                        visiting_foreign_record.source_id,
+                    ),
+                    denominator_source_id=denominator_record.source_id,
+                    derivation_method=(
+                        "arithmetic_residual_all_foreign_minus_visiting_foreign"
+                    ),
+                    derivation_formula=(
+                        "(%s.%s - %s.%s) / %s.%s"
+                        % (
+                            all_foreign_record.source_id,
+                            metric,
+                            visiting_foreign_record.source_id,
+                            metric,
+                            denominator_record.source_id,
+                            metric,
+                        )
+                    ),
+                    source_components=(
+                        dict(
+                            _component(all_foreign_record, metric),
+                            role="numerator_minuend",
+                        ),
+                        dict(
+                            _component(visiting_foreign_record, metric),
+                            role="numerator_subtrahend",
+                        ),
+                        dict(
+                            _component(denominator_record, metric),
+                            role="denominator",
+                        ),
+                    ),
+                    mismatch_flags=tuple(
+                        sorted(
+                            (*common_flags,
+                             "arithmetic_residual_not_directly_published",
+                             "residual_includes_settled_residents_us_forces_and_unknown_status",
+                             "residual_not_equivalent_to_usual_residents")
+                        )
+                    ),
+                )
+            )
     return result
 
 

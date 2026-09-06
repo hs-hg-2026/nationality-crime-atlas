@@ -149,13 +149,14 @@ M1の要点:
 - [x] S15 / S16をpinした`all_resident_regional_context` data productを作る。
 - [x] S08 / S15をpinし、日本を残差参考値として含む26 category × 6区分のoffense-composition data productを作る。
 - [x] S15の同年・同公表地理の認知件数と検挙件数をpairし、未解決cohortではない符号付き差分と割合をcompact exportで導出する。
+- [x] S08 / S09 / S15の2015–2024年全国合計をpinし、検挙件数／検挙人員について、外国人全体／来日外国人／`外国人全体 − 来日外国人`の算術残差が、日本人等を含む全国検挙総数に占める構成比を別scopeで導出する。残差は在留外国人または普段から住む外国人とは呼ばない。
 
 実装・検証結果:
 
 - contract: [indicator_contracts.json](../config/indicator_contracts.json)
 - generator / CLI: [indicators.py](../src/nationality_crime_atlas/indicators.py), [indicator_cli.py](../src/nationality_crime_atlas/indicator_cli.py)
 - latest local output pointers: `data/processed/_indicators/latest.json`, `data/processed/_all_resident_context/latest.json`, `data/processed/_nationality_comparison/latest.json`, `data/processed/_offense_composition/latest.json`（generated／gitignore対象）
-- latest compact dashboard export: `output/compact_export/20260903_231549_compact_export/`（schema v5、generated local bundle）
+- latest compact dashboard export: `output/compact_export/20260906_081500_compact_export/`（schema v7、generated local bundle）
 - audit: [20260831_085815_indicator_contract_and_run_audit.md](./20260831_085815_indicator_contract_and_run_audit.md)
 - independent review: [20260831_090540_indicator_independent_review.md](./20260831_090540_indicator_independent_review.md)
 - sensitivity config / generator: [small_number_sensitivity.json](../config/small_number_sensitivity.json), [small_numbers.py](../src/nationality_crime_atlas/small_numbers.py), [small_number_cli.py](../src/nationality_crime_atlas/small_number_cli.py)
@@ -171,15 +172,15 @@ M1の要点:
 - fresh independent reviewerはblocking／high／medium finding 0で、processed inputとsibling manifestのcoordinated edit gapがclosedしたことを確認した。contract pin変更そのものは新edition／parser／quality changeと一緒にreviewするgovernance boundaryとする。
 - `all_resident_context_contracts.json`、`all_resident_context.py`、`nca-build-all-resident-context`を追加し、S15 / S16からcurrent `20260901_225500_all_resident_context`を生成した。186 recordのうち144 calculated／42 refusedで、認知件数／検挙件数／検挙人員それぞれに全国＋47都道府県を計算した。全calculated rowはannual flowと10月1日時点population stockの差、およびnumerator residency scope未確立を明示する。警察region／subregion 12 rowと、日本国籍prefecture分子・個別国籍 × 都道府県分子の非公表はmachine-readable refusalとして同じrunに残した。summaryでは3 metricすべてでnumerator difference 0、denominator difference -1,000を固定した。東京の認知件数はabsolute countで埼玉より多いが、全住民10万人当たりでは東京668.30、埼玉704.68で順序が逆転することを再確認した。
 - offense-composition productは156 cell（26 category × 6 mutually exclusive区分）。日本の検挙人員totalは`191,826 − 10,464 = 181,362`、検挙件数totalは`287,273 − 18,861 = 268,412`で、各類型もS15 − S08のsource row付き残差として保持する。`凶悪犯`はofficial high-severity categoryだが、残る5区分をproject独自の`軽犯罪`とはしない。構成比clusterはJensen–Shannon distance（base 2）＋average linkageで、順位・危険度ではない。
-- compact export schema v5は290 + 186 + 26 + 156のsource-product rowにdefinition IDを保持し、さらにS15から62行の認知−検挙同年差分（60 calculated／2 refused）を導出する。same-byte parse/hash、source summary reconciliation、8件のpublic source metadata、local path非公開、atomic latest publicationを固定した。26行の全国籍比較は22 calculated／4 refusedで、日本人の分子を`191,826 − 10,464 = 181,362`、分母をS17の120,296,000人、参考比率を人口1,000人当たり1.5076として、残差・丸め・source date差を明示する。
+- compact export schema v7は290 + 186 + 26 + 156のsource-product rowにdefinition IDを保持し、S15から62行の認知−検挙同年差分（60 calculated／2 refused）、S08 / S09 / S15から60行の全国検挙構成比を導出する。same-byte parse/hash、source summary reconciliation、8件のpublic source metadata、local path非公開、atomic latest publicationを固定した。26行の全国籍比較は22 calculated／4 refusedで、日本人の検挙人員を`191,826 − 10,464 = 181,362`、検挙件数を`287,273 − 18,861 = 268,412`、分母をS17の120,296,000人として残差・丸め・source date差を明示する。2024年の全国検挙構成比は、検挙件数が外国人全体6.57%／来日外国人4.67%／両者の差分1.90%、検挙人員が5.45%／3.32%／差分2.14%である。
 
 ### M4. GitHub上の可視化 — **進行中**
 
 - [x] primary viewを全住民contextとする全国overviewと47都道府県mapを作る。
 - [x] 全住民の3 indicatorに加え、secondaryな全国比較へ日本を含む全26 categoryを掲載する。
-- [x] 同じ22 calculated rowから高い側5件／低い側5件を対称表示し、warning対象も隠さず注記付きで含める。
-- [ ] historical editionを追加し、year filterを実装する。都道府県より細かい地域粒度はavailabilityに応じて別途判断する。
-- [x] countと参考比率を切り替え、分子・分母・算式・source・mismatch noteを同じ画面から辿れるようにする。
+- [x] 全国籍比較は高い側／低い側の抜粋を廃止し、算出できる全categoryを参考比率の降順、算出不能を末尾に並べる横棒plotにする。日本は別色で示し、全件表にはcountと参考比率の両方を残す。
+- [ ] historical detail editionをyear-normalized panelへ接続し、year filterを実装する。都道府県より細かい地域粒度はavailabilityに応じて別途判断する。
+- [x] 分子・対象範囲を切り替え、分子・分母・参考比率・算式・source・mismatch noteを同じ画面から辿れるようにする。全国籍plotで重複していたcount／ratio表示切替は廃止する。
 - [x] 欠損と「公表なし」を0と区別し、refused rowと理由を表示する。
 - [x] gitignore対象のlocal generated productから、dashboard向けcompact exportを作る。
 - [x] all-resident contextとcompact exportをfresh reviewerがread-onlyで再監査し、open finding 0を確認する。
@@ -192,6 +193,7 @@ M1の要点:
 - [x] 認知−検挙の同年差分件数／割合を全住民regional contextへ追加し、strict未解決ではない注記、負値保持、認知0でのratio refusalを実装する。
 - [x] 犯罪類型構成と認知−検挙同年差分をfresh reviewerが独立監査し、scope内open finding 0を確認する。
 - [x] 一般読者向けに、サイトの目的、分かること／分からないこと、用語説明、ページ内導線、日本語READMEへのリンクを冒頭へ置き、画面上の英語混じりの内部用語を平易な日本語へ改める。
+- [x] 2015–2024年について、外国人全体／来日外国人／両者の算術差分が日本人等を含む全国検挙総数に占める割合を、検挙件数／検挙人員のline chartと全件表で表示する。人口当たりの犯罪率ではなく、残差も在留外国人とは同義でないことを常設する。
 - [ ] reviewed commitをpushし、GitHub Pagesのdeployed URLを実地確認する。
 
 Local MVP実装・検証結果:
@@ -199,14 +201,19 @@ Local MVP実装・検証結果:
 - app／data model: [web](../web), [dashboard.ts](../web/lib/dashboard.ts), [crime-atlas-dashboard.tsx](../web/components/crime-atlas-dashboard.tsx)
 - map provenance／generator: [map asset README](../web/assets/maps/README.md), [generate-japan-map-data.mjs](../web/scripts/generate-japan-map-data.mjs)
 - audits: [20260902_200948_visualization_mvp_audit.md](./20260902_200948_visualization_mvp_audit.md), [20260903_082238_japanese_nationality_comparison_and_ui_audit.md](./20260903_082238_japanese_nationality_comparison_and_ui_audit.md)
-- input: `web/public/data/dashboard_export.json`はcurrent compact exportとbyte-identical。schema v5、SHA-256 `102e2f6d589675a4fb45eac239212ff3f160048f5c0479bea62416da67ecb002`。
+- input: `web/public/data/dashboard_export.json`はcurrent compact exportとbyte-identical。schema v7、SHA-256 `38421caea476ba64c8ce38ecb1855eec5422db35cad4779b1fa66d6b972cd80f`。
 - primary view: 全住民、全国＋47都道府県、認知件数／検挙件数／検挙人員／認知−検挙同年差分、count／人口10万人当たりまたは同年差分率、東京・埼玉normalization、top-10 chart、deformed choropleth、source／warning／refusal panels。同年差分は全国450,406件／61.0572%、東京60,791件／64.1580%、埼玉34,976件／67.6950%で、いずれも未解決cohortとは表示しない。
-- secondary view: 日本を含む刑法犯検挙人員比較と8つの公表外国人perspectiveをselectorで切り替える。compatibleな日本人分子がないviewでも日本rowをexplicit refusalとして残す。各viewで高い側／低い側を同じsetから対称表示し、全表、raw分子・分母、source、残差、warning、refusal／mismatchを併記する。個別国籍 × 都道府県は推計しない。
+- secondary view: 日本を含む刑法犯検挙人員／検挙件数比較と8つの公表外国人perspectiveをselectorで切り替える。compatibleな日本人分子がないviewでも日本rowをexplicit refusalとして残す。全categoryの参考比率を降順の横棒plotで表示し、日本を別色、算出不能を末尾に置く。全件表にはraw分子・分母・参考比率、source、残差、warning、refusal／mismatchを併記する。個別国籍 × 都道府県は推計しない。
 - composition view: 日本を含む全26 categoryと6犯罪類型をheatmap／100%積み上げで表示し、検挙人員／検挙件数と公表順／階層cluster順を切り替える。cellは構成比と実数を併記し、total 0は`構成比算出不能`とする。
-- verification: frontend 69 test、statement coverage 90.63%、branch coverage 84.34%、typecheck／lint／format／data hash verification／production buildをpass。既存のdesktop／390 px mobile操作確認に加え、日本語案内をChromeの幅1440 px／500 pxで目視した。Pythonは前回の128 test、skip 0、coverage 83.45%。fresh reviewerも独立再計算とfocused Python 13／frontend 49 testをpassし、scope内open finding 0と判定した。
-- publication: GitHub Pages workflowとartifact verificationはlocal実装済み。local `main`にupstreamがなく、latest commitのpush／deployed URL確認は未実施。
+- time-series view: 2015–2024年の全国検挙構成比60行を、検挙件数／検挙人員を切り替えるline chartと全件表で表示する。外国人全体／来日外国人／両者の算術差分を別系列とし、日本人等を含む全国総数を分母にする。人口当たりの犯罪率ではなく、残差は普段から住む外国人というcategoryではない。
+- verification: frontend 91 test、statement coverage 89.23%、branch coverage 83.08%、typecheck／lint／data hash verification／production buildをpass。Chromeで幅1440 px／390 pxを目視し、全26 categoryのlabel、日本の別色、未算出行、時系列chart、mobile横overflowなしを確認した。Pythonは162 test、skip 0、coverage 83.20%。
+- publication: GitHub Pagesの公開版はv0.1.0。今回のschema v7／UI変更はlocalで検証中で、まだpush／deployしていない。
 
-### M5. 定期更新・監視 — **未着手**
+### M5. 過去年整備・定期更新・監視 — **進行中**
+
+- [x] 9 series／34 editionをregistryへ登録し、R02–R05詳細表、2015–2024年の総人口／日本人人口、2016–2025年の国籍等別人口を取得・検証する。
+- [x] S08 / S09 / S15から2015–2024年の全国検挙構成比60行（2 metric × 3 scope）を生成し、dashboardへ接続する。
+- [ ] R02–R06各editionの内訳を連結し、地域別・国籍等別・犯罪種類別の2020–2024年5点panelを作る。
 
 - [ ] sourceごとの公開scheduleに合わせた更新頻度を決める（要確定）。
 - [ ] GitHub Actions等による定期実行方式を決める（要確定）。
@@ -235,7 +242,10 @@ Local MVP実装・検証結果:
 - 2026-09-03〜04: nationality perspective selectorを復旧し、日本人分子がcompatibleでないviewでは日本をexplicit refusalとして保持した。日本を含む26 × 6の犯罪類型構成と階層cluster、S15の認知−検挙同年差分を追加し、compact exportをschema v5へ更新した。browser検証で同年差分率をcount unit `件`と表示するbugを検出し、RED test追加後に`%`へ修正した。
 - 2026-09-04: [fresh independent review](./20260904_082803_offense_composition_and_same_year_gap_independent_review.md)で26 × 6構成、日本残差、cluster順、同年差分62 row、selector refusal、publication hash、一次定義を再検証し、Blocking／High／Medium／Low 0、scope内open finding 0を確認した。
 - 2026-09-04: サイトの目的が見えず、`cohort`や`nationality-neutral`など英語混じりの内部用語が読みにくいというuser指摘を受け、冒頭案内、用語説明、ページ内メニュー、日本語README／解釈方針へのリンクを追加した。表示上の注意コードと出典名も平易な日本語にし、元のコードやhashは追跡可能な形で保持した。
-- 現段階の結論: 全住民regional context、日本を欠落させない選択式全国籍比較、犯罪類型構成、未解決率とは呼ばない同年差、dashboard-ready compact export v5、一般読者向けの日本語案内、local responsive visualization、GitHub Pages workflowまで成立し、fresh independent reviewもclosedした。userの明示があればpush／deployed URLを検証する。
+- 2026-09-05: R02–R05詳細表、historical populationを正式取得し、2015–2024年の全国検挙構成比40行を実装した。日本人を含む全国検挙件数／人員に対する外国人全体／来日外国人の割合を別scopeで表示し、人口当たりの犯罪率ではないと明示した。
+- 2026-09-05: 全国籍比較の高い側／低い側各5件と重複するcount／ratio切替を廃止し、全categoryを参考比率の降順で並べる横棒plotへ変更した。日本は別色、算出不能は末尾、countとratioは全件表に保持し、desktop／mobileで目視確認した。
+- 2026-09-06: userの指摘を受け、外国人全体−来日外国人を第三系列として追加した。警察庁定義を確認すると差分は定着居住者だけでなく在日米軍関係者・在留資格不明者も含み得るため、「在日外国人」「普段から住む外国人」とは表示せず、算術差分・direct非公表と明示した。
+- 現段階の結論: 全住民regional context、日本を欠落させない選択式全国籍比較、全件order plot、犯罪類型構成、未解決率とは呼ばない同年差、2015–2024年の3-scope全国検挙構成比、dashboard-ready compact export v7、responsive visualization、GitHub Pages workflowまで成立した。次は2020–2024年の地域別・国籍等別・犯罪種類別の詳細panelであり、今回の変更はpush／deploy前である。
 
 ## 想定される成果 (Outcome)
 

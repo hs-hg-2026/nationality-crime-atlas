@@ -1,0 +1,128 @@
+{
+  "compact_export_schema_version": 7,
+  "dashboard_export_sha256": "38421caea476ba64c8ce38ecb1855eec5422db35cad4779b1fa66d6b972cd80f",
+  "definition_counts": {
+    "clearance_share_ids": 1,
+    "context_ids": 4,
+    "indicator_ids": 10,
+    "nationality_comparison_ids": 1,
+    "offense_category_ids": 6,
+    "offense_composition_ids": 1
+  },
+  "generated_at": "2026-09-06T08:15:00+09:00",
+  "record_counts": {
+    "all_resident_context": 248,
+    "clearance_share_trends": 60,
+    "nationality_comparison": 26,
+    "nationality_indicators": 290,
+    "offense_composition": 156
+  },
+  "source_count": 8,
+  "source_runs": {
+    "all_resident_context": {
+      "latest_manifest": {
+        "all_resident_context_schema_version": 1,
+        "generated_at": "2026-09-01T22:55:00+09:00",
+        "regional_context_records_csv_sha256": "c9738b3621dc2224ddb2c84c522243ba2880e3f52fa5bbdd25956b55809d148e",
+        "regional_context_records_sha256": "d85a2f815cc5fa285b7570da48213e5f5feab5c5fc7e1d73f483550f79eb4582",
+        "run_relpath": "20260901_225500_all_resident_context",
+        "summary_sha256": "c60a66b2136c9cda76a5b70139d6be7fadabe80cabc747ff618492f684e35437"
+      },
+      "latest_path": "latest.json",
+      "latest_sha256": "0d812933a1d965e8f9a37ecba1a8c12b9f0e5250637e7b338ef3aca16fe9b384",
+      "record_count": 186,
+      "records_path": "20260901_225500_all_resident_context/regional_context_records.jsonl",
+      "records_sha256": "d85a2f815cc5fa285b7570da48213e5f5feab5c5fc7e1d73f483550f79eb4582",
+      "status_counts": {
+        "calculated": 144,
+        "refused": 42
+      },
+      "summary_path": "20260901_225500_all_resident_context/summary.json",
+      "summary_sha256": "c60a66b2136c9cda76a5b70139d6be7fadabe80cabc747ff618492f684e35437"
+    },
+    "clearance_share_trend": {
+      "latest_manifest": {
+        "clearance_share_records_csv_sha256": "83b82f6d6788c4cd407229f1772cef0b7f93a825eb5a2aa2d4d770fed757e9a0",
+        "clearance_share_records_sha256": "ba148af70e7279fdcb2c3cb66751a6030d969c596ee65c1c2260d9355656c35c",
+        "generated_at": "2026-09-06T08:14:00+09:00",
+        "national_clearance_share_schema_version": 2,
+        "run_relpath": "20260906_081400_clearance_share_trend",
+        "summary_sha256": "fab1cefff221ec48b1acdc631d6c3de238ba861c4a1bd9aa1b068828ae9d6980"
+      },
+      "latest_path": "latest.json",
+      "latest_sha256": "b26ac6e46ee3d9e99985db0866e09a6617224640a192d59aa806d75338f0f786",
+      "record_count": 60,
+      "records_path": "20260906_081400_clearance_share_trend/clearance_share_records.jsonl",
+      "records_sha256": "ba148af70e7279fdcb2c3cb66751a6030d969c596ee65c1c2260d9355656c35c",
+      "status_counts": {
+        "calculated": 60,
+        "refused": 0
+      },
+      "summary_path": "20260906_081400_clearance_share_trend/summary.json",
+      "summary_sha256": "fab1cefff221ec48b1acdc631d6c3de238ba861c4a1bd9aa1b068828ae9d6980"
+    },
+    "nationality_comparison": {
+      "latest_manifest": {
+        "generated_at": "2026-09-03T07:45:25+09:00",
+        "nationality_comparison_records_csv_sha256": "44d2d4c2d977ffd67e597e440ecf946ffbdb6d6c7bffc66a30fb57abab2bee28",
+        "nationality_comparison_records_sha256": "dba75ed68edef46e9ab8db6b2360672cf667b925f1c7acd285987241cbb0ee61",
+        "nationality_comparison_schema_version": 1,
+        "run_relpath": "20260903_074525_nationality_comparison",
+        "summary_sha256": "986fd54cfd9940e99fe470011c75a38f9e72b5ab2f3f20e79ac862210bcdb360"
+      },
+      "latest_path": "latest.json",
+      "latest_sha256": "51234c10ff60a16a41d86d98e9d31e914fdeb061adb2eb02d881193280108517",
+      "record_count": 26,
+      "records_path": "20260903_074525_nationality_comparison/nationality_comparison_records.jsonl",
+      "records_sha256": "dba75ed68edef46e9ab8db6b2360672cf667b925f1c7acd285987241cbb0ee61",
+      "status_counts": {
+        "calculated": 22,
+        "refused": 4
+      },
+      "summary_path": "20260903_074525_nationality_comparison/summary.json",
+      "summary_sha256": "986fd54cfd9940e99fe470011c75a38f9e72b5ab2f3f20e79ac862210bcdb360"
+    },
+    "nationality_indicators": {
+      "latest_manifest": {
+        "generated_at": "2026-09-03T07:54:23+09:00",
+        "indicator_records_csv_sha256": "e346b242afe05abaaf9047e7f135a22135a5b91dc992b84dee683c5cfcf586ee",
+        "indicator_records_sha256": "b0c352488852ff820f62339616563220ba62a575e0891899d6cb4c977d6f5c9c",
+        "indicator_run_schema_version": 2,
+        "run_relpath": "20260903_075423_indicators",
+        "summary_sha256": "d8adde64809a5e627c28523729ec44d8f29a9dc2a3fcf054f53b2a3d98aef287"
+      },
+      "latest_path": "latest.json",
+      "latest_sha256": "208d31c8f03ce60f5d40def70095302811f0f2556213d6da65eb807413b6f9dd",
+      "record_count": 290,
+      "records_path": "20260903_075423_indicators/indicator_records.jsonl",
+      "records_sha256": "b0c352488852ff820f62339616563220ba62a575e0891899d6cb4c977d6f5c9c",
+      "status_counts": {
+        "calculated": 250,
+        "refused": 40
+      },
+      "summary_path": "20260903_075423_indicators/summary.json",
+      "summary_sha256": "d8adde64809a5e627c28523729ec44d8f29a9dc2a3fcf054f53b2a3d98aef287"
+    },
+    "offense_composition": {
+      "latest_manifest": {
+        "generated_at": "2026-09-03T22:20:26+09:00",
+        "offense_composition_records_csv_sha256": "c5a79b878914cb15548ccd2995723bd8f735dd7c0961ee41369c7e9de494f704",
+        "offense_composition_records_sha256": "ddeb9e3d26d158e439cbdee2c82d92fd04c8b613bb7ac7601759003f8de17703",
+        "offense_composition_schema_version": 1,
+        "run_relpath": "20260903_222026_offense_composition",
+        "summary_sha256": "fa67fcea0b5be3fda5fed970fbcd71823267058d6e289c693d83e839263868be"
+      },
+      "latest_path": "latest.json",
+      "latest_sha256": "d972e981e00d8d2a8758f85716e1830b8de827b1c683d73555c89a587e11d0ad",
+      "record_count": 156,
+      "records_path": "20260903_222026_offense_composition/offense_composition_records.jsonl",
+      "records_sha256": "ddeb9e3d26d158e439cbdee2c82d92fd04c8b613bb7ac7601759003f8de17703",
+      "status_counts": {
+        "calculated": 156,
+        "refused": 0
+      },
+      "summary_path": "20260903_222026_offense_composition/summary.json",
+      "summary_sha256": "fa67fcea0b5be3fda5fed970fbcd71823267058d6e289c693d83e839263868be"
+    }
+  }
+}

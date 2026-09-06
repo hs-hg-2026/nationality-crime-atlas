@@ -83,6 +83,10 @@ const clearanceShareChartConfig = {
     label: '来日外国人',
     color: 'var(--chart-2)',
   },
+  allForeignMinusVisitingShare: {
+    label: '外国人全体−来日外国人（差分）',
+    color: 'var(--chart-3)',
+  },
 } satisfies ChartConfig;
 
 const PROJECT_README_URL =
@@ -445,7 +449,7 @@ function ClearanceShareTrend({
           <p className="section-kicker">全国の時系列</p>
           <h2 id="clearance-share-heading">検挙全体に占める外国人区分の割合</h2>
           <p className="intro-copy">
-            日本人等を含む全国の刑法犯検挙総数に対し、「外国人全体」と「来日外国人」の全国値が占める割合を示します。
+            日本人等を含む全国の刑法犯検挙総数に対し、「外国人全体」「来日外国人」と、その算術差分が占める割合を示します。
           </p>
         </div>
         <Badge variant="outline">
@@ -478,6 +482,9 @@ function ClearanceShareTrend({
         <div className="clearance-share-legend" aria-label="折れ線の凡例">
           <span className="all-foreign">外国人全体</span>
           <span className="visiting-foreign">来日外国人</span>
+          <span className="foreign-residual">
+            外国人全体−来日外国人（差分）
+          </span>
         </div>
       </div>
 
@@ -500,7 +507,7 @@ function ClearanceShareTrend({
           <CardHeader>
             <CardTitle>{view.metricLabel}の割合の変化</CardTitle>
             <CardDescription>
-              「来日外国人」は紹介された図4と同じ分子範囲。「外国人全体」は別の範囲として併記します。
+              差分には定着居住者だけでなく、在日米軍関係者や在留資格不明者も含まれ得るため、普段から住む外国人だけを表す値ではありません。
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -542,7 +549,9 @@ function ClearanceShareTrend({
                           <span>
                             {name === 'allForeignShare'
                               ? '外国人全体'
-                              : '来日外国人'}
+                              : name === 'visitingForeignShare'
+                                ? '来日外国人'
+                                : '外国人全体−来日外国人（差分）'}
                           </span>
                           <strong>{formatClearanceShare(Number(value))}</strong>
                         </>
@@ -563,6 +572,14 @@ function ClearanceShareTrend({
                   name="visitingForeignShare"
                   type="monotone"
                   stroke="var(--color-visitingForeignShare)"
+                  strokeWidth={2.5}
+                  dot={{ r: 3 }}
+                />
+                <Line
+                  dataKey="allForeignMinusVisitingShare"
+                  name="allForeignMinusVisitingShare"
+                  type="monotone"
+                  stroke="var(--color-allForeignMinusVisitingShare)"
                   strokeWidth={2.5}
                   dot={{ r: 3 }}
                 />
@@ -592,6 +609,7 @@ function ClearanceShareTrend({
                   <th scope="col">全国総数</th>
                   <th scope="col">外国人全体</th>
                   <th scope="col">来日外国人</th>
+                  <th scope="col">外国人全体−来日外国人（差分）</th>
                 </tr>
               </thead>
               <tbody>
@@ -616,6 +634,17 @@ function ClearanceShareTrend({
                         {formatClearanceShare(point.visitingForeignShare)}
                       </strong>
                     </td>
+                    <td>
+                      {point.allForeignMinusVisitingCount.toLocaleString(
+                        'ja-JP',
+                      )}
+                      <small>{view.unitLabel}</small>{' '}
+                      <strong>
+                        {formatClearanceShare(
+                          point.allForeignMinusVisitingShare,
+                        )}
+                      </strong>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -629,7 +658,7 @@ function ClearanceShareTrend({
           <BookOpen aria-hidden="true" />
           <CardTitle>この時系列の出典</CardTitle>
           <CardDescription>
-            外国人全体、来日外国人、日本人等を含む全国総数を別々に辿れます。
+            外国人全体、来日外国人、その差分、日本人等を含む全国総数を、元の公表値まで辿れます。
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -18,6 +18,7 @@ Codex 用の作業指示（この repo 固有の *確定ルール* だけ）。�
 - regenerate canonical dimension audit: `.venv/bin/nca-map-dimensions`
 - regenerate all-resident regional context: `.venv/bin/nca-build-all-resident-context`
 - regenerate nationality offense composition: `.venv/bin/nca-build-offense-composition`
+- regenerate national clearance-share trend: `.venv/bin/nca-build-clearance-share-trend`
 - regenerate compact dashboard export: `.venv/bin/nca-build-compact-export`
 - regenerate small-number sensitivity audit: `.venv/bin/nca-audit-small-numbers`
 - regenerate pinned map module: `cd web && npm run generate:map`
@@ -52,6 +53,7 @@ Codex 用の作業指示（この repo 固有の *確定ルール* だけ）。�
 - `web/assets/maps/deformed-japan-prefecture-map.svg`はpinned CC0 asset。generatorはchecked-in SHA-256不一致時にoutputを書かず停止し、47 code／labelとgenerated moduleのbyte identityをtestする。
 - generated productのroot `latest.json`はsame-directory unique temporary fileへ書き、`flush`／`fsync`後にatomic `replace`する。fixed temporary filenameを使わない。
 - national total − all-foreignの算術残差はdirectな日本国籍公表値と呼ばず、明示的なderived valueとしてreviewされるまでpublishしない。
+- 全国検挙構成比は`外国人区分の全国検挙値 ÷ 日本人等を含む全国検挙総数`であり、人口当たりの犯罪率ではない。`all_foreign`と`visiting_foreign`を別scopeとして混同しない。`all_foreign − visiting_foreign`は算術残差であり、定着居住者だけ／普段から住む外国人／在留外国人と呼ばない。
 - 公表されていない`個別国籍 × 都道府県`分子は推計・按分しない。
 - NPA表13のgeography semanticsは未解決。`geography_semantics=police_reporting_area_unresolved`を、居住地や発生地へ読み替えない。
 - current registryはverified direct URLの取得まで対応済み。official catalogから新editionを自動発見する処理とschedule実行は未実装。

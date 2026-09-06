@@ -8,6 +8,13 @@
 
 2025年は一部の確定値・人口が公表済みだが、2024年までと同じ詳細表一式と日本人人口分母が揃っていない。したがって、2025年を既存系列へ無条件に接続せず、利用できる指標だけを別source／別definitionとして表示し、算出できない比率は明示的に`refused`とする。
 
+### 実装進捗（2026-09-05夜）
+
+- R02–R05の表3／130／131、総務省統計局の2015–2024年人口、日本国籍人口、出入国在留管理庁の2016–2025年国籍等別人口をregistryへ追加し、9 series／34 editionをimmutable rawとして取得・検証した。
+- 表3／130／131から2015–2024年の全国検挙合計を抽出するparserと、検挙件数／検挙人員 × 外国人全体／来日外国人／両者の算術差分の60行の全国検挙構成比productを実装した。これは人口当たりの犯罪率ではなく、日本人等を含む全国検挙総数に占める構成比である。算術差分は警察庁の来日外国人定義から除かれる全区分を含むため、在留外国人または普段から住む外国人とは呼ばない。
+- compact export schema v7とdashboardへ接続し、2024年は検挙件数で外国人全体6.57%／来日外国人4.67%／差分1.90%、検挙人員で5.45%／3.32%／差分2.14%となることをsource rowから再計算した。
+- 次はR02–R06各editionの最新年内訳を連結し、地域別・国籍等別・犯罪種類別の2020–2024年5点panelを作る。未掲載・非互換・欠損を0へ置換しない。
+
 ## 検証状態
 
 - **検証済み**: official URLへの到達、downloadしたfileのhash、Excel archive/openability、主要sheet・年header、既存raw workbookの2015–2024年headerを実fileで確認した。
@@ -167,13 +174,13 @@ R02–R07の15 edition pairについて、主要sheetの同じ年・同じlabel�
 
 ## 実装TODO（順番）
 
-1. **R02–R05詳細表を取得前監査**: 表3／130／131のhash、sheet、最新年、row count、主要anchorを確認する。
-2. **historical editionをregistryへ追加**: 各editionを既存seriesへ追加し、`nca-acquire`でimmutable rawへ取得する。
-3. **既存parserの互換testを追加**: 各editionがその年の地域別／国籍別内訳を出すことをRED→GREENで確認する。全国合計の10年抽出は別API／record kindとして実装し、current detail rowを壊さない。
-4. **在留外国人数2020–2024を登録・取得**: 2020–2021 wide layoutと2022–2024 flat layoutを別profileで処理する。5点版完了後に2016–2019へ拡張する。
-5. **総人口・日本人人口2015–2024を登録・取得**: 2015–2020補間補正版＋2021–2024年次版をyear-normalizedにする。
-6. **multi-year contractを導入**: yearごとのnumerator／denominator pinとdefinition segmentを固定する。
-7. **時系列data productを生成**: raw count、population、参考比率、warning、refusal、source／definitionを同じrowへ出す。
+1. [x] **R02–R05詳細表を取得前監査**: 表3／130／131のhash、sheet、最新年、row count、主要anchorを確認する。
+2. [x] **historical editionをregistryへ追加**: 各editionを既存seriesへ追加し、`nca-acquire`でimmutable rawへ取得する。
+3. [ ] **既存parserの互換testを追加**: 全国合計の10年抽出は別record kindとして実装済み。次に、各editionがその年の地域別／国籍別内訳を出すことをRED→GREENで確認し、current detail rowを壊さない。
+4. [x] **在留外国人数2016–2025を登録・取得**: 2016–2021 wide layoutと2022–2025 flat layoutを別profileで処理する。
+5. [x] **総人口・日本人人口2015–2024を登録・取得**: 2015–2020補間補正版＋2021–2024年次版をyear-normalizedにする。
+6. [ ] **multi-year contractを導入**: 全国検挙構成比用のpinとscopeは実装済み。次に詳細5点panelのyearごとのnumerator／denominator pinとdefinition segmentを固定する。
+7. [ ] **時系列data productを生成**: 全国検挙構成比60行は実装済み。次に詳細5点panelでraw count、population、参考比率、warning、refusal、source／definitionを同じrowへ出す。
 8. **volatility表示を追加**: 母数・分子が小さい年、前年差、複数年の再現性を判断材料として表示する。ただし価値判断はしない。
 9. **frontendへyear／trend表示を追加**: まずtableとline chart、次に犯罪種類構成の年変化を追加する。
 10. **2025年を別途review**: R07詳細年報と2025年国勢調査の人口等基本集計が確認できた後、同じ定義で接続できる範囲だけ追加する。

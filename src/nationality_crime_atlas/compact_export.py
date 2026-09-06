@@ -16,12 +16,64 @@ from .errors import IntegrityError, SchemaError
 from .provenance import sha256_file
 
 
-COMPACT_EXPORT_SCHEMA_VERSION = 6
-LATEST_SCHEMA_VERSION = 6
+COMPACT_EXPORT_SCHEMA_VERSION = 7
+LATEST_SCHEMA_VERSION = 7
 CALCULATION_STATUSES = ("calculated", "refused")
 SAME_YEAR_GAP_CONTEXT_ID = "all_resident_same_year_recognition_clearance_gap"
 RECOGNIZED_CONTEXT_ID = "all_resident_recognized_cases"
 CLEARED_CASES_CONTEXT_ID = "all_resident_cleared_cases"
+CLEARANCE_SHARE_TREND_ID = "national_criminal_code_clearance_foreign_share"
+CLEARANCE_SHARE_INTERPRETATION_POLICY = "share_of_clearances_not_population_risk"
+CLEARANCE_SHARE_LABEL_JA = (
+    "全国の刑法犯検挙（日本人等を含む）に占める外国人区分の割合"
+)
+CLEARANCE_SHARE_UI_CAVEAT = (
+    "分母は日本人等を含む全国の刑法犯検挙総数、分子は警察庁の"
+    "「外国人」「来日外国人」区分、または両者の算術差分である。"
+    "検挙全体に占める構成比であり、人口当たりの犯罪率、犯罪の発生率、"
+    "個人のriskを示さない。「来日外国人」は定着居住者、在日米軍関係者、"
+    "在留資格不明者を除く区分で、短期滞在者だけを指さない。差分にも"
+    "定着居住者以外が含まれるため、普段から住む外国人だけを表す値ではない。"
+)
+CLEARANCE_SHARE_SCOPE_CONTRACTS = {
+    "all_foreign": {
+        "label_ja": "外国人全体",
+        "numerator_source_id": "S08",
+        "numerator_source_ids": ("S08",),
+        "derivation_method": "direct_published_counts_division",
+        "required_flags": (
+            "all_foreign_scope_not_resident_foreigner_population",
+            "denominator_includes_japanese_and_others",
+            "share_of_clearance_counts_not_population_rate",
+        ),
+    },
+    "visiting_foreign": {
+        "label_ja": "来日外国人",
+        "numerator_source_id": "S09",
+        "numerator_source_ids": ("S09",),
+        "derivation_method": "direct_published_counts_division",
+        "required_flags": (
+            "denominator_includes_japanese_and_others",
+            "share_of_clearance_counts_not_population_rate",
+            "visiting_foreign_includes_nonresidents",
+        ),
+    },
+    "all_foreign_minus_visiting_foreign": {
+        "label_ja": "外国人全体−来日外国人（差分）",
+        "numerator_source_id": "S08",
+        "numerator_source_ids": ("S08", "S09"),
+        "derivation_method": (
+            "arithmetic_residual_all_foreign_minus_visiting_foreign"
+        ),
+        "required_flags": (
+            "arithmetic_residual_not_directly_published",
+            "denominator_includes_japanese_and_others",
+            "residual_includes_settled_residents_us_forces_and_unknown_status",
+            "residual_not_equivalent_to_usual_residents",
+            "share_of_clearance_counts_not_population_rate",
+        ),
+    },
+}
 
 _INDICATOR_DEFINITION_FIELDS = (
     "indicator_run_schema_version",
@@ -727,6 +779,36 @@ def _validate_offense_composition_bundle(bundle: _DatasetBundle) -> None:
             raise SchemaError("offense composition cluster order is incomplete")
 
 
+def _clearance_share_semantic_error(detail: str) -> None:
+    raise SchemaError("clearance share semantic contract: %s" % detail)
+
+
+def _validate_clearance_share_components(
+    row: Mapping[str, object],
+    expected: Sequence[Tuple[object, ...]],
+) -> None:
+    components = row.get("source_components")
+    if not isinstance(components, (list, tuple)) or any(
+        not isinstance(component, dict) for component in components
+    ):
+        _clearance_share_semantic_error("source_components must be an object array")
+    actual = [
+        (
+            component.get("source_id"),
+            component.get("role"),
+            component.get("metric"),
+            component.get("value"),
+            component.get("source_table"),
+            component.get("source_sheet"),
+            component.get("source_row"),
+            component.get("source_column"),
+        )
+        for component in components
+    ]
+    if actual != list(expected):
+        _clearance_share_semantic_error("source_components do not match scope inputs")
+
+
 def _validate_clearance_share_bundle(bundle: _DatasetBundle) -> None:
     years = bundle.summary.get("years")
     year_count = bundle.summary.get("year_count")
@@ -741,7 +823,7 @@ def _validate_clearance_share_bundle(bundle: _DatasetBundle) -> None:
         raise SchemaError("clearance share summary year_count differs")
 
     seen = set()
-    expected_scopes = {"all_foreign", "visiting_foreign"}
+    expected_scopes = set(CLEARANCE_SHARE_SCOPE_CONTRACTS)
     expected_metrics = {"cleared_cases", "cleared_persons"}
     for index, row in enumerate(bundle.records, start=1):
         year = row.get("year")
@@ -753,6 +835,51 @@ def _validate_clearance_share_bundle(bundle: _DatasetBundle) -> None:
         seen.add(key)
         if year not in years or scope not in expected_scopes or metric not in expected_metrics:
             raise SchemaError("Unsupported clearance share dimensions at row %d" % index)
+        scope_contract = CLEARANCE_SHARE_SCOPE_CONTRACTS[scope]
+        if (
+            row.get("trend_id") != CLEARANCE_SHARE_TREND_ID
+            or row.get("label_ja") != CLEARANCE_SHARE_LABEL_JA
+            or row.get("interpretation_policy")
+            != CLEARANCE_SHARE_INTERPRETATION_POLICY
+            or row.get("ui_caveat") != CLEARANCE_SHARE_UI_CAVEAT
+            or row.get("foreign_scope_label_ja") != scope_contract["label_ja"]
+            or row.get("numerator_source_id")
+            != scope_contract["numerator_source_id"]
+            or row.get("denominator_source_id") != "S15"
+            or row.get("derivation_method")
+            != scope_contract["derivation_method"]
+            or row.get("metric_label_ja")
+            != ("検挙件数" if metric == "cleared_cases" else "検挙人員")
+        ):
+            _clearance_share_semantic_error(
+                "scope, source, label, or interpretation binding differs at row %d"
+                % index
+            )
+        numerator_source_ids = row.get("numerator_source_ids")
+        if (
+            not isinstance(numerator_source_ids, (list, tuple))
+            or not numerator_source_ids
+            or any(
+                not isinstance(source_id, str) or not source_id
+                for source_id in numerator_source_ids
+            )
+        ):
+            raise SchemaError(
+                "Invalid clearance share numerator_source_ids at row %d" % index
+            )
+        if tuple(numerator_source_ids) != scope_contract["numerator_source_ids"]:
+            _clearance_share_semantic_error(
+                "numerator source binding differs at row %d" % index
+            )
+        mismatch_flags = row.get("mismatch_flags")
+        if (
+            not isinstance(mismatch_flags, (list, tuple))
+            or any(not isinstance(flag, str) for flag in mismatch_flags)
+            or not set(scope_contract["required_flags"]).issubset(mismatch_flags)
+        ):
+            _clearance_share_semantic_error(
+                "required mismatch flags are absent at row %d" % index
+            )
         numerator = row.get("numerator_value")
         denominator = row.get("denominator_value")
         quotient = row.get("quotient")
@@ -784,6 +911,16 @@ def _validate_clearance_share_bundle(bundle: _DatasetBundle) -> None:
             )
         ):
             raise SchemaError("Clearance share arithmetic differs at row %d" % index)
+        expected_formula = (
+            "(S08.%s - S09.%s) / S15.%s" % (metric, metric, metric)
+            if scope == "all_foreign_minus_visiting_foreign"
+            else "%s.%s / S15.%s"
+            % (scope_contract["numerator_source_id"], metric, metric)
+        )
+        if row.get("derivation_formula") != expected_formula:
+            _clearance_share_semantic_error(
+                "derivation formula differs at row %d" % index
+            )
     expected = {
         (year, scope, metric)
         for year in years
@@ -792,6 +929,131 @@ def _validate_clearance_share_bundle(bundle: _DatasetBundle) -> None:
     }
     if seen != expected:
         raise SchemaError("Clearance share year/scope/metric grid is incomplete")
+
+    indexed = {
+        (row["year"], row["metric"], row["foreign_scope"]): row
+        for row in bundle.records
+    }
+    for year in years:
+        for metric in expected_metrics:
+            all_foreign = indexed[(year, metric, "all_foreign")]
+            visiting_foreign = indexed[(year, metric, "visiting_foreign")]
+            residual = indexed[
+                (year, metric, "all_foreign_minus_visiting_foreign")
+            ]
+            rows = (all_foreign, visiting_foreign, residual)
+            if len({row.get("denominator_value") for row in rows}) != 1 or len(
+                {row.get("denominator_source_id") for row in rows}
+            ) != 1:
+                raise SchemaError(
+                    "Clearance share denominators differ for %d %s" % (year, metric)
+                )
+            expected_residual = (
+                all_foreign["numerator_value"] - visiting_foreign["numerator_value"]
+            )
+            if expected_residual < 0 or residual.get("numerator_value") != expected_residual:
+                raise SchemaError(
+                    "Clearance share residual differs for %d %s" % (year, metric)
+                )
+            expected_sources = [
+                all_foreign.get("numerator_source_id"),
+                visiting_foreign.get("numerator_source_id"),
+            ]
+            if residual.get("numerator_source_ids") != expected_sources:
+                raise SchemaError(
+                    "Clearance share residual sources differ for %d %s" % (year, metric)
+                )
+            if residual.get("derivation_method") != (
+                "arithmetic_residual_all_foreign_minus_visiting_foreign"
+            ):
+                raise SchemaError(
+                    "Clearance share residual method differs for %d %s" % (year, metric)
+                )
+            _validate_clearance_share_components(
+                all_foreign,
+                (
+                    (
+                        "S08",
+                        "numerator",
+                        metric,
+                        all_foreign["numerator_value"],
+                        "130",
+                        "01",
+                        year - 2007,
+                        7 if metric == "cleared_cases" else 8,
+                    ),
+                    (
+                        "S15",
+                        "denominator",
+                        metric,
+                        all_foreign["denominator_value"],
+                        "3",
+                        "刑法犯総数",
+                        year - 2006,
+                        5 if metric == "cleared_cases" else 6,
+                    ),
+                ),
+            )
+            _validate_clearance_share_components(
+                visiting_foreign,
+                (
+                    (
+                        "S09",
+                        "numerator",
+                        metric,
+                        visiting_foreign["numerator_value"],
+                        "131",
+                        "01",
+                        year - 2007,
+                        6 if metric == "cleared_cases" else 7,
+                    ),
+                    (
+                        "S15",
+                        "denominator",
+                        metric,
+                        visiting_foreign["denominator_value"],
+                        "3",
+                        "刑法犯総数",
+                        year - 2006,
+                        5 if metric == "cleared_cases" else 6,
+                    ),
+                ),
+            )
+            _validate_clearance_share_components(
+                residual,
+                (
+                    (
+                        "S08",
+                        "numerator_minuend",
+                        metric,
+                        all_foreign["numerator_value"],
+                        "130",
+                        "01",
+                        year - 2007,
+                        7 if metric == "cleared_cases" else 8,
+                    ),
+                    (
+                        "S09",
+                        "numerator_subtrahend",
+                        metric,
+                        visiting_foreign["numerator_value"],
+                        "131",
+                        "01",
+                        year - 2007,
+                        6 if metric == "cleared_cases" else 7,
+                    ),
+                    (
+                        "S15",
+                        "denominator",
+                        metric,
+                        residual["denominator_value"],
+                        "3",
+                        "刑法犯総数",
+                        year - 2006,
+                        5 if metric == "cleared_cases" else 6,
+                    ),
+                ),
+            )
 
 
 def _public_sources(
@@ -939,7 +1201,7 @@ def generate_compact_export(
         name="clearance_share_trend",
         latest_path=clearance_share_latest_path,
         schema_key="national_clearance_share_schema_version",
-        expected_schema_version=1,
+        expected_schema_version=2,
         records_filename="clearance_share_records.jsonl",
         records_hash_key="clearance_share_records_sha256",
         summary_record_count_key="record_count",
@@ -1082,6 +1344,7 @@ def generate_compact_export(
         clearance_share_bundle.records,
         public_sources,
         label="clearance_share_trend",
+        array_fields=("numerator_source_ids",),
     )
     record_counts = {
         "nationality_indicators": len(compact_indicator_rows),

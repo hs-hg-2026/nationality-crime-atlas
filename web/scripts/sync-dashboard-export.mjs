@@ -9,11 +9,54 @@ import {
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const EXPECTED_COMPACT_EXPORT_SCHEMA_VERSION = 6;
+const EXPECTED_COMPACT_EXPORT_SCHEMA_VERSION = 7;
 const SAME_YEAR_GAP_CONTEXT_ID =
   'all_resident_same_year_recognition_clearance_gap';
 const CLEARANCE_SHARE_TREND_ID =
   'national_criminal_code_clearance_foreign_share';
+const CLEARANCE_SHARE_LABEL_JA =
+  '全国の刑法犯検挙（日本人等を含む）に占める外国人区分の割合';
+const CLEARANCE_SHARE_INTERPRETATION_POLICY =
+  'share_of_clearances_not_population_risk';
+const CLEARANCE_SHARE_UI_CAVEAT =
+  '分母は日本人等を含む全国の刑法犯検挙総数、分子は警察庁の「外国人」「来日外国人」区分、または両者の算術差分である。検挙全体に占める構成比であり、人口当たりの犯罪率、犯罪の発生率、個人のriskを示さない。「来日外国人」は定着居住者、在日米軍関係者、在留資格不明者を除く区分で、短期滞在者だけを指さない。差分にも定着居住者以外が含まれるため、普段から住む外国人だけを表す値ではない。';
+const CLEARANCE_SHARE_SCOPE_CONTRACTS = {
+  all_foreign: {
+    label: '外国人全体',
+    numeratorSourceId: 'S08',
+    numeratorSourceIds: ['S08'],
+    derivationMethod: 'direct_published_counts_division',
+    requiredFlags: [
+      'all_foreign_scope_not_resident_foreigner_population',
+      'denominator_includes_japanese_and_others',
+      'share_of_clearance_counts_not_population_rate',
+    ],
+  },
+  visiting_foreign: {
+    label: '来日外国人',
+    numeratorSourceId: 'S09',
+    numeratorSourceIds: ['S09'],
+    derivationMethod: 'direct_published_counts_division',
+    requiredFlags: [
+      'denominator_includes_japanese_and_others',
+      'share_of_clearance_counts_not_population_rate',
+      'visiting_foreign_includes_nonresidents',
+    ],
+  },
+  all_foreign_minus_visiting_foreign: {
+    label: '外国人全体−来日外国人（差分）',
+    numeratorSourceId: 'S08',
+    numeratorSourceIds: ['S08', 'S09'],
+    derivationMethod: 'arithmetic_residual_all_foreign_minus_visiting_foreign',
+    requiredFlags: [
+      'arithmetic_residual_not_directly_published',
+      'denominator_includes_japanese_and_others',
+      'residual_includes_settled_residents_us_forces_and_unknown_status',
+      'residual_not_equivalent_to_usual_residents',
+      'share_of_clearance_counts_not_population_rate',
+    ],
+  },
+};
 const PUBLICATION_MANIFEST_SCHEMA_VERSION = 1;
 const SAFE_RUN_RELPATH = /^\d{8}_\d{6}_compact_export$/u;
 const SHA256 = /^[a-f0-9]{64}$/u;
@@ -81,6 +124,42 @@ function assertEqual(actual, expected, label) {
   }
 }
 
+function clearanceShareSemanticError(detail) {
+  throw new Error(`Clearance-share semantic contract: ${detail}.`);
+}
+
+function arraysEqual(actual, expected) {
+  return (
+    Array.isArray(actual) &&
+    actual.length === expected.length &&
+    actual.every((value, index) => value === expected[index])
+  );
+}
+
+function validateClearanceShareComponents(record, expected) {
+  if (
+    !Array.isArray(record.source_components) ||
+    record.source_components.some((component) => !isObject(component))
+  ) {
+    clearanceShareSemanticError('source_components must be an object array');
+  }
+  const actual = record.source_components.map((component) => [
+    component.source_id,
+    component.role,
+    component.metric,
+    component.value,
+    component.source_table,
+    component.source_sheet,
+    component.source_row,
+    component.source_column,
+  ]);
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+    clearanceShareSemanticError(
+      'source_components do not match the bound scope inputs',
+    );
+  }
+}
+
 function visitStrings(value, visitor, path = '$') {
   if (typeof value === 'string') {
     visitor(value, path);
@@ -136,6 +215,19 @@ function validateRecordLinks(payload) {
   const offenseCategoryDefinitions = payload.definitions.offense_category_ids;
   const clearanceShareDefinitions = payload.definitions.clearance_share_ids;
   const sources = payload.sources;
+  const clearanceShareDefinition =
+    clearanceShareDefinitions[CLEARANCE_SHARE_TREND_ID];
+  if (
+    !isObject(clearanceShareDefinition) ||
+    clearanceShareDefinition.label_ja !== CLEARANCE_SHARE_LABEL_JA ||
+    clearanceShareDefinition.interpretation_policy !==
+      CLEARANCE_SHARE_INTERPRETATION_POLICY ||
+    clearanceShareDefinition.ui_caveat !== CLEARANCE_SHARE_UI_CAVEAT ||
+    clearanceShareDefinition.display_multiplier !== 100 ||
+    clearanceShareDefinition.display_unit_label_ja !== '%'
+  ) {
+    clearanceShareSemanticError('definition binding differs');
+  }
 
   payload.records.nationality_indicators.forEach((record, index) => {
     requireObject(record, `records.nationality_indicators[${index}]`);
@@ -308,8 +400,21 @@ function validateRecordLinks(payload) {
     if (!['cleared_cases', 'cleared_persons'].includes(record.metric)) {
       throw new Error(`${label} has an unsupported metric.`);
     }
-    if (!['all_foreign', 'visiting_foreign'].includes(record.foreign_scope)) {
+    const scopeContract = CLEARANCE_SHARE_SCOPE_CONTRACTS[record.foreign_scope];
+    if (!scopeContract) {
       throw new Error(`${label} has an unsupported foreign_scope.`);
+    }
+    if (
+      record.foreign_scope_label_ja !== scopeContract.label ||
+      record.numerator_source_id !== scopeContract.numeratorSourceId ||
+      record.denominator_source_id !== 'S15' ||
+      record.derivation_method !== scopeContract.derivationMethod ||
+      record.metric_label_ja !==
+        (record.metric === 'cleared_cases' ? '検挙件数' : '検挙人員')
+    ) {
+      clearanceShareSemanticError(
+        `scope, source, label, or interpretation binding differs at ${label}`,
+      );
     }
     for (const key of ['numerator_source_id', 'denominator_source_id']) {
       if (
@@ -318,6 +423,39 @@ function validateRecordLinks(payload) {
       ) {
         throw new Error(`${label} references an unknown ${key}.`);
       }
+    }
+    if (
+      !Array.isArray(record.numerator_source_ids) ||
+      record.numerator_source_ids.length === 0
+    ) {
+      throw new Error(
+        `${label}.numerator_source_ids must be a non-empty array.`,
+      );
+    }
+    for (const sourceId of record.numerator_source_ids) {
+      if (typeof sourceId !== 'string' || !Object.hasOwn(sources, sourceId)) {
+        throw new Error(`${label} references an unknown numerator source.`);
+      }
+    }
+    if (
+      !arraysEqual(
+        record.numerator_source_ids,
+        scopeContract.numeratorSourceIds,
+      )
+    ) {
+      clearanceShareSemanticError(
+        `numerator source binding differs at ${label}`,
+      );
+    }
+    if (
+      !Array.isArray(record.mismatch_flags) ||
+      !scopeContract.requiredFlags.every((flag) =>
+        record.mismatch_flags.includes(flag),
+      )
+    ) {
+      clearanceShareSemanticError(
+        `required mismatch flags are absent at ${label}`,
+      );
     }
     if (
       record.calculation_status !== 'calculated' ||
@@ -341,6 +479,13 @@ function validateRecordLinks(payload) {
     ) {
       throw new Error(`${label} has inconsistent arithmetic.`);
     }
+    const expectedFormula =
+      record.foreign_scope === 'all_foreign_minus_visiting_foreign'
+        ? `(S08.${record.metric} - S09.${record.metric}) / S15.${record.metric}`
+        : `${scopeContract.numeratorSourceId}.${record.metric} / S15.${record.metric}`;
+    if (record.derivation_formula !== expectedFormula) {
+      clearanceShareSemanticError(`derivation formula differs at ${label}`);
+    }
 
     const uniqueKey = `${record.metric}:${record.year}:${record.foreign_scope}`;
     if (clearanceShareKeys.has(uniqueKey)) {
@@ -354,17 +499,119 @@ function validateRecordLinks(payload) {
     clearanceShareRowsByMetricYear.set(metricYearKey, metricYearRows);
   });
   for (const [metricYear, rows] of clearanceShareRowsByMetricYear) {
+    const allForeign = rows.find((row) => row.foreign_scope === 'all_foreign');
+    const visitingForeign = rows.find(
+      (row) => row.foreign_scope === 'visiting_foreign',
+    );
+    const residual = rows.find(
+      (row) => row.foreign_scope === 'all_foreign_minus_visiting_foreign',
+    );
     if (
-      rows.length !== 2 ||
-      !rows.some((row) => row.foreign_scope === 'all_foreign') ||
-      !rows.some((row) => row.foreign_scope === 'visiting_foreign') ||
-      rows[0].denominator_value !== rows[1].denominator_value ||
-      rows[0].denominator_source_id !== rows[1].denominator_source_id
+      rows.length !== 3 ||
+      !allForeign ||
+      !visitingForeign ||
+      !residual ||
+      rows.some(
+        (row) => row.denominator_value !== allForeign.denominator_value,
+      ) ||
+      rows.some(
+        (row) => row.denominator_source_id !== allForeign.denominator_source_id,
+      )
     ) {
       throw new Error(
-        `Clearance-share scope pair is incomplete for ${metricYear}.`,
+        `Clearance-share scope set is incomplete for ${metricYear}.`,
       );
     }
+    if (
+      visitingForeign.numerator_value > allForeign.numerator_value ||
+      residual.numerator_value !==
+        allForeign.numerator_value - visitingForeign.numerator_value ||
+      residual.derivation_method !==
+        'arithmetic_residual_all_foreign_minus_visiting_foreign' ||
+      residual.numerator_source_ids.length !== 2 ||
+      residual.numerator_source_ids[0] !== allForeign.numerator_source_id ||
+      residual.numerator_source_ids[1] !== visitingForeign.numerator_source_id
+    ) {
+      throw new Error(
+        `Clearance-share residual is inconsistent for ${metricYear}.`,
+      );
+    }
+    validateClearanceShareComponents(allForeign, [
+      [
+        'S08',
+        'numerator',
+        allForeign.metric,
+        allForeign.numerator_value,
+        '130',
+        '01',
+        allForeign.year - 2007,
+        allForeign.metric === 'cleared_cases' ? 7 : 8,
+      ],
+      [
+        'S15',
+        'denominator',
+        allForeign.metric,
+        allForeign.denominator_value,
+        '3',
+        '刑法犯総数',
+        allForeign.year - 2006,
+        allForeign.metric === 'cleared_cases' ? 5 : 6,
+      ],
+    ]);
+    validateClearanceShareComponents(visitingForeign, [
+      [
+        'S09',
+        'numerator',
+        visitingForeign.metric,
+        visitingForeign.numerator_value,
+        '131',
+        '01',
+        visitingForeign.year - 2007,
+        visitingForeign.metric === 'cleared_cases' ? 6 : 7,
+      ],
+      [
+        'S15',
+        'denominator',
+        visitingForeign.metric,
+        visitingForeign.denominator_value,
+        '3',
+        '刑法犯総数',
+        visitingForeign.year - 2006,
+        visitingForeign.metric === 'cleared_cases' ? 5 : 6,
+      ],
+    ]);
+    validateClearanceShareComponents(residual, [
+      [
+        'S08',
+        'numerator_minuend',
+        residual.metric,
+        allForeign.numerator_value,
+        '130',
+        '01',
+        residual.year - 2007,
+        residual.metric === 'cleared_cases' ? 7 : 8,
+      ],
+      [
+        'S09',
+        'numerator_subtrahend',
+        residual.metric,
+        visitingForeign.numerator_value,
+        '131',
+        '01',
+        residual.year - 2007,
+        residual.metric === 'cleared_cases' ? 6 : 7,
+      ],
+      [
+        'S15',
+        'denominator',
+        residual.metric,
+        residual.denominator_value,
+        '3',
+        '刑法犯総数',
+        residual.year - 2006,
+        residual.metric === 'cleared_cases' ? 5 : 6,
+      ],
+    ]);
   }
 }
 

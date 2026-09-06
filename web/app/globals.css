@@ -1118,6 +1118,9 @@ body {
   .clearance-share-legend .visiting-foreign::before {
     background: var(--chart-2);
   }
+  .clearance-share-legend .foreign-residual::before {
+    background: var(--chart-3);
+  }
   .clearance-share-alert {
     margin-top: 1rem;
     border-color: color-mix(in oklch, var(--primary), var(--border) 72%);
@@ -1125,7 +1128,7 @@ body {
   }
   .clearance-share-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.25rem;
     margin-top: 1.25rem;
   }
@@ -1140,7 +1143,7 @@ body {
     aspect-ratio: auto;
   }
   .clearance-share-table {
-    min-width: 480px;
+    min-width: 720px;
   }
   .clearance-share-table th:first-child {
     text-align: left;

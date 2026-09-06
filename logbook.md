@@ -318,3 +318,48 @@
 - **検証結果**: R02–R05のofficial landing pageに、各年の表3／130／131／144 Excel linkが存在することを確認した。R04概要表3-3-3の異常はR04詳細表130の異常を意味しないため、詳細表は独立にreconciliationして採否を決める。
 - **次**: R02–R05表3／130／131をtemporary取得してhash・schema・anchorを監査し、registryへedition追加後にcanonical rawへ取得する。
 - **関連パス**: `docs/20260905_154001_time_series_source_inventory.md`, `config/sources.json`, `data/raw/`
+
+## 2026-09-05 全国検挙構成比を件数・人員の両方で時系列化
+- **何が**: S08の外国人全体、S09の来日外国人、S15の日本人等を含む全国総数から、2015–2024年 × 検挙件数／検挙人員 × 2 scopeの40行を生成し、line chartと全件表へ接続した。日本人の検挙件数は`287,273 − 18,861 = 268,412`として、検挙人員と同様にderived residualで表示できるようにした。
+- **どう判断**: 参考記事の図4が使う「来日外国人」と「外国人全体」は同じ分子ではないため、統合せず別系列にした。分母は対応する日本人等を含む全国検挙総数とし、この値は人口当たりの犯罪率ではなく検挙全体の構成比と常設表示する。
+- **なぜ**: 件数と人員の片方だけでは統計の単位を誤解しやすく、scopeの異なる外国人区分を一つの割合として見せると再現不能になるため。
+- **検証結果**: source rowから全40行を再計算し、2024年は検挙件数が外国人全体18,861 / 287,273 = 6.57%、来日外国人13,405 / 287,273 = 4.67%、検挙人員が10,464 / 191,826 = 5.45%、6,368 / 191,826 = 3.32%と確認した。途中の概算5.46%は直接除算後に5.45%へ訂正した。
+- **関連パス**: `src/nationality_crime_atlas/clearance_share.py`, `config/clearance_share_contracts.json`, `data/processed/_clearance_share_trend/latest.json`, `web/public/data/dashboard_export.json`
+
+## 2026-09-05 全国籍比較を全件order plotへ変更
+- **何が**: 高い側／低い側各5件のcardと、plot内で重複していたcount／参考比率切替を廃止した。算出できる全categoryを参考比率の降順、算出不能を末尾に並べる横棒plotへ変更し、日本は別色にした。raw numerator、denominator、参考比率は全件表に残した。
+- **どう判断／なぜ**: 上位だけの抜粋は多い側へ注意を偏らせ、上下5件でも中間categoryを隠す。全件を同一軸に置けば、恣意的な切り取りを避けつつ、日本のderived referenceも位置関係として確認できる。
+- **検証結果**: frontend 75 test、typecheck、lint、data hash verification、production build、Python 153 testをpassした。Chromeの1440 pxと390 pxで26 category、長い国籍等label、日本の別色、4件の未算出、時系列chart、page横overflowなしを目視確認した。
+- **関連パス**: `web/components/crime-atlas-dashboard.tsx`, `web/lib/dashboard.ts`, `web/app/globals.css`, `web/tests/dashboard.test.tsx`
+
+## 2026-09-06 `外国人全体−来日外国人`を名称を限定して追加
+- **何が**: userから「在日の外国人、すなわち普段から住んでいる外国人は、外国人全体−来日外国人か」と指摘を受けた。警察庁の一次定義を確認し、2015–2024年の検挙件数／人員について第三系列を算術残差として追加した。
+- **どう判断**: 警察庁の「来日外国人」は、定着居住者（永住者、永住者の配偶者等、特別永住者）、在日米軍関係者、在留資格不明者を除く。このため差分は定着居住者だけではなく後二者も含み得る一方、「来日外国人」側にも短期滞在者以外の在留者が含まれ得る。したがって、第三系列は`外国人全体−来日外国人（差分）`とし、「在日外国人」「普段から住む外国人」とは呼ばない。
+- **なぜ**: 計算可能な観測値は隠さず出しつつ、犯罪統計上の分類を人口・居住categoryへ読み替えないため。residual rowはS08／S09の両source ID、算式、direct非公表flagを保持する。
+- **検証結果**: 2024年の差分は検挙件数5,456件／全国比1.8992387%、検挙人員4,096人／2.1352684%。負の差分、三系列の分母不一致、残差算術・source不一致で停止するgateを追加した。最初の生成ではrecordsがschema 2、`latest.json`がschema 1のままというversion不整合をcompact-export gateが検出して停止したため、pointer version testを追加しschema 2へ修正した。compact exportはschema 7、60 trend row、SHA-256 `38421caea476ba64c8ce38ecb1855eec5422db35cad4779b1fa66d6b972cd80f`として再生成した。
+- **一次定義**: `https://www.npa.go.jp/hakusyo/r07/honbun/html/bb4431000.html`
+- **関連パス**: `config/clearance_share_trend_contract.json`, `src/nationality_crime_atlas/clearance_share_trend.py`, `src/nationality_crime_atlas/compact_export.py`, `web/lib/dashboard.ts`, `web/components/crime-atlas-dashboard.tsx`
+
+## 2026-09-06 三系列のresponsive表示と最終quality gate
+- **何が**: 三系列化した時系列表をchartと横並びにすると、desktopでも差分列がcard内の横移動領域へ隠れることを目視確認した。chartと表を縦に並べ、幅720pxの表だけを必要時に表内で横移動する構成へ変更した。
+- **どう判断／なぜ**: 三系列すべてを初期表示で比較できることを優先し、page全体の横overflowは発生させない。mobileでは6列の年次実数表を過度に圧縮すると数値と単位が読みにくいため、表内の横移動は許容する。
+- **検証結果**: Chromeの1440pxで三本の線、凡例、年次表の全列を確認した。390pxではpage幅390px／scroll幅390pxでpage横overflowはなく、表だけが表示枠366px／内容幅720pxで横移動する。最終状態でPython 154 test（skip 0、coverage 83.19%）、Web 75 test（statement 89.01%、branch 81.79%）、typecheck、lint、format、公開data SHA-256検証、production buildをpassした。sandbox内buildはlocalhost listen制限の`EPERM`で停止し、同一commandをsandbox外で実行してstatic route 1件のpre-render完了を確認した。
+- **関連パス**: `web/app/globals.css`, `web/components/crime-atlas-dashboard.tsx`, `README.md`, `README.ja.md`
+
+## 2026-09-06 全国検挙構成比のsemantic gateを独立reviewで強化
+- **何が**: fresh agentによる独立reviewで、算術と既知source IDは検証していても、scope名とS08／S09／S15の役割、安全な差分label、必須warning、metric label、公式表のcell座標を相互に固定していないことが判明した。前entryに存在しない`clearance_share.py`／`clearance_share_contracts.json`を記載した誤りも見つかった。
+- **どう判断／なぜ**: hashだけを閉じても、意味を保ったままhashを再計算した改ざんは防げない。Python compact export、JavaScript publication sync、frontend view modelの三境界で、scope、source、算式、source component、表／sheet／row／column、必須warning、解釈方針とcaveatを固定する。前entryはappend-onlyのため書き換えず、このentryで正しいpathへ訂正する。
+- **検証結果**: source入替、`在留外国人`へのlabel変更、warning削除、source component削除、解釈方針／caveat変更の6 mutationが三境界でREDになり、修正後GREEN。さらに`metric_label_ja=犯罪率`とsource table／row改ざんの2 mutationでREDを確認し、公式cell座標まで検証してGREEN化した。
+- **訂正後の関連パス**: `src/nationality_crime_atlas/clearance_share_trend.py`, `config/clearance_share_trend_contract.json`, `src/nationality_crime_atlas/compact_export.py`, `web/scripts/sync-dashboard-export.mjs`, `web/lib/dashboard.ts`
+
+## 2026-09-06 人口当たり年次plotと日本側構成比の追加要望
+- **何が**: userから、検挙全体に占める外国人区分の割合だけでは、外国人人口の増加と人口当たり参考比率の変化を分けられないため、日本人／外国人それぞれの人口を分母とした検挙件数・人員の年次plotを追加したいという要望があった。また、日本側の検挙構成比も確認したいという要望があった。
+- **どう判断**: 外国人全体の構成比に対する日本側は`100 − 外国人全体の構成比`、すなわち`(S15 − S08) / S15`の算術残差として出せるが、direct公表の日本人値とは呼ばない。90%以上の日本側と外国人3系列を同じy軸に置くと後者が潰れるため別panelにする。人口当たりplotも日本と外国人をpanel分離し、検挙件数／人員を切替可能にする。外国人分子S08と在留外国人人口はscope不一致なので、発生確率やofficial crime rateではなく、公表統計由来の参考比率とする。利用できない年は直近人口で補わず未算出理由を示す。
+- **次**: 取得済みS18／S17系列の日本人人口とS19系列の在留外国人数についてyear coverage・revision・roundingを再確認し、test-firstでannual rate product、compact schema、別panel UIの順に実装する。
+- **関連パス**: `config/sources.json`, `src/nationality_crime_atlas/population.py`, `src/nationality_crime_atlas/clearance_share_trend.py`, `docs/20260905_154001_time_series_source_inventory.md`
+
+## 2026-09-06 全国検挙構成比三系列の最終独立reviewを完了
+- **何が**: 実装に関与していないfresh agentが、全国検挙構成比のPython compact-export gate、JavaScript publication gate、frontend view-model gateと公開artifactを再監査した。
+- **どう判断したか／なぜ**: scope、source、算式、安全なlabel、warning、出典cell座標の意味的結合をrelease boundaryとする。hashと算術のみでは検出できない「意味を改変してhashを再計算したdata」も公開前に停止させるため。
+- **検証結果**: Blocking／High／Medium／Low findingは0件。17種類のsemantic mutationを三つのgateそれぞれが17/17拒否した。60行の算術・式・warning・S08／S09／S15 cell座標の独立再計算も一致。Python 162 tests、Web 91 tests、typecheck、lint、format、公開data検証、`git diff --check`はPASS。compact exportとpublic JSONはbyte-identicalでSHA-256 `38421caea476ba64c8ce38ecb1855eec5422db35cad4779b1fa66d6b972cd80f`。production buildはsandboxのlocalhost bind制限で`EPERM`となるためsandbox外で同一commandを実行し、static route 1件のpre-render完了を確認した。公開対象変更へのprivate local path、個人mail、secret混入は0件。
+- **関連パス**: `src/nationality_crime_atlas/compact_export.py`, `web/scripts/sync-dashboard-export.mjs`, `web/lib/dashboard.ts`, `config/publication/compact_export/20260906_081500_compact_export/`
