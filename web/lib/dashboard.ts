@@ -2197,6 +2197,36 @@ function requireClearancePopulationRow(
   }
 }
 
+function requireCompleteClearancePopulationGrid(
+  rows: ClearancePopulationRow[],
+  definition: ClearancePopulationDefinition,
+): void {
+  const expected = new Set<string>();
+  for (const year of CLEARANCE_POPULATION_YEARS) {
+    for (const metric of ['cleared_cases', 'cleared_persons'] as const) {
+      for (const populationGroup of Object.keys(
+        CLEARANCE_POPULATION_GROUP_CONTRACTS,
+      ) as ClearancePopulationGroup[]) {
+        expected.add(`${year}/${metric}/${populationGroup}`);
+      }
+    }
+  }
+
+  for (const row of rows) {
+    if (row.trend_id !== CLEARANCE_POPULATION_TREND_ID) {
+      clearancePopulationSemanticError('unexpected trend_id');
+    }
+    requireClearancePopulationRow(row, definition);
+    const key = `${row.year}/${row.metric}/${row.population_group}`;
+    if (!expected.delete(key)) {
+      clearancePopulationSemanticError(`duplicate or unexpected row ${key}`);
+    }
+  }
+  if (expected.size !== 0) {
+    clearancePopulationSemanticError('year/metric/group grid is incomplete');
+  }
+}
+
 export function buildClearancePopulationTrendViewModel(
   dashboard: DashboardData,
   metric: ClearanceShareMetric = 'cleared_cases',
@@ -2221,6 +2251,11 @@ export function buildClearancePopulationTrendViewModel(
   ) {
     clearancePopulationSemanticError('definition binding differs');
   }
+
+  requireCompleteClearancePopulationGrid(
+    dashboard.records.clearance_population_trends,
+    definition,
+  );
 
   const selectedRows = dashboard.records.clearance_population_trends.filter(
     (row) =>
