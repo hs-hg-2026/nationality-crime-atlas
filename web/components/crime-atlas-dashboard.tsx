@@ -847,6 +847,7 @@ function ClearancePopulationPanel({
             config={clearancePopulationChartConfig}
             className="clearance-population-chart"
             data-testid="clearance-population-rate-chart"
+            aria-label={`${panel.label}の${view.metricLabel}、人口1,000人当たり参考比率。y軸は${view.referenceRatioAxis.domain[0].toFixed(1)}から${view.referenceRatioAxis.domain[1].toFixed(1)}、目盛り間隔は${view.referenceRatioAxis.tickInterval.toFixed(1)}。`}
             initialDimension={{ width: 620, height: 260 }}
           >
             <LineChart
@@ -865,6 +866,8 @@ function ClearancePopulationPanel({
                 axisLine={false}
                 tickLine={false}
                 tickMargin={8}
+                domain={view.referenceRatioAxis.domain}
+                ticks={view.referenceRatioAxis.ticks}
                 tickFormatter={(value) => Number(value).toFixed(1)}
                 width={42}
               />

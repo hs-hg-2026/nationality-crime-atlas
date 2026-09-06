@@ -693,6 +693,12 @@ export interface ClearancePopulationTrendPanel {
   points: ClearancePopulationTrendPoint[];
 }
 
+export interface ClearancePopulationReferenceRatioAxis {
+  domain: [number, number];
+  ticks: number[];
+  tickInterval: 1;
+}
+
 export interface ClearancePopulationTrendViewModel {
   trendId: typeof CLEARANCE_POPULATION_TREND_ID;
   metric: ClearanceShareMetric;
@@ -702,6 +708,7 @@ export interface ClearancePopulationTrendViewModel {
   years: number[];
   japanese: ClearancePopulationTrendPanel;
   foreign: ClearancePopulationTrendPanel;
+  referenceRatioAxis: ClearancePopulationReferenceRatioAxis;
   uiCaveat: string;
   interpretationPolicy: 'public_data_reference_ratio_not_probability';
   warningCodes: string[];
@@ -2338,6 +2345,17 @@ export function buildClearancePopulationTrendViewModel(
     ...row.numerator_source_ids,
     ...(row.denominator_source_id ? [row.denominator_source_id] : []),
   ]);
+  const referenceRatioMaximum = Math.max(
+    1,
+    Math.ceil(
+      Math.max(
+        0,
+        ...[...japanesePoints, ...foreignPoints].flatMap((point) =>
+          point.referenceRatio === null ? [] : [point.referenceRatio],
+        ),
+      ),
+    ),
+  );
   return {
     trendId: CLEARANCE_POPULATION_TREND_ID,
     metric,
@@ -2354,6 +2372,14 @@ export function buildClearancePopulationTrendViewModel(
       group: 'all_foreign',
       label: CLEARANCE_POPULATION_GROUP_CONTRACTS.all_foreign.label,
       points: foreignPoints,
+    },
+    referenceRatioAxis: {
+      domain: [0, referenceRatioMaximum],
+      ticks: Array.from(
+        { length: referenceRatioMaximum + 1 },
+        (_, index) => index,
+      ),
+      tickInterval: 1,
     },
     uiCaveat: definition.ui_caveat,
     interpretationPolicy: definition.interpretation_policy,
