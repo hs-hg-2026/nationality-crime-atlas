@@ -281,6 +281,11 @@
 - **release状態**: `web/package.json`のpackage versionは`0.1.0`だが、GitHub tag／Releaseは未作成。今回の修正を含むCI成功commitを`v0.1.0`候補とする。
 - **関連パス**: `web/components/crime-atlas-dashboard.tsx`, `web/tests/dashboard.test.tsx`
 
+## 2026-09-06 v0.2.0を公開
+- **何が**: web package versionを0.2.0へ更新したrelease commit `e8a72f2`を対象に、GitHub tagとGitHub Release `v0.2.0`を公開した。
+- **どう確かめたか**: release直前のGitHub Actions run `34006801618`でbuild／deployが成功。GitHub APIでreleaseがdraft=false、prerelease=false、tagがcommit `e8a72f2` を指すことを確認した。
+- **関連パス**: `docs/20260906_113048_v0.2.0_release_notes.md`, `web/package.json`, `web/package-lock.json`
+
 ## 2026-09-06 人口当たり時系列の完全性gateと選択順を修正
 - **何が**: 独立reviewで、2015年の人口当たり参考比率を4行まとめて削除し、summaryとhashも同時に書き換えると、3層のsemantic gateを通ることが分かった。公開画面の「日本を含む国籍等別の全国比較」でも、各選択肢が検挙人員→検挙件数の順になっていた。
 - **どう判断したか／なぜ**: 2015–2024年の10年をschema-v8の必須coverageとし、Python compact exporter、JavaScript publication gate、frontend view modelのそれぞれで40行の完全gridと安全な英語labelを固定した。選択肢はすべて検挙件数→検挙人員の順へ揃え、defaultも検挙件数とした。
