@@ -475,7 +475,23 @@ describe('CrimeAtlasDashboard', () => {
     const selector = within(section).getByRole('combobox', {
       name: '国籍等別の分子・対象範囲',
     });
-    expect(within(selector).getAllByRole('option')).toHaveLength(10);
+    expect(
+      within(selector)
+        .getAllByRole('option')
+        .map((option) => option.textContent),
+    ).toEqual([
+      '刑法犯の検挙件数（日本を含む）',
+      '刑法犯の検挙人員（日本を含む）',
+      '全外国人の検挙件数（同じ国籍区分で人口と対応）',
+      '全外国人の検挙人員（同じ国籍区分で人口と対応）',
+      '来日外国人の検挙件数（同じ国籍区分で人口と対応）',
+      '来日外国人の検挙人員（同じ国籍区分で人口と対応）',
+      '全外国人の検挙件数（公表された国籍区分のまま）',
+      '全外国人の検挙人員（公表された国籍区分のまま）',
+      '来日外国人の検挙件数（公表された国籍区分のまま）',
+      '来日外国人の検挙人員（公表された国籍区分のまま）',
+    ]);
+    expect(selector).toHaveValue('nationality_criminal_code_cleared_cases');
     expect(within(section).getByText('参考比率の式')).toBeVisible();
     expect(
       within(section).getByText(
