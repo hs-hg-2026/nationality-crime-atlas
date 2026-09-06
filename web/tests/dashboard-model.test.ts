@@ -633,6 +633,7 @@ describe('clearance population reference trend model', () => {
     'formula',
     'label_en',
     'drop_2015_slice',
+    'drop_unselected_2015_slice',
   ])('rejects unsafe clearance-population semantics: %s', (mutation) => {
     const dashboard = structuredClone(parseDashboardData(dashboardFixture));
     const target = dashboard.records.clearance_population_trends.find(
@@ -675,6 +676,11 @@ describe('clearance population reference trend model', () => {
       dashboard.records.clearance_population_trends =
         dashboard.records.clearance_population_trends.filter(
           (row) => row.year !== 2015,
+        );
+    } else if (mutation === 'drop_unselected_2015_slice') {
+      dashboard.records.clearance_population_trends =
+        dashboard.records.clearance_population_trends.filter(
+          (row) => !(row.year === 2015 && row.metric === 'cleared_persons'),
         );
     }
 
