@@ -69,6 +69,37 @@ describe('CrimeAtlasDashboard', () => {
     expect(screen.queryByText(/residency scope/)).not.toBeInTheDocument();
   });
 
+  it('offers a clear and privacy-aware path to GitHub Issues', () => {
+    render(<CrimeAtlasDashboard dashboard={dashboard} />);
+
+    const footer = screen.getByRole('contentinfo');
+    expect(
+      within(footer).getByRole('heading', {
+        name: '可視化の提案・不具合報告',
+      }),
+    ).toBeVisible();
+    expect(
+      within(footer).getByText(/GitHub上で公開されます/),
+    ).toHaveTextContent(/個人情報や個別事件を特定できる情報/);
+
+    const createIssueLink = within(footer).getByRole('link', {
+      name: /要望・不具合を送る/,
+    });
+    expect(createIssueLink).toHaveAttribute(
+      'href',
+      'https://github.com/hs-hg-2026/nationality-crime-atlas/issues/new/choose',
+    );
+    expect(createIssueLink).toHaveAttribute('target', '_blank');
+    expect(createIssueLink).toHaveAttribute('rel', 'noreferrer');
+
+    expect(
+      within(footer).getByRole('link', { name: '寄せられた内容を見る' }),
+    ).toHaveAttribute(
+      'href',
+      'https://github.com/hs-hg-2026/nationality-crime-atlas/issues',
+    );
+  });
+
   it('opens on a useful all-resident comparison with permanent cautions', () => {
     render(<CrimeAtlasDashboard dashboard={dashboard} />);
 
