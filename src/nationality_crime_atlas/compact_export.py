@@ -40,6 +40,10 @@ CLEARANCE_POPULATION_INTERPRETATION_POLICY = (
     "public_data_reference_ratio_not_probability"
 )
 CLEARANCE_POPULATION_LABEL_JA = "人口1,000人当たりの刑法犯検挙参考比率"
+CLEARANCE_POPULATION_LABEL_EN = (
+    "Criminal-code clearances per 1,000 reference population"
+)
+CLEARANCE_POPULATION_YEARS = tuple(range(2015, 2025))
 CLEARANCE_POPULATION_UI_CAVEAT = (
     "1年間の刑法犯検挙件数または検挙人員を、10月1日の日本人人口または"
     "12月31日の在留外国人数で単純に割った公表統計由来の参考比率である。犯罪統計の分子から"
@@ -1193,6 +1197,8 @@ def _validate_clearance_population_bundle(bundle: _DatasetBundle) -> None:
         )
     if year_count != len(years):
         raise SchemaError("clearance population summary year_count differs")
+    if years != list(CLEARANCE_POPULATION_YEARS):
+        _clearance_population_semantic_error("year coverage differs")
     if bundle.summary.get("trend_id") != CLEARANCE_POPULATION_TREND_ID:
         _clearance_population_semantic_error("summary trend_id differs")
 
@@ -1216,6 +1222,7 @@ def _validate_clearance_population_bundle(bundle: _DatasetBundle) -> None:
         if (
             row.get("trend_id") != CLEARANCE_POPULATION_TREND_ID
             or row.get("label_ja") != CLEARANCE_POPULATION_LABEL_JA
+            or row.get("label_en") != CLEARANCE_POPULATION_LABEL_EN
             or row.get("interpretation_policy")
             != CLEARANCE_POPULATION_INTERPRETATION_POLICY
             or row.get("ui_caveat") != CLEARANCE_POPULATION_UI_CAVEAT

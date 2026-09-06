@@ -690,16 +690,16 @@ describe('selectable all-nationality comparison model', () => {
     expect(
       NATIONALITY_PERSPECTIVES.map((perspective) => perspective.id),
     ).toEqual([
-      'nationality_criminal_code_cleared_persons',
       'nationality_criminal_code_cleared_cases',
-      'x_cleared_persons_exact',
+      'nationality_criminal_code_cleared_persons',
       'x_cleared_cases_exact',
-      'y_cleared_persons_exact',
+      'x_cleared_persons_exact',
       'y_cleared_cases_exact',
-      'x_cleared_persons_as_published_mismatch',
+      'y_cleared_persons_exact',
       'x_cleared_cases_as_published_mismatch',
-      'y_cleared_persons_as_published_mismatch',
+      'x_cleared_persons_as_published_mismatch',
       'y_cleared_cases_as_published_mismatch',
+      'y_cleared_persons_as_published_mismatch',
     ]);
   });
 

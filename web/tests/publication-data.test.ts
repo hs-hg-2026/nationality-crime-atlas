@@ -733,6 +733,28 @@ describe('dashboard publication bundle', () => {
     expect(result.status, result.stderr).toBe(0);
   });
 
+  it('rejects a self-declared partial clearance population range', () => {
+    const directory = makeTemporaryDirectory();
+    const source = makeCompactSource(directory);
+    const payload = JSON.parse(readFileSync(source.dashboardPath, 'utf8'));
+    addClearancePopulationFixture(payload);
+    writeHashClosedSchema8Dashboard(source, payload);
+
+    const result = runScript([
+      '--pointer',
+      source.pointerPath,
+      '--publication-pointer',
+      join(directory, 'publication/compact_export/latest.json'),
+      '--destination',
+      join(directory, 'published.json'),
+      '--manifest',
+      join(directory, 'published.manifest.json'),
+    ]);
+
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toMatch(/clearance-population semantic contract/i);
+  });
+
   it.each([
     'group_label',
     'source_binding',

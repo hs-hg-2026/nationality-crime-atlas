@@ -838,28 +838,45 @@ def _clearance_population_fixture(tmp_path: Path) -> Path:
         "居住者だけを識別できず、特に「外国人全体」と在留外国人人口の対象範囲は一致しない。"
         "犯罪を行う確率や公的な犯罪率を示さない。"
     )
-    values = {
-        2015: {
-            "cleared_cases": (700, 70),
-            "cleared_persons": (350, 45),
-            "japanese_population": 125_000_000,
-            "japanese_source": "S18",
-        },
-        2024: {
-            "cleared_cases": (600, 60),
-            "cleared_persons": (300, 40),
-            "japanese_population": 120_000_000,
-            "japanese_source": "S17",
-            "foreign_population": 100_000,
-            "foreign_source": "S19_2024",
-        },
+    foreign_coordinates = {
+        2016: ("16-12-01-1", 7, 3),
+        2017: ("17-12-01-1", 7, 3),
+        2018: ("18-12-01-1", 7, 3),
+        2019: ("19-12-01-1", 7, 2),
+        2020: ("20-12-01-1", 7, 2),
+        2021: ("21-12-01-1", 7, 2),
+        2022: ("22-12-01m", 5, 6),
+        2023: ("23-12-01m", 5, 5),
+        2024: ("24-12-01m", 5, 5),
     }
+    values = {}
+    for year in range(2015, 2025):
+        offset = year - 2015
+        annual = {
+            "cleared_cases": (700 - offset * 100 // 9, 70 - offset * 10 // 9),
+            "cleared_persons": (350 - offset * 50 // 9, 45 - offset * 5 // 9),
+            "japanese_population": 125_000_000 - offset * 5_000_000 // 9,
+            "japanese_source": (
+                "S18"
+                if year <= 2020
+                else "S17" if year == 2024 else "S17_%d" % year
+            ),
+        }
+        if year >= 2016:
+            annual.update(
+                {
+                    "foreign_population": 100_000,
+                    "foreign_source": "S19_%d" % year,
+                }
+            )
+        values[year] = annual
     records = []
     for year, annual in values.items():
         for metric in ("cleared_cases", "cleared_persons"):
             all_person, all_foreign = annual[metric]
             japanese_population = annual["japanese_population"]
             japanese_source = annual["japanese_source"]
+            japanese_is_intercensal = japanese_source == "S18"
             japanese_numerator = all_person - all_foreign
             japanese_components = [
                 {
@@ -884,14 +901,14 @@ def _clearance_population_fixture(tmp_path: Path) -> Path:
                 },
                 {
                     "source_id": japanese_source,
-                    "source_table": "5" if year == 2015 else "2",
+                    "source_table": "5" if japanese_is_intercensal else "2",
                     "source_sheet": (
                         "日本人人口 (2015年～2020年)"
-                        if year == 2015
+                        if japanese_is_intercensal
                         else "第2表"
                     ),
-                    "source_row": 11 if year == 2015 else 12,
-                    "source_column": 5 if year == 2015 else 9,
+                    "source_row": 11 if japanese_is_intercensal else 12,
+                    "source_column": year - 2010 if japanese_is_intercensal else 9,
                     "metric": "population",
                     "value": japanese_population,
                     "published_value": japanese_population // 1000,
@@ -1034,13 +1051,16 @@ def _clearance_population_fixture(tmp_path: Path) -> Path:
                 ],
             }
             if foreign_population is not None:
+                foreign_sheet, foreign_source_row, foreign_source_column = (
+                    foreign_coordinates[year]
+                )
                 foreign_row["source_components"].append(
                     {
                         "source_id": foreign_source,
                         "source_table": "1",
-                        "source_sheet": "24-12-01m",
-                        "source_row": 5,
-                        "source_column": 5,
+                        "source_sheet": foreign_sheet,
+                        "source_row": foreign_source_row,
+                        "source_column": foreign_source_column,
                         "metric": "population",
                         "value": foreign_population,
                         "published_value": foreign_population,
@@ -1051,6 +1071,24 @@ def _clearance_population_fixture(tmp_path: Path) -> Path:
             records.append(foreign_row)
 
     records_hash = _write_jsonl(records_path, records)
+    source_artifacts = {
+        "S08": _s08_source_artifact(),
+        "S15": _source_artifact("S15", "3"),
+        "S17": _source_artifact("S17", "2"),
+        "S18": _source_artifact("S18", "5"),
+    }
+    source_artifacts.update(
+        {
+            "S17_%d" % year: _source_artifact("S17_%d" % year, "2")
+            for year in range(2021, 2024)
+        }
+    )
+    source_artifacts.update(
+        {
+            "S19_%d" % year: _source_artifact("S19_%d" % year, "1")
+            for year in range(2016, 2025)
+        }
+    )
     _write_json(
         summary_path,
         {
@@ -1058,16 +1096,10 @@ def _clearance_population_fixture(tmp_path: Path) -> Path:
             "generated_at": "2026-09-06T10:30:00+09:00",
             "trend_id": "national_clearance_population_reference_ratio",
             "record_count": len(records),
-            "year_count": 2,
-            "years": [2015, 2024],
-            "status_counts": {"calculated": 6, "refused": 2},
-            "source_artifacts": {
-                "S08": _s08_source_artifact(),
-                "S15": _source_artifact("S15", "3"),
-                "S17": _source_artifact("S17", "2"),
-                "S18": _source_artifact("S18", "5"),
-                "S19_2024": _source_artifact("S19_2024", "1"),
-            },
+            "year_count": 10,
+            "years": list(range(2015, 2025)),
+            "status_counts": {"calculated": 38, "refused": 2},
+            "source_artifacts": source_artifacts,
         },
     )
     _write_json(
@@ -1124,10 +1156,9 @@ def _rewrite_clearance_population_records(latest_path: Path, mutation: str) -> N
         rows = [row for row in rows if row["year"] != 2015]
         summary = json.loads(summary_path.read_text(encoding="utf-8"))
         summary["record_count"] = len(rows)
-        summary["year_count"] = 1
-        summary["years"] = [2024]
-        summary["status_counts"] = {"calculated": 4, "refused": 0}
-        summary["source_artifacts"].pop("S18")
+        summary["year_count"] = 9
+        summary["years"] = list(range(2016, 2025))
+        summary["status_counts"] = {"calculated": 36, "refused": 0}
         _write_json(summary_path, summary)
         latest["summary_sha256"] = sha256_file(summary_path)
     else:  # pragma: no cover - test helper guard
@@ -1372,7 +1403,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
         "nationality_comparison": 1,
         "offense_composition": 12,
         "clearance_share_trends": 6,
-        "clearance_population_trends": 8,
+        "clearance_population_trends": 40,
     }
     assert latest["run_relpath"] == "20260901_180000_compact_export"
     assert latest["dashboard_export_sha256"] == sha256_file(report.export_path)
@@ -1382,7 +1413,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert summary["record_counts"]["nationality_comparison"] == 1
     assert summary["record_counts"]["offense_composition"] == 12
     assert summary["record_counts"]["clearance_share_trends"] == 6
-    assert summary["record_counts"]["clearance_population_trends"] == 8
+    assert summary["record_counts"]["clearance_population_trends"] == 40
     assert payload["sources"]["S08"]["publisher"] == "National Police Agency of Japan"
     assert payload["sources"]["S16"]["source_table"] == "144"
     assert payload["sources"]["S17"]["source_table"] == "2"
@@ -1594,7 +1625,7 @@ def test_compact_export_cli_writes_timestamped_bundle(tmp_path, capsys):
         "nationality_indicators": 2,
         "offense_composition": 12,
         "clearance_share_trends": 6,
-        "clearance_population_trends": 8,
+        "clearance_population_trends": 40,
     }
     assert payload["output_dir"].endswith("20260901_180000_compact_export")
 

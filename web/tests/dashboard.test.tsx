@@ -284,12 +284,12 @@ describe('CrimeAtlasDashboard', () => {
     ).toHaveLength(26);
     expect(
       within(orderedPlot).getAllByTestId('nationality-order-row')[0],
-    ).toHaveTextContent(/無国籍.*10\.68/);
+    ).toHaveTextContent(/ベトナム.*9\.72/);
     expect(
       within(orderedPlot)
         .getByTestId('nationality-order-japanese')
         .closest('.nationality-order-row'),
-    ).toHaveTextContent(/日本（残差による参考値）.*1\.51/);
+    ).toHaveTextContent(/日本（残差による参考値）.*2\.23/);
     expect(
       within(section).queryByTestId('nationality-high-side'),
     ).not.toBeInTheDocument();
@@ -298,13 +298,13 @@ describe('CrimeAtlasDashboard', () => {
     ).not.toBeInTheDocument();
     expect(
       within(section).queryByRole('button', {
-        name: '実数（検挙人員）',
+        name: '実数（検挙件数）',
       }),
     ).not.toBeInTheDocument();
     expect(within(fullTable).getAllByRole('row')).toHaveLength(27);
     expect(
       within(fullTable).getByTestId('nationality-japanese-reference'),
-    ).toHaveTextContent(/日本（残差による参考値）.*181,362.*120,296,000.*1.51/);
+    ).toHaveTextContent(/日本（残差による参考値）.*268,412.*120,296,000.*2.23/);
     expect(within(fullTable).getByText('国籍不明')).toBeVisible();
     expect(within(fullTable).getAllByText('未算出')).toHaveLength(4);
 

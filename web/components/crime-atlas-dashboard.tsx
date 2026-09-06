@@ -57,7 +57,7 @@ import {
   type DashboardData,
   formatDashboardValue,
   type NationalityComparisonViewModel,
-  NATIONALITY_COMPARISON_ID,
+  NATIONALITY_CASES_COMPARISON_ID,
   NATIONALITY_PERSPECTIVES,
   type NationalityPerspectiveId,
   type OffenseCompositionEntity,
@@ -1279,7 +1279,7 @@ export function CrimeAtlasDashboard({
   );
   const [mode, setMode] = useState<ValueMode>('ratio');
   const [nationalityPerspectiveId, setNationalityPerspectiveId] =
-    useState<NationalityPerspectiveId>(NATIONALITY_COMPARISON_ID);
+    useState<NationalityPerspectiveId>(NATIONALITY_CASES_COMPARISON_ID);
   const [clearanceShareMetric, setClearanceShareMetric] =
     useState<ClearanceShareMetric>('cleared_cases');
   const [clearancePopulationMetric, setClearancePopulationMetric] =

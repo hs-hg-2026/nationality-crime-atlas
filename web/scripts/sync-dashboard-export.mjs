@@ -60,6 +60,12 @@ const CLEARANCE_SHARE_SCOPE_CONTRACTS = {
 const CLEARANCE_POPULATION_TREND_ID =
   'national_clearance_population_reference_ratio';
 const CLEARANCE_POPULATION_LABEL_JA = '人口1,000人当たりの刑法犯検挙参考比率';
+const CLEARANCE_POPULATION_LABEL_EN =
+  'Criminal-code clearances per 1,000 reference population';
+const CLEARANCE_POPULATION_YEARS = Array.from(
+  { length: 10 },
+  (_, index) => 2015 + index,
+);
 const CLEARANCE_POPULATION_INTERPRETATION_POLICY =
   'public_data_reference_ratio_not_probability';
 const CLEARANCE_POPULATION_UI_CAVEAT =
@@ -299,6 +305,7 @@ function validateClearancePopulationRecords(payload, definitions, sources) {
   if (
     !isObject(definition) ||
     definition.label_ja !== CLEARANCE_POPULATION_LABEL_JA ||
+    definition.label_en !== CLEARANCE_POPULATION_LABEL_EN ||
     definition.interpretation_policy !==
       CLEARANCE_POPULATION_INTERPRETATION_POLICY ||
     definition.ui_caveat !== CLEARANCE_POPULATION_UI_CAVEAT ||
@@ -562,6 +569,21 @@ function validateClearancePopulationRecords(payload, definitions, sources) {
       .filter((record) => record.foreign_scope === 'all_foreign')
       .map((record) => [`${record.metric}:${record.year}`, record]),
   );
+  const expectedKeys = new Set(
+    ['cleared_cases', 'cleared_persons'].flatMap((metric) =>
+      CLEARANCE_POPULATION_YEARS.flatMap((year) =>
+        Object.keys(CLEARANCE_POPULATION_GROUP_CONTRACTS).map(
+          (group) => `${metric}:${year}:${group}`,
+        ),
+      ),
+    ),
+  );
+  if (
+    uniqueKeys.size !== expectedKeys.size ||
+    [...expectedKeys].some((key) => !uniqueKeys.has(key))
+  ) {
+    clearancePopulationSemanticError('year/group/metric grid differs');
+  }
   for (const [metricYear, rows] of rowsByMetricYear) {
     const japanese = rows.find(
       (row) => row.population_group === 'japanese_etc_residual',

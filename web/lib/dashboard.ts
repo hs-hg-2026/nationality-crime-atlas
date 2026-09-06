@@ -115,6 +115,12 @@ const CLEARANCE_SHARE_SCOPE_CONTRACTS = {
 } as const;
 
 const CLEARANCE_POPULATION_LABEL_JA = '人口1,000人当たりの刑法犯検挙参考比率';
+const CLEARANCE_POPULATION_LABEL_EN =
+  'Criminal-code clearances per 1,000 reference population';
+const CLEARANCE_POPULATION_YEARS = Array.from(
+  { length: 10 },
+  (_, index) => 2015 + index,
+);
 const CLEARANCE_POPULATION_INTERPRETATION_POLICY =
   'public_data_reference_ratio_not_probability';
 const CLEARANCE_POPULATION_UI_CAVEAT =
@@ -180,44 +186,44 @@ type ClearancePopulationGroup =
 
 export const NATIONALITY_PERSPECTIVES = [
   {
-    id: NATIONALITY_COMPARISON_ID,
-    label: '刑法犯の検挙人員（日本を含む）',
-  },
-  {
     id: NATIONALITY_CASES_COMPARISON_ID,
     label: '刑法犯の検挙件数（日本を含む）',
   },
   {
-    id: 'x_cleared_persons_exact',
-    label: '全外国人の検挙人員（同じ国籍区分で人口と対応）',
+    id: NATIONALITY_COMPARISON_ID,
+    label: '刑法犯の検挙人員（日本を含む）',
   },
   {
     id: 'x_cleared_cases_exact',
     label: '全外国人の検挙件数（同じ国籍区分で人口と対応）',
   },
   {
-    id: 'y_cleared_persons_exact',
-    label: '来日外国人の検挙人員（同じ国籍区分で人口と対応）',
+    id: 'x_cleared_persons_exact',
+    label: '全外国人の検挙人員（同じ国籍区分で人口と対応）',
   },
   {
     id: 'y_cleared_cases_exact',
     label: '来日外国人の検挙件数（同じ国籍区分で人口と対応）',
   },
   {
-    id: 'x_cleared_persons_as_published_mismatch',
-    label: '全外国人の検挙人員（公表された国籍区分のまま）',
+    id: 'y_cleared_persons_exact',
+    label: '来日外国人の検挙人員（同じ国籍区分で人口と対応）',
   },
   {
     id: 'x_cleared_cases_as_published_mismatch',
     label: '全外国人の検挙件数（公表された国籍区分のまま）',
   },
   {
-    id: 'y_cleared_persons_as_published_mismatch',
-    label: '来日外国人の検挙人員（公表された国籍区分のまま）',
+    id: 'x_cleared_persons_as_published_mismatch',
+    label: '全外国人の検挙人員（公表された国籍区分のまま）',
   },
   {
     id: 'y_cleared_cases_as_published_mismatch',
     label: '来日外国人の検挙件数（公表された国籍区分のまま）',
+  },
+  {
+    id: 'y_cleared_persons_as_published_mismatch',
+    label: '来日外国人の検挙人員（公表された国籍区分のまま）',
   },
 ] as const;
 
@@ -2206,6 +2212,7 @@ export function buildClearancePopulationTrendViewModel(
   }
   if (
     definition.label_ja !== CLEARANCE_POPULATION_LABEL_JA ||
+    definition.label_en !== CLEARANCE_POPULATION_LABEL_EN ||
     definition.interpretation_policy !==
       CLEARANCE_POPULATION_INTERPRETATION_POLICY ||
     definition.ui_caveat !== CLEARANCE_POPULATION_UI_CAVEAT ||
@@ -2240,6 +2247,12 @@ export function buildClearancePopulationTrendViewModel(
   }
 
   const years = [...rowsByYear.keys()].sort((left, right) => left - right);
+  if (
+    years.length !== CLEARANCE_POPULATION_YEARS.length ||
+    years.some((year, index) => year !== CLEARANCE_POPULATION_YEARS[index])
+  ) {
+    clearancePopulationSemanticError('year coverage differs');
+  }
   const japanesePoints: ClearancePopulationTrendPoint[] = [];
   const foreignPoints: ClearancePopulationTrendPoint[] = [];
   for (const year of years) {
