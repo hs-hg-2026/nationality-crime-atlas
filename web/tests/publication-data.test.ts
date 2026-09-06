@@ -717,7 +717,6 @@ describe('dashboard publication bundle', () => {
     const directory = makeTemporaryDirectory();
     const source = makeCompactSource(directory);
     const payload = JSON.parse(readFileSync(source.dashboardPath, 'utf8'));
-    addClearancePopulationFixture(payload);
     writeHashClosedSchema8Dashboard(source, payload);
 
     const result = runScript([
@@ -743,11 +742,12 @@ describe('dashboard publication bundle', () => {
     'population_reference_date',
     'metric_label',
     'formula',
+    'label_en',
+    'drop_2015_slice',
   ])('rejects unsafe clearance-population semantics: %s', (mutation) => {
     const directory = makeTemporaryDirectory();
     const source = makeCompactSource(directory);
     const payload = JSON.parse(readFileSync(source.dashboardPath, 'utf8'));
-    addClearancePopulationFixture(payload);
     const rows: MutableFixtureRecord[] =
       payload.records.clearance_population_trends;
     const target = rows.find(
@@ -779,6 +779,14 @@ describe('dashboard publication bundle', () => {
       target.metric_label_ja = '犯罪率';
     } else if (mutation === 'formula') {
       target.derivation_formula = 'S08.cleared_cases / S15.population';
+    } else if (mutation === 'label_en') {
+      payload.definitions.clearance_population_ids[
+        'national_clearance_population_reference_ratio'
+      ].label_en = 'Official criminality rate per population';
+    } else if (mutation === 'drop_2015_slice') {
+      payload.records.clearance_population_trends = rows.filter(
+        (row) => row.year !== 2015,
+      );
     }
     writeHashClosedSchema8Dashboard(source, payload);
 

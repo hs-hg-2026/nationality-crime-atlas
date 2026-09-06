@@ -631,6 +631,8 @@ describe('clearance population reference trend model', () => {
     'population_reference_date',
     'metric_label',
     'formula',
+    'label_en',
+    'drop_2015_slice',
   ])('rejects unsafe clearance-population semantics: %s', (mutation) => {
     const dashboard = structuredClone(parseDashboardData(dashboardFixture));
     const target = dashboard.records.clearance_population_trends.find(
@@ -662,6 +664,18 @@ describe('clearance population reference trend model', () => {
       target.metric_label_ja = '犯罪率';
     } else if (mutation === 'formula') {
       target.derivation_formula = 'S08.cleared_cases / S15.population';
+    } else if (mutation === 'label_en') {
+      Object.assign(
+        dashboard.definitions.clearance_population_ids[
+          'national_clearance_population_reference_ratio'
+        ],
+        { label_en: 'Official criminality rate per population' },
+      );
+    } else if (mutation === 'drop_2015_slice') {
+      dashboard.records.clearance_population_trends =
+        dashboard.records.clearance_population_trends.filter(
+          (row) => row.year !== 2015,
+        );
     }
 
     expect(() =>

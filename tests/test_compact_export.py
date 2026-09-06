@@ -1086,11 +1086,9 @@ def _clearance_population_fixture(tmp_path: Path) -> Path:
 
 def _rewrite_clearance_population_records(latest_path: Path, mutation: str) -> None:
     latest = json.loads(latest_path.read_text(encoding="utf-8"))
-    records_path = (
-        latest_path.parent
-        / latest["run_relpath"]
-        / "clearance_population_records.jsonl"
-    )
+    run_dir = latest_path.parent / latest["run_relpath"]
+    records_path = run_dir / "clearance_population_records.jsonl"
+    summary_path = run_dir / "summary.json"
     rows = [
         json.loads(line)
         for line in records_path.read_text(encoding="utf-8").splitlines()
@@ -1119,6 +1117,19 @@ def _rewrite_clearance_population_records(latest_path: Path, mutation: str) -> N
         target["metric_label_ja"] = "犯罪率"
     elif mutation == "formula":
         target["derivation_formula"] = "S08.cleared_cases / S15.population"
+    elif mutation == "label_en":
+        for row in rows:
+            row["label_en"] = "Official criminality rate per population"
+    elif mutation == "drop_2015_slice":
+        rows = [row for row in rows if row["year"] != 2015]
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        summary["record_count"] = len(rows)
+        summary["year_count"] = 1
+        summary["years"] = [2024]
+        summary["status_counts"] = {"calculated": 4, "refused": 0}
+        summary["source_artifacts"].pop("S18")
+        _write_json(summary_path, summary)
+        latest["summary_sha256"] = sha256_file(summary_path)
     else:  # pragma: no cover - test helper guard
         raise AssertionError("Unsupported fixture mutation: %s" % mutation)
     latest["clearance_population_records_sha256"] = _write_jsonl(
@@ -1486,6 +1497,8 @@ def test_compact_export_rejects_unsafe_clearance_share_semantics(
         "population_reference_date",
         "metric_label",
         "formula",
+        "label_en",
+        "drop_2015_slice",
     ],
 )
 def test_compact_export_rejects_unsafe_clearance_population_semantics(
