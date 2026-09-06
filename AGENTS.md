@@ -19,6 +19,7 @@ Codex 用の作業指示（この repo 固有の *確定ルール* だけ）。�
 - regenerate all-resident regional context: `.venv/bin/nca-build-all-resident-context`
 - regenerate nationality offense composition: `.venv/bin/nca-build-offense-composition`
 - regenerate national clearance-share trend: `.venv/bin/nca-build-clearance-share-trend`
+- regenerate national clearance population-reference trend: `.venv/bin/nca-build-clearance-population-trend`
 - regenerate compact dashboard export: `.venv/bin/nca-build-compact-export`
 - regenerate small-number sensitivity audit: `.venv/bin/nca-audit-small-numbers`
 - regenerate pinned map module: `cd web && npm run generate:map`

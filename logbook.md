@@ -281,6 +281,24 @@
 - **release状態**: `web/package.json`のpackage versionは`0.1.0`だが、GitHub tag／Releaseは未作成。今回の修正を含むCI成功commitを`v0.1.0`候補とする。
 - **関連パス**: `web/components/crime-atlas-dashboard.tsx`, `web/tests/dashboard.test.tsx`
 
+## 2026-09-06 人口当たり時系列の完全性gateと選択順を修正
+- **何が**: 独立reviewで、2015年の人口当たり参考比率を4行まとめて削除し、summaryとhashも同時に書き換えると、3層のsemantic gateを通ることが分かった。公開画面の「日本を含む国籍等別の全国比較」でも、各選択肢が検挙人員→検挙件数の順になっていた。
+- **どう判断したか／なぜ**: 2015–2024年の10年をschema-v8の必須coverageとし、Python compact exporter、JavaScript publication gate、frontend view modelのそれぞれで40行の完全gridと安全な英語labelを固定した。選択肢はすべて検挙件数→検挙人員の順へ揃え、defaultも検挙件数とした。
+- **検証結果**: 完全なfixtureで範囲抜落と不適切な`label_en`を3層すべてが拒否。さらに、未選択の検挙人員の2015年2行だけを削除する改変も、defaultの検挙件数表示時点でfrontendが拒否する。Python 176 test、Web 117 test、typecheck、lint、format、公開data SHA-256検証、production buildをPASSした。
+- **関連パス**: `src/nationality_crime_atlas/compact_export.py`, `tests/test_compact_export.py`, `web/scripts/sync-dashboard-export.mjs`, `web/lib/dashboard.ts`, `web/components/crime-atlas-dashboard.tsx`
+
+## 2026-09-06 schema-v8最終独立re-reviewでfindingをclose
+- **何が**: 修正に関与していないreviewerが、未選択の検挙人員の2015年2行を削除した38行bundleをdefaultの検挙件数viewに入れる改変probeを再実行した。
+- **どう判断したか／なぜ**: frontendは選択metricを抽出する前に2015–2024年 × 2 metrics × 2 groupsの全40-keyと全row semanticsを検査するため、この改変を即時拒否した。
+- **結果**: 前回のMedium findingはclose。新しいBlocking／High／Medium／Low findingは0件。reviewerはread-onlyでファイルを変更していない。
+- **関連パス**: `web/lib/dashboard.ts`, `web/tests/dashboard-model.test.ts`, `docs/workflow.md`
+
+## 2026-09-06 schema-v8をGitHub Pagesへdeploy
+- **何が**: 検証済みの57 commitsを`main`へpushし、GitHub Actions run `34006089452`がbuildとdeployの両jobで成功した。
+- **どう確かめたか**: liveの`dashboard_export.json`を再取得し、repository内の公開copyとgenerated compact exportの3者がbyte-identical、SHA-256 `80b33e28babe7285c67e03e1d92fee1d0ca082d33176c272d5d8334b402e4e67`であることを確認した。live HTMLで人口時系列の見出しと、全国比較の選択肢が検挙件数→検挙人員の順であることも確認した。
+- **注記**: Actionsが使う一部のGitHub公式actionにNode.js 20 deprecation warningが出たが、GitHub側でNode.js 24に強制実行され、build・deployは成功した。将来のworkflow maintenance候補とする。
+- **関連パス**: `.github/workflows/pages.yml`, `web/public/data/dashboard_export.json`, `docs/workflow.md`
+
 ## 2026-09-05 v0.1.0前のdependency security audit
 - **何が**: GitHub Release前に`npm audit`を実行し、full treeで11件（low 1／moderate 2／high 8）、`--omit=dev`でも6件（low 1／high 5）のadvisoryを検出した。Dependabot alertsはrepository設定で無効、secret-scanningのopen alertは0件だった。
 - **どう判断**: `npm audit fix --force`はdirect dependencyのrange外更新を要求するため、release直前に無検証で適用しない。公式advisoryとdependency treeを照合し、該当attack surfaceはReact Server Functions、network公開したWindows development server、Node側のuntrusted image処理、SOCKS proxy／WebSocket等だった。v0.1.0が配信するのはGitHub Pagesの32-file static client artifactだけで、server endpoint、development server、画像upload処理を公開しないため、deployed siteのrelease blockerとはしない。
@@ -374,3 +392,15 @@
 - **何が**: userから、公開サイト下部からGitHub Issuesへ移動できる導線と、可視化requestを受け取りやすくする鋳型の提案があった。
 - **どう判断したか／なぜ**: 現在の人口当たり年次表示を先に完了し、次の候補とする。可視化提案と不具合報告はtemplateを分け、前者には「見たい対象、分子、分母、期間、地域粒度、希望する図、知りたいこと」を含める。
 - **関連候補**: `.github/ISSUE_TEMPLATE/`, `web/components/crime-atlas-dashboard.tsx`
+
+## 2026-09-06 日本人等／外国人全体の人口当たり検挙時系列を実装
+- **何が**: 2015–2024年 × 検挙件数／検挙人員 × 日本人等／外国人全体の40行を生成し、分子、参照人口、人口1,000人当たり参考比率を別panelで表示した。compact exportをschema v8へ更新し、21件のpublic source metadataとともに公開用bundleへ反映した。
+- **どう判断したか／なぜ**: 日本人等は`S15全国総数 − S08外国人全体`の算術残差を10月1日の日本人人口で割り、外国人全体はS08を12月31日の在留外国人数で割る。両者を同一population scopeとは扱わず、犯罪発生確率やofficial crime rateとも呼ばない。2015年の外国人分母は登録sourceがないため直近値で補わず、分子を保持して2 metricとも明示的にrefuseした。
+- **検証結果**: 40行中38 calculated／2 refused。2024年の検挙件数は日本人等268,412 / 120,296,000 = 2.2313、外国人全体18,861 / 3,768,977 = 5.0043（いずれも人口1,000人当たり参考比率）。Python 174 test、Web 111 test、typecheck、lint、format、公開data SHA-256検証、production buildをPASSした。Chromeの1440px／390pxで別panel、2種類のline chart、注意書き、表を目視確認した。sandbox内buildだけはlocalhost bind制限の`EPERM`となり、同一commandをsandbox外で再実行してstatic route 1件のpre-render完了を確認した。
+- **関連パス**: `config/clearance_population_trend_contract.json`, `src/nationality_crime_atlas/clearance_population_trend.py`, `data/processed/_clearance_population_trend/20260906_093002_clearance_population_trend/`, `output/compact_export/20260906_104500_compact_export/`, `web/public/data/dashboard_export.json`
+
+## 2026-09-06 過去年人口sourceの英語fallbackを日本語化
+- **何が**: browser確認後に、schema v8で追加したS17過去年、S18、S19過去年の出典カードだけ、public metadataの英語dataset／publisher／periodへfallbackすることを確認した。
+- **どう判断したか／なぜ**: source metadata自体はprovenanceとして変更せず、公開画面の表示層でsource IDから日本語名と基準日を組み立てる。以前確定した「内部用語や英語混じりを一般読者へそのまま出さない」方針を新sourceにも一貫させるため。
+- **検証結果**: 英語publisher名が残る状態でUI testのREDを確認し、日本語表示追加後にfocused 13 test、typecheck、lint、formatをPASSした。
+- **関連パス**: `web/components/crime-atlas-dashboard.tsx`, `web/tests/dashboard.test.tsx`
