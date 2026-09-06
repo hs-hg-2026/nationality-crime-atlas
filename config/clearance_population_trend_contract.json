@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "artifact_pins": {
+    "S08": "23ccb60d89c9b4bdaa898105753506a61d8354a0ae87b01598f6c97f4efd6a83",
+    "S15": "f1c597114874c1a0ba6b87e9a7d7fcbb48041defb7cb16a874c2c9542991d75b",
+    "S17": "171c9930a3c881c42ded00fbaace83b4e6dd226d1a90cfddecd1daca2e376e82",
+    "S17_2021": "5acd98b56ab29648d39c780098826c8916cd5daddf663bcf72d1198e32aef226",
+    "S17_2022": "c91ad5d7dd29f067f0d20d27575e8fcc1ab1fb8dc7871b1393080a3b5e682fc2",
+    "S17_2023": "53a63aea1b02c672f25a9e9e563f9c698901a52e651dd8d2e81c2ef1092d1a47",
+    "S18": "9e28da4c0ef8c2680577ad5ef0b0a78023d389113f66c85ab9e52bdbed89a1fc",
+    "S19_2016": "9c22453746ec6cc1e696db9e5b338e5c76b422aac23a1e9678a3f8a7ee872481",
+    "S19_2017": "ab1773d57f0dafc9f8e77273ac3bfa317a28b0081f09cb8ea9e051de63c0f0c2",
+    "S19_2018": "247a2ae232ec04d1360920148aa8d0d01c7c1d802b11b3c050c854919c4c4185",
+    "S19_2019": "b4c9774ee641ad02ba96c5117b254ded4e16bb4ad19b844148015c2f31883792",
+    "S19_2020": "b798ad3f892d4da60fd0925ced185eab30b134aab5f5cbb238b04afba52c91a1",
+    "S19_2021": "2a2253ef440d0444d1f901cadb7798fb334b44994745c9fcf2a282cdd01fc619",
+    "S19_2022": "2acb2d84748d533ffc8b5bf37f99667ac06c924b9a0fdb2da82c38a970817e25",
+    "S19_2023": "16f703a47b83448902c332b4a268dc4ade95acf0ec45facecb306d2abf8efcab",
+    "S19_2024": "d400d8e2b46d2e6384eb6787ad04568e8bfe2b7a5e89f2d2191d5d079c4f4306"
+  },
+  "trend": {
+    "trend_id": "national_clearance_population_reference_ratio",
+    "label_ja": "人口1,000人当たりの刑法犯検挙参考比率",
+    "label_en": "Criminal-code clearances per 1,000 reference population",
+    "years": [
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024
+    ],
+    "all_person_source_id": "S15",
+    "all_foreign_source_id": "S08",
+    "japanese_population_sources": {
+      "2015": "S18",
+      "2016": "S18",
+      "2017": "S18",
+      "2018": "S18",
+      "2019": "S18",
+      "2020": "S18",
+      "2021": "S17_2021",
+      "2022": "S17_2022",
+      "2023": "S17_2023",
+      "2024": "S17"
+    },
+    "resident_foreign_population_sources": {
+      "2016": "S19_2016",
+      "2017": "S19_2017",
+      "2018": "S19_2018",
+      "2019": "S19_2019",
+      "2020": "S19_2020",
+      "2021": "S19_2021",
+      "2022": "S19_2022",
+      "2023": "S19_2023",
+      "2024": "S19_2024"
+    },
+    "metrics": ["cleared_cases", "cleared_persons"],
+    "display_multiplier": 1000,
+    "display_unit_label_ja": "人口1,000人当たり",
+    "interpretation_policy": "public_data_reference_ratio_not_probability",
+    "ui_caveat": "1年間の刑法犯検挙件数または検挙人員を、10月1日の日本人人口または12月31日の在留外国人数で単純に割った公表統計由来の参考比率である。犯罪統計の分子から居住者だけを識別できず、特に「外国人全体」と在留外国人人口の対象範囲は一致しない。犯罪を行う確率や公的な犯罪率を示さない。"
+  }
+}

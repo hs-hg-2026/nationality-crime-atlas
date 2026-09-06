@@ -16,8 +16,8 @@ from .errors import IntegrityError, SchemaError
 from .provenance import sha256_file
 
 
-COMPACT_EXPORT_SCHEMA_VERSION = 7
-LATEST_SCHEMA_VERSION = 7
+COMPACT_EXPORT_SCHEMA_VERSION = 8
+LATEST_SCHEMA_VERSION = 8
 CALCULATION_STATUSES = ("calculated", "refused")
 SAME_YEAR_GAP_CONTEXT_ID = "all_resident_same_year_recognition_clearance_gap"
 RECOGNIZED_CONTEXT_ID = "all_resident_recognized_cases"
@@ -35,6 +35,66 @@ CLEARANCE_SHARE_UI_CAVEAT = (
     "在留資格不明者を除く区分で、短期滞在者だけを指さない。差分にも"
     "定着居住者以外が含まれるため、普段から住む外国人だけを表す値ではない。"
 )
+CLEARANCE_POPULATION_TREND_ID = "national_clearance_population_reference_ratio"
+CLEARANCE_POPULATION_INTERPRETATION_POLICY = (
+    "public_data_reference_ratio_not_probability"
+)
+CLEARANCE_POPULATION_LABEL_JA = "人口1,000人当たりの刑法犯検挙参考比率"
+CLEARANCE_POPULATION_UI_CAVEAT = (
+    "1年間の刑法犯検挙件数または検挙人員を、10月1日の日本人人口または"
+    "12月31日の在留外国人数で単純に割った公表統計由来の参考比率である。犯罪統計の分子から"
+    "居住者だけを識別できず、特に「外国人全体」と在留外国人人口の対象範囲は一致しない。"
+    "犯罪を行う確率や公的な犯罪率を示さない。"
+)
+CLEARANCE_POPULATION_GROUP_CONTRACTS = {
+    "japanese_etc_residual": {
+        "label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "numerator_source_ids": ("S15", "S08"),
+        "population_scope": "japanese_population",
+        "derivation_method": (
+            "arithmetic_residual_all_person_minus_all_foreign_division"
+        ),
+        "required_flags": (
+            "annual_clearance_flow_vs_point_in_time_population_stock",
+            "japanese_numerator_is_arithmetic_residual",
+            "japanese_population_rounded_to_nearest_1000",
+            "numerator_residency_scope_not_established",
+            "october_1_population_reference_date",
+            "public_data_reference_ratio_not_official_crime_rate",
+        ),
+    },
+    "all_foreign": {
+        "label_ja": "外国人全体（分母は在留外国人数）",
+        "numerator_source_ids": ("S08",),
+        "population_scope": "resident_foreigner_population",
+        "derivation_method": "direct_published_count_division",
+        "required_flags": (
+            "all_foreign_numerator_vs_resident_foreigner_denominator",
+            "annual_clearance_flow_vs_point_in_time_population_stock",
+            "december_31_population_reference_date",
+            "numerator_residency_scope_not_established",
+            "public_data_reference_ratio_not_official_crime_rate",
+        ),
+    },
+}
+_JAPANESE_POPULATION_SOURCES = {
+    **{year: "S18" for year in range(2015, 2021)},
+    2021: "S17_2021",
+    2022: "S17_2022",
+    2023: "S17_2023",
+    2024: "S17",
+}
+_FOREIGN_POPULATION_COORDINATES = {
+    2016: ("S19_2016", "16-12-01-1", 7, 3),
+    2017: ("S19_2017", "17-12-01-1", 7, 3),
+    2018: ("S19_2018", "18-12-01-1", 7, 3),
+    2019: ("S19_2019", "19-12-01-1", 7, 2),
+    2020: ("S19_2020", "20-12-01-1", 7, 2),
+    2021: ("S19_2021", "21-12-01-1", 7, 2),
+    2022: ("S19_2022", "22-12-01m", 5, 6),
+    2023: ("S19_2023", "23-12-01m", 5, 5),
+    2024: ("S19_2024", "24-12-01m", 5, 5),
+}
 CLEARANCE_SHARE_SCOPE_CONTRACTS = {
     "all_foreign": {
         "label_ja": "外国人全体",
@@ -144,6 +204,16 @@ _OFFENSE_CATEGORY_DEFINITION_FIELDS = (
 )
 _CLEARANCE_SHARE_DEFINITION_FIELDS = (
     "national_clearance_share_schema_version",
+    "trend_id",
+    "label_ja",
+    "label_en",
+    "interpretation_policy",
+    "ui_caveat",
+    "display_multiplier",
+    "display_unit_label_ja",
+)
+_CLEARANCE_POPULATION_DEFINITION_FIELDS = (
+    "clearance_population_trend_schema_version",
     "trend_id",
     "label_ja",
     "label_en",
@@ -1056,6 +1126,347 @@ def _validate_clearance_share_bundle(bundle: _DatasetBundle) -> None:
             )
 
 
+def _clearance_population_semantic_error(detail: str) -> None:
+    raise SchemaError("clearance population semantic contract: %s" % detail)
+
+
+def _clearance_population_component_signature(
+    component: Mapping[str, object],
+) -> Tuple[object, ...]:
+    return (
+        component.get("source_id"),
+        component.get("role"),
+        component.get("metric"),
+        component.get("value"),
+        component.get("source_table"),
+        component.get("source_sheet"),
+        component.get("source_row"),
+        component.get("source_column"),
+        component.get("published_value"),
+        component.get("published_unit"),
+    )
+
+
+def _validate_clearance_population_components(
+    row: Mapping[str, object],
+    expected: Sequence[Tuple[object, ...]],
+) -> None:
+    components = row.get("source_components")
+    if not isinstance(components, (list, tuple)) or any(
+        not isinstance(component, dict) for component in components
+    ):
+        _clearance_population_semantic_error(
+            "source_components must be an object array"
+        )
+    actual = [
+        _clearance_population_component_signature(component)
+        for component in components
+    ]
+    if actual != list(expected):
+        _clearance_population_semantic_error(
+            "source_components do not match population inputs"
+        )
+
+
+def _japanese_population_coordinate(year: int) -> Tuple[object, ...]:
+    source_id = _JAPANESE_POPULATION_SOURCES.get(year)
+    if source_id is None:
+        _clearance_population_semantic_error(
+            "unsupported Japanese population year %d" % year
+        )
+    if source_id == "S18":
+        return source_id, "5", "日本人人口 (2015年～2020年)", 11, year - 2010
+    return source_id, "2", "第2表", 12, 9
+
+
+def _validate_clearance_population_bundle(bundle: _DatasetBundle) -> None:
+    years = bundle.summary.get("years")
+    year_count = bundle.summary.get("year_count")
+    if (
+        not isinstance(years, list)
+        or not years
+        or any(isinstance(year, bool) or not isinstance(year, int) for year in years)
+        or years != sorted(set(years))
+    ):
+        raise SchemaError(
+            "clearance population years must be ascending unique integers"
+        )
+    if year_count != len(years):
+        raise SchemaError("clearance population summary year_count differs")
+    if bundle.summary.get("trend_id") != CLEARANCE_POPULATION_TREND_ID:
+        _clearance_population_semantic_error("summary trend_id differs")
+
+    expected_groups = set(CLEARANCE_POPULATION_GROUP_CONTRACTS)
+    expected_metrics = {"cleared_cases", "cleared_persons"}
+    seen = set()
+    for index, row in enumerate(bundle.records, start=1):
+        year = row.get("year")
+        group = row.get("population_group")
+        metric = row.get("metric")
+        key = (year, group, metric)
+        if key in seen:
+            raise SchemaError("Duplicate clearance population row: %r" % (key,))
+        seen.add(key)
+        if year not in years or group not in expected_groups or metric not in expected_metrics:
+            raise SchemaError(
+                "Unsupported clearance population dimensions at row %d" % index
+            )
+
+        contract = CLEARANCE_POPULATION_GROUP_CONTRACTS[group]
+        if (
+            row.get("trend_id") != CLEARANCE_POPULATION_TREND_ID
+            or row.get("label_ja") != CLEARANCE_POPULATION_LABEL_JA
+            or row.get("interpretation_policy")
+            != CLEARANCE_POPULATION_INTERPRETATION_POLICY
+            or row.get("ui_caveat") != CLEARANCE_POPULATION_UI_CAVEAT
+            or row.get("population_group_label_ja") != contract["label_ja"]
+            or row.get("population_scope") != contract["population_scope"]
+            or row.get("metric_label_ja")
+            != ("検挙件数" if metric == "cleared_cases" else "検挙人員")
+            or row.get("display_multiplier") != 1000
+            or row.get("display_unit_label_ja") != "人口1,000人当たり"
+        ):
+            _clearance_population_semantic_error(
+                "group, label, or interpretation binding differs at row %d" % index
+            )
+
+        numerator_source_ids = row.get("numerator_source_ids")
+        if (
+            not isinstance(numerator_source_ids, (list, tuple))
+            or tuple(numerator_source_ids) != contract["numerator_source_ids"]
+        ):
+            _clearance_population_semantic_error(
+                "numerator source binding differs at row %d" % index
+            )
+        mismatch_flags = row.get("mismatch_flags")
+        if (
+            not isinstance(mismatch_flags, (list, tuple))
+            or any(not isinstance(flag, str) for flag in mismatch_flags)
+            or not set(contract["required_flags"]).issubset(mismatch_flags)
+        ):
+            _clearance_population_semantic_error(
+                "required mismatch flags are absent at row %d" % index
+            )
+
+        numerator = row.get("numerator_value")
+        if isinstance(numerator, bool) or not isinstance(numerator, int) or numerator < 0:
+            raise SchemaError(
+                "Invalid clearance population numerator at row %d" % index
+            )
+        clearance_component = (
+            "S08",
+            "numerator",
+            metric,
+            numerator,
+            "130",
+            "01",
+            year - 2007,
+            7 if metric == "cleared_cases" else 8,
+            None,
+            None,
+        )
+
+        if group == "japanese_etc_residual":
+            denominator = row.get("denominator_value")
+            components = row.get("source_components")
+            if (
+                row.get("calculation_status") != "calculated"
+                or row.get("refusal_reason") is not None
+                or isinstance(denominator, bool)
+                or not isinstance(denominator, int)
+                or denominator <= 0
+                or not isinstance(components, (list, tuple))
+                or len(components) != 3
+                or not all(isinstance(component, dict) for component in components)
+            ):
+                _clearance_population_semantic_error(
+                    "Japanese residual calculation status differs at row %d" % index
+                )
+            all_person_value = components[0].get("value")
+            all_foreign_value = components[1].get("value")
+            if (
+                isinstance(all_person_value, bool)
+                or not isinstance(all_person_value, int)
+                or isinstance(all_foreign_value, bool)
+                or not isinstance(all_foreign_value, int)
+                or all_person_value - all_foreign_value != numerator
+            ):
+                _clearance_population_semantic_error(
+                    "Japanese numerator residual differs at row %d" % index
+                )
+            source_id, table, sheet, source_row, source_column = (
+                _japanese_population_coordinate(year)
+            )
+            if (
+                row.get("denominator_source_id") != source_id
+                or row.get("population_reference_date") != "%d-10-01" % year
+                or row.get("denominator_rounding") != "nearest_1000_persons"
+                or row.get("derivation_method") != contract["derivation_method"]
+                or row.get("derivation_formula")
+                != "(S15.%s - S08.%s) / %s.population * 1000"
+                % (metric, metric, source_id)
+            ):
+                _clearance_population_semantic_error(
+                    "Japanese source, date, or formula differs at row %d" % index
+                )
+            _validate_clearance_population_components(
+                row,
+                (
+                    (
+                        "S15",
+                        "numerator_minuend",
+                        metric,
+                        all_person_value,
+                        "3",
+                        "刑法犯総数",
+                        year - 2006,
+                        5 if metric == "cleared_cases" else 6,
+                        None,
+                        None,
+                    ),
+                    (
+                        "S08",
+                        "numerator_subtrahend",
+                        metric,
+                        all_foreign_value,
+                        "130",
+                        "01",
+                        year - 2007,
+                        7 if metric == "cleared_cases" else 8,
+                        None,
+                        None,
+                    ),
+                    (
+                        source_id,
+                        "denominator",
+                        "population",
+                        denominator,
+                        table,
+                        sheet,
+                        source_row,
+                        source_column,
+                        denominator // 1000,
+                        "1000_persons",
+                    ),
+                ),
+            )
+        else:
+            expected_foreign = _FOREIGN_POPULATION_COORDINATES.get(year)
+            if expected_foreign is None:
+                if (
+                    row.get("calculation_status") != "refused"
+                    or row.get("refusal_reason")
+                    != "resident_foreigner_population_source_not_registered_for_year"
+                    or row.get("denominator_value") is not None
+                    or row.get("quotient") is not None
+                    or row.get("display_value") is not None
+                    or row.get("denominator_source_id") is not None
+                    or row.get("population_reference_date") is not None
+                    or row.get("denominator_rounding") is not None
+                    or row.get("derivation_method")
+                    != "direct_published_count_division_refused"
+                    or row.get("derivation_formula") is not None
+                    or "population_denominator_unavailable" not in mismatch_flags
+                ):
+                    _clearance_population_semantic_error(
+                        "foreign refusal semantics differ at row %d" % index
+                    )
+                _validate_clearance_population_components(row, (clearance_component,))
+                continue
+            source_id, sheet, source_row, source_column = expected_foreign
+            denominator = row.get("denominator_value")
+            if (
+                row.get("calculation_status") != "calculated"
+                or row.get("refusal_reason") is not None
+                or isinstance(denominator, bool)
+                or not isinstance(denominator, int)
+                or denominator <= 0
+                or row.get("denominator_source_id") != source_id
+                or row.get("population_reference_date") != "%d-12-31" % year
+                or row.get("denominator_rounding") != "as_published_persons"
+                or row.get("derivation_method") != contract["derivation_method"]
+                or row.get("derivation_formula")
+                != "S08.%s / %s.population * 1000" % (metric, source_id)
+            ):
+                _clearance_population_semantic_error(
+                    "foreign source, date, or formula differs at row %d" % index
+                )
+            _validate_clearance_population_components(
+                row,
+                (
+                    clearance_component,
+                    (
+                        source_id,
+                        "denominator",
+                        "population",
+                        denominator,
+                        "1",
+                        sheet,
+                        source_row,
+                        source_column,
+                        denominator,
+                        "persons",
+                    ),
+                ),
+            )
+
+        denominator = row.get("denominator_value")
+        quotient = row.get("quotient")
+        display_value = row.get("display_value")
+        expected_quotient = numerator / denominator
+        if (
+            isinstance(quotient, bool)
+            or not isinstance(quotient, (int, float))
+            or not math.isclose(
+                quotient, expected_quotient, rel_tol=1e-12, abs_tol=1e-12
+            )
+            or isinstance(display_value, bool)
+            or not isinstance(display_value, (int, float))
+            or not math.isclose(
+                display_value,
+                expected_quotient * 1000,
+                rel_tol=1e-12,
+                abs_tol=1e-12,
+            )
+        ):
+            raise SchemaError(
+                "Clearance population arithmetic differs at row %d" % index
+            )
+
+    expected = {
+        (year, group, metric)
+        for year in years
+        for group in expected_groups
+        for metric in expected_metrics
+    }
+    if seen != expected:
+        raise SchemaError("Clearance population year/group/metric grid is incomplete")
+
+
+def _validate_clearance_population_share_consistency(
+    population_bundle: _DatasetBundle,
+    share_bundle: _DatasetBundle,
+) -> None:
+    share_rows = {
+        (row.get("year"), row.get("metric")): row
+        for row in share_bundle.records
+        if row.get("foreign_scope") == "all_foreign"
+    }
+    for row in population_bundle.records:
+        if row.get("population_group") != "all_foreign":
+            continue
+        share = share_rows.get((row.get("year"), row.get("metric")))
+        if share is None:
+            continue
+        if (
+            row.get("numerator_value") != share.get("numerator_value")
+            or row.get("numerator_source_ids") != share.get("numerator_source_ids")
+        ):
+            _clearance_population_semantic_error(
+                "all-foreign numerator differs from clearance-share input"
+            )
+
+
 def _public_sources(
     bundles: Sequence[_DatasetBundle],
 ) -> Mapping[str, Mapping[str, object]]:
@@ -1140,6 +1551,7 @@ def _publication_policy() -> Mapping[str, object]:
         "supplementary_view": "nationality_indicators",
         "composition_view": "offense_composition",
         "clearance_share_view": "national_criminal_code_clearance_foreign_share",
+        "clearance_population_view": CLEARANCE_POPULATION_TREND_ID,
         "same_year_gap_view": SAME_YEAR_GAP_CONTEXT_ID,
         "same_year_gap_is_unresolved_cohort": False,
         "derived_value_label_ja": "公表統計由来の参考比率",
@@ -1156,6 +1568,7 @@ def generate_compact_export(
     nationality_comparison_latest_path: Path,
     offense_composition_latest_path: Path,
     clearance_share_latest_path: Path,
+    clearance_population_latest_path: Path,
     output_root: Path,
     generated_at: str,
 ) -> CompactExportReport:
@@ -1206,8 +1619,22 @@ def generate_compact_export(
         records_hash_key="clearance_share_records_sha256",
         summary_record_count_key="record_count",
     )
+    clearance_population_bundle = _load_dataset_bundle(
+        name="clearance_population_trend",
+        latest_path=clearance_population_latest_path,
+        schema_key="clearance_population_trend_schema_version",
+        expected_schema_version=1,
+        records_filename="clearance_population_records.jsonl",
+        records_hash_key="clearance_population_records_sha256",
+        summary_record_count_key="record_count",
+    )
     _validate_offense_composition_bundle(offense_bundle)
     _validate_clearance_share_bundle(clearance_share_bundle)
+    _validate_clearance_population_bundle(clearance_population_bundle)
+    _validate_clearance_population_share_consistency(
+        clearance_population_bundle,
+        clearance_share_bundle,
+    )
     gap_definition, gap_records = derive_same_year_recognition_clearance_gap(
         all_resident_bundle.records
     )
@@ -1244,6 +1671,12 @@ def generate_compact_export(
         id_field="trend_id",
         definition_fields=_CLEARANCE_SHARE_DEFINITION_FIELDS,
         label="clearance share trend",
+    )
+    clearance_population_definitions = _collect_definitions(
+        clearance_population_bundle.records,
+        id_field="trend_id",
+        definition_fields=_CLEARANCE_POPULATION_DEFINITION_FIELDS,
+        label="clearance population trend",
     )
     raw_offense_category_definitions = _collect_definitions(
         offense_bundle.records,
@@ -1307,6 +1740,11 @@ def generate_compact_export(
         id_field="trend_id",
         definition_fields=_CLEARANCE_SHARE_DEFINITION_FIELDS,
     )
+    compact_clearance_population_rows = _compact_rows(
+        clearance_population_bundle.records,
+        id_field="trend_id",
+        definition_fields=_CLEARANCE_POPULATION_DEFINITION_FIELDS,
+    )
     public_sources = _public_sources(
         (
             indicator_bundle,
@@ -1314,6 +1752,7 @@ def generate_compact_export(
             comparison_bundle,
             offense_bundle,
             clearance_share_bundle,
+            clearance_population_bundle,
         )
     )
     _validate_record_source_links(
@@ -1346,12 +1785,20 @@ def generate_compact_export(
         label="clearance_share_trend",
         array_fields=("numerator_source_ids",),
     )
+    _validate_record_source_links(
+        clearance_population_bundle.records,
+        public_sources,
+        label="clearance_population_trend",
+        scalar_fields=("denominator_source_id",),
+        array_fields=("numerator_source_ids",),
+    )
     record_counts = {
         "nationality_indicators": len(compact_indicator_rows),
         "all_resident_context": len(compact_context_rows),
         "nationality_comparison": len(compact_comparison_rows),
         "offense_composition": len(compact_offense_rows),
         "clearance_share_trends": len(compact_clearance_share_rows),
+        "clearance_population_trends": len(compact_clearance_population_rows),
     }
     source_runs = {
         "nationality_indicators": {
@@ -1417,6 +1864,22 @@ def generate_compact_export(
             "record_count": len(clearance_share_bundle.records),
             "status_counts": _status_counts(clearance_share_bundle.records),
         },
+        "clearance_population_trend": {
+            "latest_path": clearance_population_bundle.latest_path.name,
+            "latest_sha256": clearance_population_bundle.latest_sha256,
+            "latest_manifest": dict(clearance_population_bundle.latest_manifest),
+            "summary_path": "%s/summary.json"
+            % clearance_population_bundle.run_dir.name,
+            "summary_sha256": clearance_population_bundle.summary_sha256,
+            "records_path": "%s/%s"
+            % (
+                clearance_population_bundle.run_dir.name,
+                clearance_population_bundle.records_path.name,
+            ),
+            "records_sha256": clearance_population_bundle.records_sha256,
+            "record_count": len(clearance_population_bundle.records),
+            "status_counts": _status_counts(clearance_population_bundle.records),
+        },
     }
     payload = {
         "compact_export_schema_version": COMPACT_EXPORT_SCHEMA_VERSION,
@@ -1431,6 +1894,7 @@ def generate_compact_export(
             "offense_composition_ids": offense_composition_definitions,
             "offense_category_ids": offense_category_definitions,
             "clearance_share_ids": clearance_share_definitions,
+            "clearance_population_ids": clearance_population_definitions,
         },
         "records": {
             "nationality_indicators": compact_indicator_rows,
@@ -1438,6 +1902,7 @@ def generate_compact_export(
             "nationality_comparison": compact_comparison_rows,
             "offense_composition": compact_offense_rows,
             "clearance_share_trends": compact_clearance_share_rows,
+            "clearance_population_trends": compact_clearance_population_rows,
         },
     }
 
@@ -1469,6 +1934,9 @@ def generate_compact_export(
                     ),
                     "offense_category_ids": len(offense_category_definitions),
                     "clearance_share_ids": len(clearance_share_definitions),
+                    "clearance_population_ids": len(
+                        clearance_population_definitions
+                    ),
                 },
                 "source_count": len(public_sources),
                 "dashboard_export_sha256": sha256_file(export_path),

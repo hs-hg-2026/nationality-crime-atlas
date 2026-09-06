@@ -37,6 +37,11 @@ def _argument_parser() -> argparse.ArgumentParser:
         default=Path("data/processed/_clearance_share_trend/latest.json"),
     )
     parser.add_argument(
+        "--clearance-population-latest",
+        type=Path,
+        default=Path("data/processed/_clearance_population_trend/latest.json"),
+    )
+    parser.add_argument(
         "--output-root",
         type=Path,
         default=Path("output/compact_export"),
@@ -56,6 +61,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         nationality_comparison_latest_path=arguments.nationality_comparison_latest,
         offense_composition_latest_path=arguments.offense_composition_latest,
         clearance_share_latest_path=arguments.clearance_share_latest,
+        clearance_population_latest_path=arguments.clearance_population_latest,
         output_root=arguments.output_root,
         generated_at=generated_at,
     )
