@@ -160,6 +160,42 @@ const sourceDisplay: Record<
   },
 };
 
+function sourceDisplayFor(source: RegionalViewModel['sources'][number]) {
+  const exact = sourceDisplay[source.id];
+  if (exact) return exact;
+
+  const annualJapanesePopulation = /^S17_(\d{4})$/.exec(source.id);
+  if (annualJapanesePopulation) {
+    return {
+      dataset: '都道府県別の総人口と日本人人口',
+      publisher: '総務省統計局',
+      period: `${annualJapanesePopulation[1]}年10月1日時点`,
+    };
+  }
+  if (source.id === 'S18') {
+    return {
+      dataset: '都道府県別の総人口と日本人人口（国勢調査間補間補正）',
+      publisher: '総務省統計局',
+      period: '2015–2020年10月1日時点',
+    };
+  }
+
+  const annualForeignPopulation = /^S19_(\d{4})$/.exec(source.id);
+  if (annualForeignPopulation) {
+    return {
+      dataset: '在留外国人統計：国籍・地域別の在留外国人数',
+      publisher: '出入国在留管理庁',
+      period: `${annualForeignPopulation[1]}年12月31日時点`,
+    };
+  }
+
+  return {
+    dataset: source.dataset,
+    publisher: source.publisher,
+    period: source.sourcePeriod,
+  };
+}
+
 const refusalLabels: Record<string, string> = {
   geography_not_exact_prefecture_or_national:
     '都道府県または全国と一致する地域区分ではない',
@@ -287,11 +323,7 @@ function SourceList({ sources }: { sources: RegionalViewModel['sources'] }) {
   return (
     <div className="source-list">
       {sources.map((source) => {
-        const display = sourceDisplay[source.id] ?? {
-          dataset: source.dataset,
-          publisher: source.publisher,
-          period: source.sourcePeriod,
-        };
+        const display = sourceDisplayFor(source);
         return (
           <article key={source.id}>
             <div>
