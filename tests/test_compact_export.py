@@ -825,6 +825,308 @@ def _clearance_share_fixture(tmp_path: Path) -> Path:
     return root / "latest.json"
 
 
+def _clearance_population_fixture(tmp_path: Path) -> Path:
+    root = tmp_path / "processed" / "_clearance_population_trend"
+    run_dir = root / "20260906_103000_clearance_population_trend"
+    records_path = run_dir / "clearance_population_records.jsonl"
+    summary_path = run_dir / "summary.json"
+    label_ja = "人口1,000人当たりの刑法犯検挙参考比率"
+    label_en = "Criminal-code clearances per 1,000 reference population"
+    ui_caveat = (
+        "1年間の刑法犯検挙件数または検挙人員を、10月1日の日本人人口または"
+        "12月31日の在留外国人数で単純に割った公表統計由来の参考比率である。犯罪統計の分子から"
+        "居住者だけを識別できず、特に「外国人全体」と在留外国人人口の対象範囲は一致しない。"
+        "犯罪を行う確率や公的な犯罪率を示さない。"
+    )
+    values = {
+        2015: {
+            "cleared_cases": (700, 70),
+            "cleared_persons": (350, 45),
+            "japanese_population": 125_000_000,
+            "japanese_source": "S18",
+        },
+        2024: {
+            "cleared_cases": (600, 60),
+            "cleared_persons": (300, 40),
+            "japanese_population": 120_000_000,
+            "japanese_source": "S17",
+            "foreign_population": 100_000,
+            "foreign_source": "S19_2024",
+        },
+    }
+    records = []
+    for year, annual in values.items():
+        for metric in ("cleared_cases", "cleared_persons"):
+            all_person, all_foreign = annual[metric]
+            japanese_population = annual["japanese_population"]
+            japanese_source = annual["japanese_source"]
+            japanese_numerator = all_person - all_foreign
+            japanese_components = [
+                {
+                    "source_id": "S15",
+                    "source_table": "3",
+                    "source_sheet": "刑法犯総数",
+                    "source_row": year - 2006,
+                    "source_column": 5 if metric == "cleared_cases" else 6,
+                    "metric": metric,
+                    "value": all_person,
+                    "role": "numerator_minuend",
+                },
+                {
+                    "source_id": "S08",
+                    "source_table": "130",
+                    "source_sheet": "01",
+                    "source_row": year - 2007,
+                    "source_column": 7 if metric == "cleared_cases" else 8,
+                    "metric": metric,
+                    "value": all_foreign,
+                    "role": "numerator_subtrahend",
+                },
+                {
+                    "source_id": japanese_source,
+                    "source_table": "5" if year == 2015 else "2",
+                    "source_sheet": (
+                        "日本人人口 (2015年～2020年)"
+                        if year == 2015
+                        else "第2表"
+                    ),
+                    "source_row": 11 if year == 2015 else 12,
+                    "source_column": 5 if year == 2015 else 9,
+                    "metric": "population",
+                    "value": japanese_population,
+                    "published_value": japanese_population // 1000,
+                    "published_unit": "1000_persons",
+                    "role": "denominator",
+                },
+            ]
+            records.append(
+                {
+                    "clearance_population_trend_schema_version": 1,
+                    "trend_id": "national_clearance_population_reference_ratio",
+                    "label_ja": label_ja,
+                    "label_en": label_en,
+                    "interpretation_policy": (
+                        "public_data_reference_ratio_not_probability"
+                    ),
+                    "ui_caveat": ui_caveat,
+                    "year": year,
+                    "population_group": "japanese_etc_residual",
+                    "population_group_label_ja": (
+                        "日本人等（全国総数−外国人全体の残差）"
+                    ),
+                    "metric": metric,
+                    "metric_label_ja": (
+                        "検挙件数" if metric == "cleared_cases" else "検挙人員"
+                    ),
+                    "numerator_value": japanese_numerator,
+                    "denominator_value": japanese_population,
+                    "quotient": japanese_numerator / japanese_population,
+                    "display_multiplier": 1000,
+                    "display_unit_label_ja": "人口1,000人当たり",
+                    "display_value": japanese_numerator / japanese_population * 1000,
+                    "calculation_status": "calculated",
+                    "refusal_reason": None,
+                    "numerator_source_ids": ["S15", "S08"],
+                    "denominator_source_id": japanese_source,
+                    "population_reference_date": "%d-10-01" % year,
+                    "population_scope": "japanese_population",
+                    "denominator_rounding": "nearest_1000_persons",
+                    "derivation_method": (
+                        "arithmetic_residual_all_person_minus_all_foreign_division"
+                    ),
+                    "derivation_formula": (
+                        "(S15.%s - S08.%s) / %s.population * 1000"
+                        % (metric, metric, japanese_source)
+                    ),
+                    "source_components": japanese_components,
+                    "mismatch_flags": [
+                        "annual_clearance_flow_vs_point_in_time_population_stock",
+                        "japanese_numerator_is_arithmetic_residual",
+                        "japanese_population_rounded_to_nearest_1000",
+                        "numerator_residency_scope_not_established",
+                        "october_1_population_reference_date",
+                        "public_data_reference_ratio_not_official_crime_rate",
+                    ],
+                }
+            )
+
+            foreign_population = annual.get("foreign_population")
+            foreign_source = annual.get("foreign_source")
+            foreign_row = {
+                "clearance_population_trend_schema_version": 1,
+                "trend_id": "national_clearance_population_reference_ratio",
+                "label_ja": label_ja,
+                "label_en": label_en,
+                "interpretation_policy": "public_data_reference_ratio_not_probability",
+                "ui_caveat": ui_caveat,
+                "year": year,
+                "population_group": "all_foreign",
+                "population_group_label_ja": (
+                    "外国人全体（分母は在留外国人数）"
+                ),
+                "metric": metric,
+                "metric_label_ja": (
+                    "検挙件数" if metric == "cleared_cases" else "検挙人員"
+                ),
+                "numerator_value": all_foreign,
+                "denominator_value": foreign_population,
+                "quotient": (
+                    None if foreign_population is None else all_foreign / foreign_population
+                ),
+                "display_multiplier": 1000,
+                "display_unit_label_ja": "人口1,000人当たり",
+                "display_value": (
+                    None
+                    if foreign_population is None
+                    else all_foreign / foreign_population * 1000
+                ),
+                "calculation_status": (
+                    "refused" if foreign_population is None else "calculated"
+                ),
+                "refusal_reason": (
+                    "resident_foreigner_population_source_not_registered_for_year"
+                    if foreign_population is None
+                    else None
+                ),
+                "numerator_source_ids": ["S08"],
+                "denominator_source_id": foreign_source,
+                "population_reference_date": (
+                    None if foreign_population is None else "%d-12-31" % year
+                ),
+                "population_scope": "resident_foreigner_population",
+                "denominator_rounding": (
+                    None if foreign_population is None else "as_published_persons"
+                ),
+                "derivation_method": (
+                    "direct_published_count_division_refused"
+                    if foreign_population is None
+                    else "direct_published_count_division"
+                ),
+                "derivation_formula": (
+                    None
+                    if foreign_population is None
+                    else "S08.%s / %s.population * 1000"
+                    % (metric, foreign_source)
+                ),
+                "source_components": [
+                    {
+                        "source_id": "S08",
+                        "source_table": "130",
+                        "source_sheet": "01",
+                        "source_row": year - 2007,
+                        "source_column": 7 if metric == "cleared_cases" else 8,
+                        "metric": metric,
+                        "value": all_foreign,
+                        "role": "numerator",
+                    }
+                ],
+                "mismatch_flags": [
+                    "all_foreign_numerator_vs_resident_foreigner_denominator",
+                    "annual_clearance_flow_vs_point_in_time_population_stock",
+                    "december_31_population_reference_date",
+                    "numerator_residency_scope_not_established",
+                    "public_data_reference_ratio_not_official_crime_rate",
+                    *(
+                        ["population_denominator_unavailable"]
+                        if foreign_population is None
+                        else []
+                    ),
+                ],
+            }
+            if foreign_population is not None:
+                foreign_row["source_components"].append(
+                    {
+                        "source_id": foreign_source,
+                        "source_table": "1",
+                        "source_sheet": "24-12-01m",
+                        "source_row": 5,
+                        "source_column": 5,
+                        "metric": "population",
+                        "value": foreign_population,
+                        "published_value": foreign_population,
+                        "published_unit": "persons",
+                        "role": "denominator",
+                    }
+                )
+            records.append(foreign_row)
+
+    records_hash = _write_jsonl(records_path, records)
+    _write_json(
+        summary_path,
+        {
+            "clearance_population_trend_schema_version": 1,
+            "generated_at": "2026-09-06T10:30:00+09:00",
+            "trend_id": "national_clearance_population_reference_ratio",
+            "record_count": len(records),
+            "year_count": 2,
+            "years": [2015, 2024],
+            "status_counts": {"calculated": 6, "refused": 2},
+            "source_artifacts": {
+                "S08": _s08_source_artifact(),
+                "S15": _source_artifact("S15", "3"),
+                "S17": _source_artifact("S17", "2"),
+                "S18": _source_artifact("S18", "5"),
+                "S19_2024": _source_artifact("S19_2024", "1"),
+            },
+        },
+    )
+    _write_json(
+        root / "latest.json",
+        {
+            "clearance_population_trend_schema_version": 1,
+            "generated_at": "2026-09-06T10:30:00+09:00",
+            "run_relpath": run_dir.name,
+            "summary_sha256": sha256_file(summary_path),
+            "clearance_population_records_sha256": records_hash,
+            "clearance_population_records_csv_sha256": "0" * 64,
+        },
+    )
+    return root / "latest.json"
+
+
+def _rewrite_clearance_population_records(latest_path: Path, mutation: str) -> None:
+    latest = json.loads(latest_path.read_text(encoding="utf-8"))
+    records_path = (
+        latest_path.parent
+        / latest["run_relpath"]
+        / "clearance_population_records.jsonl"
+    )
+    rows = [
+        json.loads(line)
+        for line in records_path.read_text(encoding="utf-8").splitlines()
+    ]
+    target = next(
+        row
+        for row in rows
+        if row["year"] == 2024
+        and row["population_group"] == "all_foreign"
+        and row["metric"] == "cleared_cases"
+    )
+    if mutation == "group_label":
+        target["population_group_label_ja"] = "在留外国人の犯罪率"
+    elif mutation == "source_binding":
+        target["numerator_source_ids"] = ["S15"]
+    elif mutation == "required_warnings":
+        target["mismatch_flags"] = []
+    elif mutation == "interpretation_policy":
+        for row in rows:
+            row["interpretation_policy"] = "official_population_crime_probability"
+    elif mutation == "source_coordinates":
+        target["source_components"][1]["source_row"] = 999
+    elif mutation == "population_reference_date":
+        target["population_reference_date"] = "2024-10-01"
+    elif mutation == "metric_label":
+        target["metric_label_ja"] = "犯罪率"
+    elif mutation == "formula":
+        target["derivation_formula"] = "S08.cleared_cases / S15.population"
+    else:  # pragma: no cover - test helper guard
+        raise AssertionError("Unsupported fixture mutation: %s" % mutation)
+    latest["clearance_population_records_sha256"] = _write_jsonl(
+        records_path, rows
+    )
+    _write_json(latest_path, latest)
+
+
 def _rewrite_clearance_share_records(latest_path: Path, mutation: str) -> None:
     latest = json.loads(latest_path.read_text(encoding="utf-8"))
     records_path = (
@@ -888,6 +1190,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     comparison_latest_path = _comparison_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
     clearance_share_latest_path = _clearance_share_fixture(tmp_path)
+    clearance_population_latest_path = _clearance_population_fixture(tmp_path)
 
     report = generate_compact_export(
         indicator_latest_path=indicator_latest_path,
@@ -895,6 +1198,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
         nationality_comparison_latest_path=comparison_latest_path,
         offense_composition_latest_path=offense_latest_path,
         clearance_share_latest_path=clearance_share_latest_path,
+        clearance_population_latest_path=clearance_population_latest_path,
         output_root=tmp_path / "output" / "compact_export",
         generated_at="2026-09-01T18:00:00+09:00",
     )
@@ -903,13 +1207,16 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     latest = json.loads(report.latest_path.read_text(encoding="utf-8"))
     summary = json.loads(report.summary_path.read_text(encoding="utf-8"))
 
-    assert payload["compact_export_schema_version"] == 7
+    assert payload["compact_export_schema_version"] == 8
     assert payload["publication_policy"]["primary_view"] == "all_resident_context"
     assert payload["publication_policy"]["secondary_view"] == "nationality_comparison"
     assert payload["publication_policy"]["supplementary_view"] == "nationality_indicators"
     assert payload["publication_policy"]["composition_view"] == "offense_composition"
     assert payload["publication_policy"]["clearance_share_view"] == (
         "national_criminal_code_clearance_foreign_share"
+    )
+    assert payload["publication_policy"]["clearance_population_view"] == (
+        "national_clearance_population_reference_ratio"
     )
     assert payload["source_runs"]["nationality_indicators"]["latest_manifest"]["run_relpath"] == (
         "20260901_133239_indicators"
@@ -926,6 +1233,9 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert payload["source_runs"]["clearance_share_trend"]["latest_manifest"][
         "run_relpath"
     ] == "20260905_181000_clearance_share_trend"
+    assert payload["source_runs"]["clearance_population_trend"]["latest_manifest"][
+        "run_relpath"
+    ] == "20260906_103000_clearance_population_trend"
     assert payload["definitions"]["indicator_ids"]["x_cleared_cases_as_published_mismatch"][
         "label_ja"
     ].startswith("全国・国籍別")
@@ -958,12 +1268,16 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert payload["definitions"]["clearance_share_ids"][
         "national_criminal_code_clearance_foreign_share"
     ]["interpretation_policy"] == "share_of_clearances_not_population_risk"
+    assert payload["definitions"]["clearance_population_ids"][
+        "national_clearance_population_reference_ratio"
+    ]["interpretation_policy"] == "public_data_reference_ratio_not_probability"
     assert "label_ja" not in payload["records"]["nationality_indicators"][0]
     assert "label_en" not in payload["records"]["all_resident_context"][0]
     assert "label_ja" not in payload["records"]["nationality_comparison"][0]
     assert "label_ja" not in payload["records"]["offense_composition"][0]
     assert "offense_label" not in payload["records"]["offense_composition"][0]
     assert "label_ja" not in payload["records"]["clearance_share_trends"][0]
+    assert "label_ja" not in payload["records"]["clearance_population_trends"][0]
     assert payload["records"]["nationality_indicators"][0]["indicator_id"] in payload[
         "definitions"
     ]["indicator_ids"]
@@ -982,6 +1296,9 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert payload["records"]["clearance_share_trends"][0]["trend_id"] in payload[
         "definitions"
     ]["clearance_share_ids"]
+    assert payload["records"]["clearance_population_trends"][0][
+        "trend_id"
+    ] in payload["definitions"]["clearance_population_ids"]
     residual_share = next(
         row
         for row in payload["records"]["clearance_share_trends"]
@@ -990,6 +1307,31 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     )
     assert residual_share["numerator_value"] == 20
     assert residual_share["numerator_source_ids"] == ["S08", "S09"]
+    population_reference = next(
+        row
+        for row in payload["records"]["clearance_population_trends"]
+        if row["year"] == 2024
+        and row["population_group"] == "all_foreign"
+        and row["metric"] == "cleared_cases"
+    )
+    assert population_reference["numerator_value"] == 60
+    assert population_reference["denominator_value"] == 100_000
+    assert population_reference["display_value"] == pytest.approx(0.6)
+    assert population_reference["numerator_source_ids"] == ["S08"]
+    assert population_reference["denominator_source_id"] == "S19_2024"
+    missing_population = next(
+        row
+        for row in payload["records"]["clearance_population_trends"]
+        if row["year"] == 2015
+        and row["population_group"] == "all_foreign"
+        and row["metric"] == "cleared_cases"
+    )
+    assert missing_population["calculation_status"] == "refused"
+    assert missing_population["numerator_value"] == 70
+    assert missing_population["denominator_value"] is None
+    assert missing_population["refusal_reason"] == (
+        "resident_foreigner_population_source_not_registered_for_year"
+    )
     assert payload["records"]["nationality_comparison"][0]["numerator_source_ids"] == [
         "S08",
         "S15",
@@ -1019,6 +1361,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
         "nationality_comparison": 1,
         "offense_composition": 12,
         "clearance_share_trends": 6,
+        "clearance_population_trends": 8,
     }
     assert latest["run_relpath"] == "20260901_180000_compact_export"
     assert latest["dashboard_export_sha256"] == sha256_file(report.export_path)
@@ -1028,9 +1371,12 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert summary["record_counts"]["nationality_comparison"] == 1
     assert summary["record_counts"]["offense_composition"] == 12
     assert summary["record_counts"]["clearance_share_trends"] == 6
+    assert summary["record_counts"]["clearance_population_trends"] == 8
     assert payload["sources"]["S08"]["publisher"] == "National Police Agency of Japan"
     assert payload["sources"]["S16"]["source_table"] == "144"
     assert payload["sources"]["S17"]["source_table"] == "2"
+    assert payload["sources"]["S18"]["source_table"] == "5"
+    assert payload["sources"]["S19_2024"]["source_table"] == "1"
     serialized = json.dumps(payload, ensure_ascii=False, sort_keys=True)
     assert str(tmp_path) not in serialized
     assert "/private/local/" not in serialized
@@ -1113,6 +1459,7 @@ def test_compact_export_rejects_unsafe_clearance_share_semantics(
     comparison_latest_path = _comparison_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
     clearance_share_latest_path = _clearance_share_fixture(tmp_path)
+    clearance_population_latest_path = _clearance_population_fixture(tmp_path)
     _rewrite_clearance_share_records(clearance_share_latest_path, mutation)
 
     with pytest.raises(SchemaError, match="clearance share semantic contract"):
@@ -1122,6 +1469,48 @@ def test_compact_export_rejects_unsafe_clearance_share_semantics(
             nationality_comparison_latest_path=comparison_latest_path,
             offense_composition_latest_path=offense_latest_path,
             clearance_share_latest_path=clearance_share_latest_path,
+            clearance_population_latest_path=clearance_population_latest_path,
+            output_root=tmp_path / "output" / "compact_export",
+            generated_at="2026-09-01T18:00:00+09:00",
+        )
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "group_label",
+        "source_binding",
+        "required_warnings",
+        "interpretation_policy",
+        "source_coordinates",
+        "population_reference_date",
+        "metric_label",
+        "formula",
+    ],
+)
+def test_compact_export_rejects_unsafe_clearance_population_semantics(
+    tmp_path, mutation
+):
+    from nationality_crime_atlas.compact_export import generate_compact_export
+
+    indicator_latest_path = _indicator_fixture(tmp_path)
+    all_resident_latest_path = _all_resident_fixture(tmp_path)
+    comparison_latest_path = _comparison_fixture(tmp_path)
+    offense_latest_path = _offense_composition_fixture(tmp_path)
+    clearance_share_latest_path = _clearance_share_fixture(tmp_path)
+    clearance_population_latest_path = _clearance_population_fixture(tmp_path)
+    _rewrite_clearance_population_records(clearance_population_latest_path, mutation)
+
+    with pytest.raises(
+        SchemaError, match="clearance population semantic contract"
+    ):
+        generate_compact_export(
+            indicator_latest_path=indicator_latest_path,
+            all_resident_latest_path=all_resident_latest_path,
+            nationality_comparison_latest_path=comparison_latest_path,
+            offense_composition_latest_path=offense_latest_path,
+            clearance_share_latest_path=clearance_share_latest_path,
+            clearance_population_latest_path=clearance_population_latest_path,
             output_root=tmp_path / "output" / "compact_export",
             generated_at="2026-09-01T18:00:00+09:00",
         )
@@ -1135,6 +1524,7 @@ def test_generate_compact_export_rejects_latest_hash_mismatch(tmp_path):
     comparison_latest_path = _comparison_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
     clearance_share_latest_path = _clearance_share_fixture(tmp_path)
+    clearance_population_latest_path = _clearance_population_fixture(tmp_path)
     indicator_latest = json.loads(indicator_latest_path.read_text(encoding="utf-8"))
     indicator_latest["summary_sha256"] = "f" * 64
     _write_json(indicator_latest_path, indicator_latest)
@@ -1146,6 +1536,7 @@ def test_generate_compact_export_rejects_latest_hash_mismatch(tmp_path):
             nationality_comparison_latest_path=comparison_latest_path,
             offense_composition_latest_path=offense_latest_path,
             clearance_share_latest_path=clearance_share_latest_path,
+            clearance_population_latest_path=clearance_population_latest_path,
             output_root=tmp_path / "output" / "compact_export",
             generated_at="2026-09-01T18:00:00+09:00",
         )
@@ -1159,6 +1550,7 @@ def test_compact_export_cli_writes_timestamped_bundle(tmp_path, capsys):
     comparison_latest_path = _comparison_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
     clearance_share_latest_path = _clearance_share_fixture(tmp_path)
+    clearance_population_latest_path = _clearance_population_fixture(tmp_path)
 
     exit_code = main(
         [
@@ -1172,6 +1564,8 @@ def test_compact_export_cli_writes_timestamped_bundle(tmp_path, capsys):
             str(offense_latest_path),
             "--clearance-share-latest",
             str(clearance_share_latest_path),
+            "--clearance-population-latest",
+            str(clearance_population_latest_path),
             "--output-root",
             str(tmp_path / "output" / "compact_export"),
             "--generated-at",
@@ -1187,6 +1581,7 @@ def test_compact_export_cli_writes_timestamped_bundle(tmp_path, capsys):
         "nationality_indicators": 2,
         "offense_composition": 12,
         "clearance_share_trends": 6,
+        "clearance_population_trends": 8,
     }
     assert payload["output_dir"].endswith("20260901_180000_compact_export")
 
@@ -1199,6 +1594,7 @@ def test_compact_export_rejects_hash_closed_but_inaccurate_source_summary(tmp_pa
     comparison_latest_path = _comparison_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
     clearance_share_latest_path = _clearance_share_fixture(tmp_path)
+    clearance_population_latest_path = _clearance_population_fixture(tmp_path)
     latest = json.loads(indicator_latest_path.read_text(encoding="utf-8"))
     summary_path = indicator_latest_path.parent / latest["run_relpath"] / "summary.json"
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
@@ -1214,6 +1610,7 @@ def test_compact_export_rejects_hash_closed_but_inaccurate_source_summary(tmp_pa
             nationality_comparison_latest_path=comparison_latest_path,
             offense_composition_latest_path=offense_latest_path,
             clearance_share_latest_path=clearance_share_latest_path,
+            clearance_population_latest_path=clearance_population_latest_path,
             output_root=tmp_path / "output" / "compact_export",
             generated_at="2026-09-01T18:00:00+09:00",
         )
@@ -1225,6 +1622,7 @@ def test_compact_export_hashes_the_same_latest_bytes_that_it_parses(tmp_path, mo
     comparison_latest_path = _comparison_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
     clearance_share_latest_path = _clearance_share_fixture(tmp_path)
+    clearance_population_latest_path = _clearance_population_fixture(tmp_path)
     original_latest_sha256 = sha256_file(indicator_latest_path)
     original_sha256_file = compact_export_module.sha256_file
     mutation_performed = False
@@ -1250,6 +1648,7 @@ def test_compact_export_hashes_the_same_latest_bytes_that_it_parses(tmp_path, mo
         nationality_comparison_latest_path=comparison_latest_path,
         offense_composition_latest_path=offense_latest_path,
         clearance_share_latest_path=clearance_share_latest_path,
+        clearance_population_latest_path=clearance_population_latest_path,
         output_root=tmp_path / "output" / "compact_export",
         generated_at="2026-09-01T18:00:00+09:00",
     )
@@ -1271,6 +1670,7 @@ def test_concurrent_compact_exports_publish_a_hash_closed_latest_pointer(
     comparison_latest_path = _comparison_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
     clearance_share_latest_path = _clearance_share_fixture(tmp_path)
+    clearance_population_latest_path = _clearance_population_fixture(tmp_path)
     output_root = tmp_path / "output" / "compact_export"
     original_replace = Path.replace
     latest_barrier = threading.Barrier(2)
@@ -1289,6 +1689,7 @@ def test_concurrent_compact_exports_publish_a_hash_closed_latest_pointer(
             nationality_comparison_latest_path=comparison_latest_path,
             offense_composition_latest_path=offense_latest_path,
             clearance_share_latest_path=clearance_share_latest_path,
+            clearance_population_latest_path=clearance_population_latest_path,
             output_root=output_root,
             generated_at=generated_at,
         )
