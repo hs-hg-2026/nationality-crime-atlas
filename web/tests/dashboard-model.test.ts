@@ -585,6 +585,11 @@ describe('clearance population reference trend model', () => {
       refusalReason:
         'resident_foreigner_population_source_not_registered_for_year',
     });
+    expect(view.referenceRatioAxis).toEqual({
+      domain: [0, 7],
+      ticks: [0, 1, 2, 3, 4, 5, 6, 7],
+      tickInterval: 1,
+    });
     expect(view.metricLabel).toBe('検挙件数');
     expect(view.uiCaveat).toMatch(/犯罪を行う確率や公的な犯罪率を示さない/);
     expect(view.sources).toHaveLength(16);
@@ -617,6 +622,11 @@ describe('clearance population reference trend model', () => {
     expect(
       persons.japanese.points.map((point) => point.populationValue),
     ).toEqual(cases.japanese.points.map((point) => point.populationValue));
+    expect(persons.referenceRatioAxis).toEqual({
+      domain: [0, 5],
+      ticks: [0, 1, 2, 3, 4, 5],
+      tickInterval: 1,
+    });
     expect(
       persons.foreign.points.map((point) => point.populationValue),
     ).toEqual(cases.foreign.points.map((point) => point.populationValue));

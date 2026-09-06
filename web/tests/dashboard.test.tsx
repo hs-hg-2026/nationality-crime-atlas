@@ -448,6 +448,33 @@ describe('CrimeAtlasDashboard', () => {
     ).toHaveTextContent(/2024.*10,464.*3,768,977.*2\.78/);
   });
 
+  it('uses one 1.0-spaced reference-ratio y-axis for both population groups', async () => {
+    const user = userEvent.setup();
+    render(<CrimeAtlasDashboard dashboard={dashboard} />);
+
+    const section = screen.getByTestId('clearance-population-trend-section');
+    const rateCharts = within(section).getAllByTestId(
+      'clearance-population-rate-chart',
+    );
+    expect(rateCharts).toHaveLength(2);
+    for (const chart of rateCharts) {
+      expect(chart).toHaveAttribute(
+        'aria-label',
+        expect.stringMatching(/y軸は0\.0から7\.0、目盛り間隔は1\.0/),
+      );
+    }
+
+    await user.click(within(section).getByRole('button', { name: '検挙人員' }));
+    for (const chart of within(section).getAllByTestId(
+      'clearance-population-rate-chart',
+    )) {
+      expect(chart).toHaveAttribute(
+        'aria-label',
+        expect.stringMatching(/y軸は0\.0から5\.0、目盛り間隔は1\.0/),
+      );
+    }
+  });
+
   it('shows all nationality offense patterns as a clustered heatmap and 100% bars', async () => {
     const user = userEvent.setup();
     render(<CrimeAtlasDashboard dashboard={dashboard} />);
