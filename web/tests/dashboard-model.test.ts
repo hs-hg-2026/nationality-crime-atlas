@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import dashboardFixture from '@/public/data/dashboard_export.json';
 import {
+  buildClearancePopulationTrendViewModel,
   buildClearanceShareTrendViewModel,
   buildNationalityComparisonViewModel,
   buildOffenseCompositionViewModel,
@@ -539,6 +540,133 @@ describe('national clearance foreign-share trend model', () => {
     expect(() =>
       buildClearanceShareTrendViewModel(dashboard, 'cleared_cases'),
     ).toThrow(/clearance-share semantic contract/i);
+  });
+});
+
+describe('clearance population reference trend model', () => {
+  it('keeps Japanese and foreign population references in separate panels', () => {
+    const dashboard = parseDashboardData(dashboardFixture);
+    const view = buildClearancePopulationTrendViewModel(
+      dashboard,
+      'cleared_cases',
+    );
+
+    expect(view.years).toEqual([
+      2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024,
+    ]);
+    expect(view.japanese.points).toHaveLength(10);
+    expect(view.foreign.points).toHaveLength(10);
+    expect(view.japanese.points.at(-1)).toMatchObject({
+      year: 2024,
+      numeratorValue: 268_412,
+      populationValue: 120_296_000,
+      calculationStatus: 'calculated',
+      populationReferenceDate: '2024-10-01',
+    });
+    expect(view.japanese.points.at(-1)?.referenceRatio).toBeCloseTo(
+      (268_412 / 120_296_000) * 1000,
+    );
+    expect(view.foreign.points.at(-1)).toMatchObject({
+      year: 2024,
+      numeratorValue: 18_861,
+      populationValue: 3_768_977,
+      calculationStatus: 'calculated',
+      populationReferenceDate: '2024-12-31',
+    });
+    expect(view.foreign.points.at(-1)?.referenceRatio).toBeCloseTo(
+      (18_861 / 3_768_977) * 1000,
+    );
+    expect(view.foreign.points[0]).toMatchObject({
+      year: 2015,
+      numeratorValue: 16_017,
+      populationValue: null,
+      referenceRatio: null,
+      calculationStatus: 'refused',
+      refusalReason:
+        'resident_foreigner_population_source_not_registered_for_year',
+    });
+    expect(view.metricLabel).toBe('検挙件数');
+    expect(view.uiCaveat).toMatch(/犯罪を行う確率や公的な犯罪率を示さない/);
+    expect(view.sources).toHaveLength(16);
+    expect(view.sources.map((source) => source.id)).toEqual(
+      expect.arrayContaining(['S08', 'S15', 'S17', 'S18', 'S19_2024']),
+    );
+  });
+
+  it('switches to cleared persons without changing the population series', () => {
+    const dashboard = parseDashboardData(dashboardFixture);
+    const cases = buildClearancePopulationTrendViewModel(
+      dashboard,
+      'cleared_cases',
+    );
+    const persons = buildClearancePopulationTrendViewModel(
+      dashboard,
+      'cleared_persons',
+    );
+
+    expect(persons.metricLabel).toBe('検挙人員');
+    expect(persons.unitLabel).toBe('人');
+    expect(persons.japanese.points.at(-1)).toMatchObject({
+      numeratorValue: 181_362,
+      populationValue: 120_296_000,
+    });
+    expect(persons.foreign.points.at(-1)).toMatchObject({
+      numeratorValue: 10_464,
+      populationValue: 3_768_977,
+    });
+    expect(persons.japanese.points.map((point) => point.populationValue)).toEqual(
+      cases.japanese.points.map((point) => point.populationValue),
+    );
+    expect(persons.foreign.points.map((point) => point.populationValue)).toEqual(
+      cases.foreign.points.map((point) => point.populationValue),
+    );
+  });
+
+  it.each([
+    'group_label',
+    'source_binding',
+    'required_warnings',
+    'interpretation_policy',
+    'source_coordinates',
+    'population_reference_date',
+    'metric_label',
+    'formula',
+  ])('rejects unsafe clearance-population semantics: %s', (mutation) => {
+    const dashboard = structuredClone(parseDashboardData(dashboardFixture));
+    const target = dashboard.records.clearance_population_trends.find(
+      (row) =>
+        row.year === 2024 &&
+        row.population_group === 'all_foreign' &&
+        row.metric === 'cleared_cases',
+    );
+    if (!target) throw new Error('Clearance-population test row is missing.');
+
+    if (mutation === 'group_label') {
+      target.population_group_label_ja = '在留外国人の犯罪率';
+    } else if (mutation === 'source_binding') {
+      target.numerator_source_ids = ['S15'];
+    } else if (mutation === 'required_warnings') {
+      target.mismatch_flags = [];
+    } else if (mutation === 'interpretation_policy') {
+      Object.assign(
+        dashboard.definitions.clearance_population_ids[
+          'national_clearance_population_reference_ratio'
+        ],
+        { interpretation_policy: 'official_population_crime_probability' },
+      );
+    } else if (mutation === 'source_coordinates') {
+      target.source_components[1].source_row = 999;
+    } else if (mutation === 'population_reference_date') {
+      target.population_reference_date = '2024-10-01';
+    } else if (mutation === 'metric_label') {
+      target.metric_label_ja = '犯罪率';
+    } else if (mutation === 'formula') {
+      target.derivation_formula = 'S08.cleared_cases / S15.population';
+    }
+
+    expect(() =>
+      buildClearancePopulationTrendViewModel(dashboard, 'cleared_cases'),
+    ).toThrow(/clearance-population semantic contract/i);
   });
 });
 

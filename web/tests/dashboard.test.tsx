@@ -357,6 +357,56 @@ describe('CrimeAtlasDashboard', () => {
     );
   });
 
+  it('shows population change beside separate Japanese and foreign reference ratios', async () => {
+    const user = userEvent.setup();
+    render(<CrimeAtlasDashboard dashboard={dashboard} />);
+
+    const section = screen.getByTestId('clearance-population-trend-section');
+    expect(
+      within(section).getByRole('heading', {
+        name: '人口の変化と人口1,000人当たりの検挙',
+      }),
+    ).toBeVisible();
+    expect(
+      within(section).getByText('2015–2024年', { selector: 'span' }),
+    ).toBeVisible();
+    expect(
+      within(section).getByTestId('japanese-clearance-population-panel'),
+    ).toBeVisible();
+    expect(
+      within(section).getByTestId('foreign-clearance-population-panel'),
+    ).toBeVisible();
+    expect(
+      within(section).getAllByTestId('clearance-population-rate-chart'),
+    ).toHaveLength(2);
+    expect(
+      within(section).getAllByTestId('clearance-population-count-chart'),
+    ).toHaveLength(2);
+    expect(
+      within(section).getByTestId('japanese-clearance-population-table'),
+    ).toHaveTextContent(/2024.*268,412.*120,296,000.*2\.23/);
+    expect(
+      within(section).getByTestId('foreign-clearance-population-table'),
+    ).toHaveTextContent(/2024.*18,861.*3,768,977.*5\.00/);
+    expect(
+      within(section).getByTestId('foreign-clearance-population-table'),
+    ).toHaveTextContent(/2015.*16,017.*分母未登録.*未算出/);
+    expect(
+      within(section).getByText(/対象範囲は一致しない/),
+    ).toBeVisible();
+    expect(
+      within(section).getByText(/犯罪を行う確率や公的な犯罪率を示さない/),
+    ).toBeVisible();
+
+    await user.click(within(section).getByRole('button', { name: '検挙人員' }));
+    expect(
+      within(section).getByTestId('japanese-clearance-population-table'),
+    ).toHaveTextContent(/2024.*181,362.*120,296,000.*1\.51/);
+    expect(
+      within(section).getByTestId('foreign-clearance-population-table'),
+    ).toHaveTextContent(/2024.*10,464.*3,768,977.*2\.78/);
+  });
+
   it('shows all nationality offense patterns as a clustered heatmap and 100% bars', async () => {
     const user = userEvent.setup();
     render(<CrimeAtlasDashboard dashboard={dashboard} />);
