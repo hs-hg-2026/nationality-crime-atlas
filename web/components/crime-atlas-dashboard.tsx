@@ -113,6 +113,9 @@ const PROJECT_README_URL =
   'https://github.com/hs-hg-2026/nationality-crime-atlas/blob/main/README.ja.md';
 const INTERPRETATION_NOTE_URL =
   'https://github.com/hs-hg-2026/nationality-crime-atlas/blob/main/docs/interpretation_note.md';
+const GITHUB_ISSUES_URL =
+  'https://github.com/hs-hg-2026/nationality-crime-atlas/issues';
+const GITHUB_NEW_ISSUE_URL = `${GITHUB_ISSUES_URL}/new/choose`;
 
 const sourceDisplay: Record<
   string,
@@ -2145,8 +2148,45 @@ export function CrimeAtlasDashboard({
       </main>
 
       <footer className="atlas-footer">
-        <span>公表値をその定義差とともに表示</span>
-        <span>表示データ作成日時 {dashboard.generated_at}</span>
+        <section
+          className="footer-feedback"
+          aria-labelledby="footer-feedback-title"
+        >
+          <div className="footer-feedback-copy">
+            <h2 id="footer-feedback-title">可視化の提案・不具合報告</h2>
+            <p>
+              見たい比較や図の提案、表示上の不具合をGitHub
+              Issuesで受け付けています。投稿にはGitHubアカウントが必要です。
+            </p>
+            <p className="footer-feedback-notice">
+              投稿内容はGitHub上で公開されます。個人情報や個別事件を特定できる情報は書き込まないでください。
+            </p>
+          </div>
+          <nav className="footer-feedback-actions" aria-label="GitHub Issues">
+            <a
+              className="footer-issue-link footer-issue-link-primary"
+              href={GITHUB_NEW_ISSUE_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
+              要望・不具合を送る（GitHub Issues）
+              <ExternalLink aria-hidden="true" />
+            </a>
+            <a
+              className="footer-issue-link footer-issue-link-secondary"
+              href={GITHUB_ISSUES_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
+              寄せられた内容を見る
+              <ExternalLink aria-hidden="true" />
+            </a>
+          </nav>
+        </section>
+        <div className="footer-meta">
+          <span>公表値をその定義差とともに表示</span>
+          <span>表示データ作成日時 {dashboard.generated_at}</span>
+        </div>
       </footer>
     </div>
   );

@@ -1472,13 +1472,96 @@ body {
   }
 
   .atlas-footer {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.25rem clamp(1.25rem, 4vw, 4rem);
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.5rem clamp(1.25rem, 4vw, 4rem) 1.25rem;
     border-top: 1px solid var(--border);
     color: var(--muted-foreground);
     font-size: 0.7rem;
+  }
+  .footer-feedback {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .footer-feedback-copy {
+    display: grid;
+    gap: 0.45rem;
+    max-width: 48rem;
+  }
+  .footer-feedback-copy h2 {
+    color: var(--foreground);
+    font-size: 1rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+  .footer-feedback-copy p {
+    line-height: 1.65;
+  }
+  .footer-feedback-notice {
+    color: color-mix(in oklch, var(--foreground), var(--muted-foreground) 35%);
+  }
+  .footer-feedback-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    justify-content: flex-end;
+  }
+  .footer-issue-link {
+    display: inline-flex;
+    gap: 0.45rem;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 0.55rem;
+    font-size: 0.74rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-decoration: none;
+    transition:
+      border-color 150ms ease,
+      background-color 150ms ease,
+      color 150ms ease;
+  }
+  .footer-issue-link svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    flex: 0 0 auto;
+  }
+  .footer-issue-link-primary {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  .footer-issue-link-secondary {
+    background: var(--background);
+    color: var(--foreground);
+  }
+  .footer-issue-link:hover,
+  .footer-issue-link:focus-visible {
+    border-color: var(--ring);
+  }
+  .footer-issue-link-primary:hover,
+  .footer-issue-link-primary:focus-visible {
+    background: color-mix(in oklch, var(--primary), white 12%);
+  }
+  .footer-issue-link-secondary:hover,
+  .footer-issue-link-secondary:focus-visible {
+    background: var(--muted);
+  }
+  .footer-issue-link:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  .footer-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
   }
 
   @media (max-width: 860px) {
@@ -1587,7 +1670,13 @@ body {
     .mismatch-strip {
       grid-template-columns: 1fr;
     }
-    .atlas-footer {
+    .footer-feedback {
+      grid-template-columns: 1fr;
+    }
+    .footer-feedback-actions {
+      justify-content: flex-start;
+    }
+    .footer-meta {
       flex-direction: column;
     }
   }
