@@ -426,3 +426,9 @@
 - **検証結果**: 先にUI testのREDを確認し、実装後に118 frontend test、statement coverage 88.20%、branch coverage 84.28%、typecheck、lint、format、公開data検証、production buildをPASSした。1440pxと390pxの実画面でfooterの欠落と横はみ出しがないことを目視確認した。
 - **用語集への追記**: userの「visaを取得した人で、有効／失効の両方を含むのか」という具体的な問いは、未確認のまま保持した。「来日外国人」をvisa状態だけで言い換えず、公式QA等の実例を確認できた場合だけ根拠と適用範囲を添える。
 - **関連パス**: `web/components/crime-atlas-dashboard.tsx`, `web/app/globals.css`, `web/tests/dashboard.test.tsx`, `docs/20260906_114255_glossary_backlog.md`
+
+## 2026-09-06 人口当たり検挙時系列のy軸を共通化
+- **何が**: 「人口の変化と人口1,000人当たりの検挙」の日本人等panelと外国人全体panelに、同じy軸と1.0間隔の目盛りを適用した。
+- **どう判断したか／なぜ**: 選択中の分子に含まれる両groupの最大値を次の整数へ切り上げ、両panelの上限とする。検挙件数は0.0–7.0、検挙人員は0.0–5.0で、どちらも1.0間隔とした。日本人等の変化は圧縮されるが、両groupの高さを同一尺度で直接比較できることを優先した。
+- **検証結果**: 共通axisがない状態で3件のREDを確認後、実装してGREEN化した。全119 frontend test、statement coverage 88.25%、branch coverage 84.32%、typecheck、lint、format、公開data検証、production buildをPASS。1440pxと390pxの実画面で共通scaleとresponsive表示を確認した。
+- **関連パス**: `web/lib/dashboard.ts`, `web/components/crime-atlas-dashboard.tsx`, `web/tests/dashboard-model.test.ts`, `web/tests/dashboard.test.tsx`
