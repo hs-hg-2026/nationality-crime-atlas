@@ -1171,6 +1171,99 @@ body {
     margin-top: 1.25rem;
   }
 
+  .clearance-population-section {
+    margin-top: clamp(4rem, 9vw, 7rem);
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+    border-top: 1px solid var(--border);
+  }
+  .clearance-population-section h2 {
+    margin-top: 0.4rem;
+    font-size: clamp(1.9rem, 4vw, 3.35rem);
+    font-weight: 770;
+    letter-spacing: -0.05em;
+    line-height: 1.08;
+  }
+  .clearance-population-controls {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) * 1.4);
+    background: var(--card);
+  }
+  .clearance-population-controls .control-field {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .clearance-population-alert {
+    margin-top: 1rem;
+    border-color: color-mix(in oklch, var(--primary), var(--border) 72%);
+    background: color-mix(in oklch, var(--primary), white 93%);
+  }
+  .clearance-population-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+  .clearance-population-panel {
+    min-width: 0;
+  }
+  .clearance-population-panel-content {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .clearance-population-chart-block {
+    min-width: 0;
+  }
+  .clearance-population-chart-block h3 {
+    margin-bottom: 0.5rem;
+    color: var(--muted-foreground);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+  .clearance-population-chart {
+    width: 100%;
+    min-width: 0;
+    height: 245px;
+    aspect-ratio: auto;
+  }
+  .clearance-population-table {
+    width: 100%;
+    min-width: 550px;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+  }
+  .clearance-population-table th,
+  .clearance-population-table td {
+    padding: 0.65rem 0.55rem;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    vertical-align: top;
+  }
+  .clearance-population-table th:first-child {
+    text-align: left;
+  }
+  .clearance-population-table small {
+    display: block;
+    color: var(--muted-foreground);
+    font-size: 0.62rem;
+  }
+  .clearance-population-table strong {
+    color: var(--primary);
+  }
+  .clearance-population-sources {
+    margin-top: 1.25rem;
+  }
+  .clearance-population-sources summary {
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .clearance-population-sources details[open] summary {
+    margin-bottom: 1rem;
+  }
+
   .offense-section {
     margin-top: clamp(4rem, 9vw, 7rem);
     padding-top: clamp(2.5rem, 6vw, 4.5rem);
@@ -1410,6 +1503,7 @@ body {
     .nationality-grid,
     .clearance-share-grid,
     .clearance-share-panel-grid,
+    .clearance-population-grid,
     .offense-controls,
     .offense-evidence-grid {
       grid-template-columns: 1fr;

@@ -44,12 +44,14 @@ import {
 } from '@/components/ui/native-select';
 import { PrefectureMap } from '@/components/prefecture-map';
 import {
+  buildClearancePopulationTrendViewModel,
   buildClearanceShareTrendViewModel,
   buildOffenseCompositionViewModel,
   buildSelectableNationalityViewModel,
   buildRegionalViewModel,
   CONTEXT_METRICS,
   type ClearanceShareMetric,
+  type ClearancePopulationTrendViewModel,
   type ClearanceShareTrendViewModel,
   type ContextMetricId,
   type DashboardData,
@@ -93,6 +95,17 @@ const japaneseClearanceShareChartConfig = {
   japaneseEtcResidualShare: {
     label: '日本人等（残差）',
     color: 'var(--chart-4)',
+  },
+} satisfies ChartConfig;
+
+const clearancePopulationChartConfig = {
+  referenceRatio: {
+    label: '人口1,000人当たり',
+    color: 'var(--chart-1)',
+  },
+  populationValue: {
+    label: '参照人口',
+    color: 'var(--chart-2)',
   },
 } satisfies ChartConfig;
 
@@ -758,6 +771,306 @@ function ClearanceShareTrend({
   );
 }
 
+function formatPopulationReferenceRatio(value: number | null): string {
+  if (value === null) return '未算出';
+  return value.toLocaleString('ja-JP', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function formatCompactPopulation(value: number): string {
+  if (value >= 100_000_000) return `${(value / 100_000_000).toFixed(2)}億`;
+  if (value >= 10_000) return `${(value / 10_000).toFixed(1)}万`;
+  return value.toLocaleString('ja-JP');
+}
+
+function ClearancePopulationPanel({
+  panel,
+  view,
+  testId,
+}: {
+  panel: ClearancePopulationTrendViewModel['japanese'];
+  view: ClearancePopulationTrendViewModel;
+  testId: string;
+}) {
+  const isJapanese = panel.group === 'japanese_etc_residual';
+  return (
+    <Card className="clearance-population-panel" data-testid={testId}>
+      <CardHeader>
+        <CardTitle>{panel.label}</CardTitle>
+        <CardDescription>
+          {isJapanese
+            ? '分子は日本人の直接公表値ではなく、全国総数から外国人全体を引いた残差です。分母は10月1日の日本人人口です。'
+            : '分子は犯罪統計の「外国人全体」、分母は12月31日の在留外国人数で、対象範囲は一致しません。'}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="clearance-population-panel-content">
+        <div className="clearance-population-chart-block">
+          <h3>{view.metricLabel}の人口1,000人当たり参考比率</h3>
+          <ChartContainer
+            config={clearancePopulationChartConfig}
+            className="clearance-population-chart"
+            data-testid="clearance-population-rate-chart"
+            initialDimension={{ width: 620, height: 260 }}
+          >
+            <LineChart
+              accessibilityLayer
+              data={panel.points}
+              margin={{ left: 4, right: 18, top: 12, bottom: 4 }}
+            >
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis
+                dataKey="year"
+                axisLine={false}
+                tickLine={false}
+                tickMargin={8}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tickMargin={8}
+                tickFormatter={(value) => Number(value).toFixed(1)}
+                width={42}
+              />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    labelFormatter={(_, payload) =>
+                      payload[0]?.payload?.year
+                        ? `${payload[0].payload.year}年`
+                        : ''
+                    }
+                    formatter={(value) => (
+                      <>
+                        <span>人口1,000人当たり</span>
+                        <strong>
+                          {formatPopulationReferenceRatio(Number(value))}
+                        </strong>
+                      </>
+                    )}
+                  />
+                }
+              />
+              <Line
+                dataKey="referenceRatio"
+                name="referenceRatio"
+                type="monotone"
+                stroke="var(--color-referenceRatio)"
+                strokeWidth={2.5}
+                dot={{ r: 3 }}
+                connectNulls={false}
+              />
+            </LineChart>
+          </ChartContainer>
+        </div>
+
+        <div className="clearance-population-chart-block">
+          <h3>分母に使った参照人口</h3>
+          <ChartContainer
+            config={clearancePopulationChartConfig}
+            className="clearance-population-chart"
+            data-testid="clearance-population-count-chart"
+            initialDimension={{ width: 620, height: 230 }}
+          >
+            <LineChart
+              accessibilityLayer
+              data={panel.points}
+              margin={{ left: 4, right: 18, top: 12, bottom: 4 }}
+            >
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis
+                dataKey="year"
+                axisLine={false}
+                tickLine={false}
+                tickMargin={8}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tickMargin={8}
+                tickFormatter={(value) =>
+                  formatCompactPopulation(Number(value))
+                }
+                width={52}
+              />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    labelFormatter={(_, payload) =>
+                      payload[0]?.payload?.year
+                        ? `${payload[0].payload.year}年`
+                        : ''
+                    }
+                    formatter={(value) => (
+                      <>
+                        <span>参照人口</span>
+                        <strong>
+                          {Number(value).toLocaleString('ja-JP')}人
+                        </strong>
+                      </>
+                    )}
+                  />
+                }
+              />
+              <Line
+                dataKey="populationValue"
+                name="populationValue"
+                type="monotone"
+                stroke="var(--color-populationValue)"
+                strokeWidth={2.5}
+                dot={{ r: 3 }}
+                connectNulls={false}
+              />
+            </LineChart>
+          </ChartContainer>
+        </div>
+
+        <div className="table-scroll">
+          <table
+            className="clearance-population-table"
+            data-testid={`${panel.group === 'japanese_etc_residual' ? 'japanese' : 'foreign'}-clearance-population-table`}
+          >
+            <caption className="sr-only">
+              {panel.label}の{view.metricLabel}
+              と参照人口、人口1,000人当たり参考比率
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">年</th>
+                <th scope="col">{view.metricLabel}</th>
+                <th scope="col">参照人口</th>
+                <th scope="col">参考比率</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...panel.points].reverse().map((point) => (
+                <tr key={point.year}>
+                  <th scope="row">{point.year}</th>
+                  <td>
+                    {point.numeratorValue.toLocaleString('ja-JP')}
+                    <small>{view.unitLabel}</small>
+                  </td>
+                  <td>
+                    {point.populationValue === null
+                      ? '分母未登録'
+                      : point.populationValue.toLocaleString('ja-JP')}
+                    {point.populationValue !== null && <small>人</small>}
+                    {point.populationReferenceDate && (
+                      <small>{point.populationReferenceDate}時点</small>
+                    )}
+                  </td>
+                  <td>
+                    <strong>
+                      {formatPopulationReferenceRatio(point.referenceRatio)}
+                    </strong>
+                    {point.referenceRatio !== null && (
+                      <small>人口1,000人当たり</small>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function ClearancePopulationTrend({
+  view,
+  metric,
+  onMetricChange,
+}: {
+  view: ClearancePopulationTrendViewModel;
+  metric: ClearanceShareMetric;
+  onMetricChange: (metric: ClearanceShareMetric) => void;
+}) {
+  return (
+    <section
+      id="clearance-population"
+      className="clearance-population-section"
+      aria-labelledby="clearance-population-heading"
+      data-testid="clearance-population-trend-section"
+    >
+      <div className="section-heading-row">
+        <div>
+          <p className="section-kicker">人口と検挙の時系列</p>
+          <h2 id="clearance-population-heading">
+            人口の変化と人口1,000人当たりの検挙
+          </h2>
+          <p className="intro-copy">
+            検挙数の変化が、参照人口の増減と人口当たり参考比率のどちらに表れているかを、日本人等と外国人全体に分けて確認します。
+          </p>
+        </div>
+        <Badge variant="outline">
+          {view.years[0]}–{view.years.at(-1)}年
+        </Badge>
+      </div>
+
+      <div className="clearance-population-controls">
+        <fieldset className="control-field">
+          <legend>分子</legend>
+          <div className="mode-buttons">
+            <Button
+              type="button"
+              variant={metric === 'cleared_cases' ? 'default' : 'outline'}
+              aria-pressed={metric === 'cleared_cases'}
+              onClick={() => onMetricChange('cleared_cases')}
+            >
+              検挙件数
+            </Button>
+            <Button
+              type="button"
+              variant={metric === 'cleared_persons' ? 'default' : 'outline'}
+              aria-pressed={metric === 'cleared_persons'}
+              onClick={() => onMetricChange('cleared_persons')}
+            >
+              検挙人員
+            </Button>
+          </div>
+        </fieldset>
+      </div>
+
+      <Alert className="clearance-population-alert">
+        <Info aria-hidden="true" />
+        <AlertTitle>確率ではなく、公表統計由来の参考比率です</AlertTitle>
+        <AlertDescription>{view.uiCaveat}</AlertDescription>
+      </Alert>
+
+      <div className="clearance-population-grid">
+        <ClearancePopulationPanel
+          panel={view.japanese}
+          view={view}
+          testId="japanese-clearance-population-panel"
+        />
+        <ClearancePopulationPanel
+          panel={view.foreign}
+          view={view}
+          testId="foreign-clearance-population-panel"
+        />
+      </div>
+
+      <Card className="clearance-population-sources">
+        <CardHeader>
+          <BookOpen aria-hidden="true" />
+          <CardTitle>この参考比率の出典</CardTitle>
+          <CardDescription>
+            犯罪統計の分子と、年ごとの日本人人口・在留外国人数の分母を別々に辿れます。
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <details>
+            <summary>{view.sources.length}件の出典を表示</summary>
+            <SourceList sources={view.sources} />
+          </details>
+        </CardContent>
+      </Card>
+    </section>
+  );
+}
+
 function OffenseCompositionLegend({
   view,
 }: {
@@ -937,6 +1250,8 @@ export function CrimeAtlasDashboard({
     useState<NationalityPerspectiveId>(NATIONALITY_COMPARISON_ID);
   const [clearanceShareMetric, setClearanceShareMetric] =
     useState<ClearanceShareMetric>('cleared_cases');
+  const [clearancePopulationMetric, setClearancePopulationMetric] =
+    useState<ClearanceShareMetric>('cleared_cases');
   const [offenseMetric, setOffenseMetric] =
     useState<OffenseCompositionMetric>('cleared_persons');
   const [offenseOrder, setOffenseOrder] =
@@ -959,6 +1274,14 @@ export function CrimeAtlasDashboard({
   const clearanceShareView = useMemo(
     () => buildClearanceShareTrendViewModel(dashboard, clearanceShareMetric),
     [clearanceShareMetric, dashboard],
+  );
+  const clearancePopulationView = useMemo(
+    () =>
+      buildClearancePopulationTrendViewModel(
+        dashboard,
+        clearancePopulationMetric,
+      ),
+    [clearancePopulationMetric, dashboard],
   );
   const offenseView = useMemo(
     () =>
@@ -993,6 +1316,7 @@ export function CrimeAtlasDashboard({
           <a href="#regional">地域全体</a>
           <a href="#nationality">国籍等別</a>
           <a href="#clearance-share">時系列</a>
+          <a href="#clearance-population">人口と検挙</a>
           <a href="#offense">犯罪の種類</a>
         </nav>
         <Badge variant="outline" className="verified-badge">
@@ -1603,6 +1927,12 @@ export function CrimeAtlasDashboard({
           view={clearanceShareView}
           metric={clearanceShareMetric}
           onMetricChange={setClearanceShareMetric}
+        />
+
+        <ClearancePopulationTrend
+          view={clearancePopulationView}
+          metric={clearancePopulationMetric}
+          onMetricChange={setClearancePopulationMetric}
         />
 
         <section

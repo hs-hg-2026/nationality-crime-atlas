@@ -67,6 +67,9 @@ export const OFFENSE_COMPOSITION_ID =
 export const CLEARANCE_SHARE_TREND_ID =
   'national_criminal_code_clearance_foreign_share' as const;
 
+export const CLEARANCE_POPULATION_TREND_ID =
+  'national_clearance_population_reference_ratio' as const;
+
 const CLEARANCE_SHARE_LABEL_JA =
   '全国の刑法犯検挙（日本人等を含む）に占める外国人区分の割合';
 const CLEARANCE_SHARE_INTERPRETATION_POLICY =
@@ -111,7 +114,69 @@ const CLEARANCE_SHARE_SCOPE_CONTRACTS = {
   },
 } as const;
 
+const CLEARANCE_POPULATION_LABEL_JA = '人口1,000人当たりの刑法犯検挙参考比率';
+const CLEARANCE_POPULATION_INTERPRETATION_POLICY =
+  'public_data_reference_ratio_not_probability';
+const CLEARANCE_POPULATION_UI_CAVEAT =
+  '1年間の刑法犯検挙件数または検挙人員を、10月1日の日本人人口または12月31日の在留外国人数で単純に割った公表統計由来の参考比率である。犯罪統計の分子から居住者だけを識別できず、特に「外国人全体」と在留外国人人口の対象範囲は一致しない。犯罪を行う確率や公的な犯罪率を示さない。';
+const CLEARANCE_POPULATION_GROUP_CONTRACTS = {
+  japanese_etc_residual: {
+    label: '日本人等（全国総数−外国人全体の残差）',
+    numeratorSourceIds: ['S15', 'S08'],
+    populationScope: 'japanese_population',
+    derivationMethod:
+      'arithmetic_residual_all_person_minus_all_foreign_division',
+    requiredFlags: [
+      'annual_clearance_flow_vs_point_in_time_population_stock',
+      'japanese_numerator_is_arithmetic_residual',
+      'japanese_population_rounded_to_nearest_1000',
+      'numerator_residency_scope_not_established',
+      'october_1_population_reference_date',
+      'public_data_reference_ratio_not_official_crime_rate',
+    ],
+  },
+  all_foreign: {
+    label: '外国人全体（分母は在留外国人数）',
+    numeratorSourceIds: ['S08'],
+    populationScope: 'resident_foreigner_population',
+    derivationMethod: 'direct_published_count_division',
+    requiredFlags: [
+      'all_foreign_numerator_vs_resident_foreigner_denominator',
+      'annual_clearance_flow_vs_point_in_time_population_stock',
+      'december_31_population_reference_date',
+      'numerator_residency_scope_not_established',
+      'public_data_reference_ratio_not_official_crime_rate',
+    ],
+  },
+} as const;
+const JAPANESE_POPULATION_SOURCES = new Map<number, string>([
+  ...Array.from({ length: 6 }, (_, index): [number, string] => [
+    2015 + index,
+    'S18',
+  ]),
+  [2021, 'S17_2021'],
+  [2022, 'S17_2022'],
+  [2023, 'S17_2023'],
+  [2024, 'S17'],
+]);
+const FOREIGN_POPULATION_COORDINATES = new Map<
+  number,
+  readonly [string, string, number, number]
+>([
+  [2016, ['S19_2016', '16-12-01-1', 7, 3]],
+  [2017, ['S19_2017', '17-12-01-1', 7, 3]],
+  [2018, ['S19_2018', '18-12-01-1', 7, 3]],
+  [2019, ['S19_2019', '19-12-01-1', 7, 2]],
+  [2020, ['S19_2020', '20-12-01-1', 7, 2]],
+  [2021, ['S19_2021', '21-12-01-1', 7, 2]],
+  [2022, ['S19_2022', '22-12-01m', 5, 6]],
+  [2023, ['S19_2023', '23-12-01m', 5, 5]],
+  [2024, ['S19_2024', '24-12-01m', 5, 5]],
+]);
+
 type ClearanceShareScope = keyof typeof CLEARANCE_SHARE_SCOPE_CONTRACTS;
+type ClearancePopulationGroup =
+  keyof typeof CLEARANCE_POPULATION_GROUP_CONTRACTS;
 
 export const NATIONALITY_PERSPECTIVES = [
   {
@@ -237,6 +302,15 @@ interface ClearanceShareDefinition {
   ui_caveat: string;
   display_multiplier: 100;
   display_unit_label_ja: '%';
+}
+
+interface ClearancePopulationDefinition {
+  label_ja: string;
+  label_en: string;
+  interpretation_policy: 'public_data_reference_ratio_not_probability';
+  ui_caveat: string;
+  display_multiplier: 1000;
+  display_unit_label_ja: '人口1,000人当たり';
 }
 
 interface ContextRow {
@@ -368,6 +442,43 @@ interface ClearanceShareRow {
   mismatch_flags: string[];
 }
 
+interface ClearancePopulationSourceComponent {
+  source_id: string;
+  role: string;
+  metric: ClearanceShareMetric | 'population';
+  value: number;
+  source_table: string;
+  source_sheet: string;
+  source_row: number;
+  source_column: number;
+  published_value?: number;
+  published_unit?: string;
+}
+
+interface ClearancePopulationRow {
+  trend_id: string;
+  year: number;
+  population_group: ClearancePopulationGroup;
+  population_group_label_ja: string;
+  metric: ClearanceShareMetric;
+  metric_label_ja: string;
+  numerator_value: number;
+  denominator_value: number | null;
+  quotient: number | null;
+  display_value: number | null;
+  calculation_status: 'calculated' | 'refused';
+  refusal_reason: string | null;
+  numerator_source_ids: string[];
+  denominator_source_id: string | null;
+  population_reference_date: string | null;
+  population_scope: string;
+  denominator_rounding: string | null;
+  derivation_method: string;
+  derivation_formula: string | null;
+  source_components: ClearancePopulationSourceComponent[];
+  mismatch_flags: string[];
+}
+
 interface PublicSource {
   dataset: string;
   publisher: string;
@@ -381,7 +492,7 @@ interface PublicSource {
 }
 
 export interface DashboardData {
-  compact_export_schema_version: 7;
+  compact_export_schema_version: 8;
   generated_at: string;
   definitions: {
     context_ids: Record<string, ContextDefinition>;
@@ -390,6 +501,7 @@ export interface DashboardData {
     offense_composition_ids: Record<string, OffenseCompositionDefinition>;
     offense_category_ids: Record<string, OffenseCategoryDefinition>;
     clearance_share_ids: Record<string, ClearanceShareDefinition>;
+    clearance_population_ids: Record<string, ClearancePopulationDefinition>;
   };
   records: {
     all_resident_context: ContextRow[];
@@ -397,6 +509,7 @@ export interface DashboardData {
     nationality_comparison: NationalityComparisonRow[];
     offense_composition: OffenseCompositionRow[];
     clearance_share_trends: ClearanceShareRow[];
+    clearance_population_trends: ClearancePopulationRow[];
   };
   sources: Record<string, PublicSource>;
 }
@@ -558,6 +671,37 @@ export interface ClearanceShareTrendViewModel {
   sources: DashboardSource[];
 }
 
+export interface ClearancePopulationTrendPoint {
+  year: number;
+  numeratorValue: number;
+  populationValue: number | null;
+  referenceRatio: number | null;
+  calculationStatus: 'calculated' | 'refused';
+  refusalReason: string | null;
+  populationReferenceDate: string | null;
+}
+
+export interface ClearancePopulationTrendPanel {
+  group: ClearancePopulationGroup;
+  label: string;
+  points: ClearancePopulationTrendPoint[];
+}
+
+export interface ClearancePopulationTrendViewModel {
+  trendId: typeof CLEARANCE_POPULATION_TREND_ID;
+  metric: ClearanceShareMetric;
+  metricLabel: '検挙件数' | '検挙人員';
+  unitLabel: '件' | '人';
+  label: string;
+  years: number[];
+  japanese: ClearancePopulationTrendPanel;
+  foreign: ClearancePopulationTrendPanel;
+  uiCaveat: string;
+  interpretationPolicy: 'public_data_reference_ratio_not_probability';
+  warningCodes: string[];
+  sources: DashboardSource[];
+}
+
 export interface OffenseCompositionCategory {
   id: string;
   label: string;
@@ -617,7 +761,7 @@ function isObject(value: unknown): value is JsonObject {
 }
 
 export function parseDashboardData(value: unknown): DashboardData {
-  if (!isObject(value) || value.compact_export_schema_version !== 7) {
+  if (!isObject(value) || value.compact_export_schema_version !== 8) {
     throw new Error('Unsupported compact export schema version.');
   }
 
@@ -632,12 +776,14 @@ export function parseDashboardData(value: unknown): DashboardData {
     !isObject(definitions.offense_composition_ids) ||
     !isObject(definitions.offense_category_ids) ||
     !isObject(definitions.clearance_share_ids) ||
+    !isObject(definitions.clearance_population_ids) ||
     !isObject(records) ||
     !Array.isArray(records.all_resident_context) ||
     !Array.isArray(records.nationality_indicators) ||
     !Array.isArray(records.nationality_comparison) ||
     !Array.isArray(records.offense_composition) ||
     !Array.isArray(records.clearance_share_trends) ||
+    !Array.isArray(records.clearance_population_trends) ||
     !isObject(sources)
   ) {
     throw new Error('Compact export is missing the regional dashboard data.');
@@ -1774,6 +1920,393 @@ export function buildClearanceShareTrendViewModel(
     label: definition.label_ja,
     years,
     points,
+    uiCaveat: definition.ui_caveat,
+    interpretationPolicy: definition.interpretation_policy,
+    warningCodes: [
+      ...new Set(selectedRows.flatMap((row) => row.mismatch_flags)),
+    ].sort(),
+    sources: collectSources(dashboard, sourceIds),
+  };
+}
+
+function clearancePopulationSemanticError(detail: string): never {
+  throw new Error(`Clearance-population semantic contract: ${detail}.`);
+}
+
+type ClearancePopulationComponentSignature = readonly [
+  string,
+  string,
+  ClearanceShareMetric | 'population',
+  number,
+  string,
+  string,
+  number,
+  number,
+  number | undefined,
+  string | undefined,
+];
+
+function validateClearancePopulationComponents(
+  row: ClearancePopulationRow,
+  expected: ReadonlyArray<ClearancePopulationComponentSignature>,
+): void {
+  const components: unknown = row.source_components;
+  if (
+    !Array.isArray(components) ||
+    components.some((component) => !isObject(component))
+  ) {
+    clearancePopulationSemanticError(
+      'source_components must be an object array',
+    );
+  }
+  const actual = components.map((component) => [
+    component.source_id,
+    component.role,
+    component.metric,
+    component.value,
+    component.source_table,
+    component.source_sheet,
+    component.source_row,
+    component.source_column,
+    component.published_value,
+    component.published_unit,
+  ]);
+  if (
+    actual.length !== expected.length ||
+    actual.some(
+      (component, index) =>
+        component.length !== expected[index].length ||
+        component.some((value, part) => value !== expected[index][part]),
+    )
+  ) {
+    clearancePopulationSemanticError(
+      'source_components do not match the population inputs',
+    );
+  }
+}
+
+function requireClearancePopulationRow(
+  row: ClearancePopulationRow,
+  definition: ClearancePopulationDefinition,
+): void {
+  const groupContract =
+    CLEARANCE_POPULATION_GROUP_CONTRACTS[row.population_group];
+  const rowLabel = `${row.metric}/${row.population_group}/${row.year}`;
+  if (
+    !groupContract ||
+    row.population_group_label_ja !== groupContract.label ||
+    row.population_scope !== groupContract.populationScope ||
+    row.metric_label_ja !==
+      (row.metric === 'cleared_cases' ? '検挙件数' : '検挙人員') ||
+    !Array.isArray(row.numerator_source_ids) ||
+    !stringArraysEqual(
+      row.numerator_source_ids,
+      groupContract.numeratorSourceIds,
+    ) ||
+    !Array.isArray(row.mismatch_flags) ||
+    !groupContract.requiredFlags.every((flag) =>
+      row.mismatch_flags.includes(flag),
+    )
+  ) {
+    clearancePopulationSemanticError(
+      `group, source, label, or warning binding differs for ${rowLabel}`,
+    );
+  }
+  if (
+    !Number.isSafeInteger(row.year) ||
+    !['cleared_cases', 'cleared_persons'].includes(row.metric) ||
+    !Number.isSafeInteger(row.numerator_value) ||
+    row.numerator_value < 0
+  ) {
+    throw new Error(`Invalid clearance-population numerator for ${rowLabel}.`);
+  }
+
+  const clearanceColumn = row.metric === 'cleared_cases' ? 7 : 8;
+  const foreignClearanceComponent: ClearancePopulationComponentSignature = [
+    'S08',
+    'numerator',
+    row.metric,
+    row.numerator_value,
+    '130',
+    '01',
+    row.year - 2007,
+    clearanceColumn,
+    undefined,
+    undefined,
+  ];
+
+  if (row.population_group === 'japanese_etc_residual') {
+    const [allPersonComponent, allForeignComponent] = row.source_components;
+    if (
+      row.calculation_status !== 'calculated' ||
+      row.refusal_reason !== null ||
+      typeof row.denominator_value !== 'number' ||
+      !Number.isSafeInteger(row.denominator_value) ||
+      row.denominator_value <= 0 ||
+      row.source_components.length !== 3 ||
+      !allPersonComponent ||
+      !allForeignComponent ||
+      allPersonComponent.value - allForeignComponent.value !==
+        row.numerator_value
+    ) {
+      clearancePopulationSemanticError(
+        `Japanese residual calculation differs for ${rowLabel}`,
+      );
+    }
+    const sourceId = JAPANESE_POPULATION_SOURCES.get(row.year);
+    if (!sourceId) {
+      clearancePopulationSemanticError(
+        `unsupported Japanese population year for ${rowLabel}`,
+      );
+    }
+    const isIntercensal = sourceId === 'S18';
+    if (
+      row.denominator_source_id !== sourceId ||
+      row.population_reference_date !== `${row.year}-10-01` ||
+      row.denominator_rounding !== 'nearest_1000_persons' ||
+      row.derivation_method !== groupContract.derivationMethod ||
+      row.derivation_formula !==
+        `(S15.${row.metric} - S08.${row.metric}) / ${sourceId}.population * 1000`
+    ) {
+      clearancePopulationSemanticError(
+        `Japanese source, date, or formula differs for ${rowLabel}`,
+      );
+    }
+    validateClearancePopulationComponents(row, [
+      [
+        'S15',
+        'numerator_minuend',
+        row.metric,
+        allPersonComponent.value,
+        '3',
+        '刑法犯総数',
+        row.year - 2006,
+        row.metric === 'cleared_cases' ? 5 : 6,
+        undefined,
+        undefined,
+      ],
+      [
+        'S08',
+        'numerator_subtrahend',
+        row.metric,
+        allForeignComponent.value,
+        '130',
+        '01',
+        row.year - 2007,
+        clearanceColumn,
+        undefined,
+        undefined,
+      ],
+      [
+        sourceId,
+        'denominator',
+        'population',
+        row.denominator_value,
+        isIntercensal ? '5' : '2',
+        isIntercensal ? '日本人人口 (2015年～2020年)' : '第2表',
+        isIntercensal ? 11 : 12,
+        isIntercensal ? row.year - 2010 : 9,
+        row.denominator_value / 1000,
+        '1000_persons',
+      ],
+    ]);
+  } else {
+    const coordinate = FOREIGN_POPULATION_COORDINATES.get(row.year);
+    if (!coordinate) {
+      if (
+        row.calculation_status !== 'refused' ||
+        row.refusal_reason !==
+          'resident_foreigner_population_source_not_registered_for_year' ||
+        row.denominator_value !== null ||
+        row.quotient !== null ||
+        row.display_value !== null ||
+        row.denominator_source_id !== null ||
+        row.population_reference_date !== null ||
+        row.denominator_rounding !== null ||
+        row.derivation_method !== 'direct_published_count_division_refused' ||
+        row.derivation_formula !== null ||
+        !row.mismatch_flags.includes('population_denominator_unavailable')
+      ) {
+        clearancePopulationSemanticError(
+          `foreign refusal semantics differ for ${rowLabel}`,
+        );
+      }
+      validateClearancePopulationComponents(row, [foreignClearanceComponent]);
+      return;
+    }
+    const [sourceId, sheet, sourceRow, sourceColumn] = coordinate;
+    if (
+      row.calculation_status !== 'calculated' ||
+      row.refusal_reason !== null ||
+      typeof row.denominator_value !== 'number' ||
+      !Number.isSafeInteger(row.denominator_value) ||
+      row.denominator_value <= 0 ||
+      row.denominator_source_id !== sourceId ||
+      row.population_reference_date !== `${row.year}-12-31` ||
+      row.denominator_rounding !== 'as_published_persons' ||
+      row.derivation_method !== groupContract.derivationMethod ||
+      row.derivation_formula !==
+        `S08.${row.metric} / ${sourceId}.population * 1000`
+    ) {
+      clearancePopulationSemanticError(
+        `foreign source, date, or formula differs for ${rowLabel}`,
+      );
+    }
+    validateClearancePopulationComponents(row, [
+      foreignClearanceComponent,
+      [
+        sourceId,
+        'denominator',
+        'population',
+        row.denominator_value,
+        '1',
+        sheet,
+        sourceRow,
+        sourceColumn,
+        row.denominator_value,
+        'persons',
+      ],
+    ]);
+  }
+
+  if (
+    row.denominator_value === null ||
+    row.quotient === null ||
+    row.display_value === null
+  ) {
+    throw new Error(
+      `Calculated clearance-population values are missing for ${rowLabel}.`,
+    );
+  }
+  const expectedQuotient = row.numerator_value / row.denominator_value;
+  if (
+    Math.abs(row.quotient - expectedQuotient) > 1e-12 ||
+    Math.abs(
+      row.display_value - expectedQuotient * definition.display_multiplier,
+    ) > 1e-10
+  ) {
+    throw new Error(
+      `Clearance-population arithmetic conflicts for ${rowLabel}.`,
+    );
+  }
+}
+
+export function buildClearancePopulationTrendViewModel(
+  dashboard: DashboardData,
+  metric: ClearanceShareMetric = 'cleared_cases',
+): ClearancePopulationTrendViewModel {
+  const definition =
+    dashboard.definitions.clearance_population_ids[
+      CLEARANCE_POPULATION_TREND_ID
+    ];
+  if (!definition) {
+    throw new Error(
+      `Clearance-population definition is missing: ${CLEARANCE_POPULATION_TREND_ID}`,
+    );
+  }
+  if (
+    definition.label_ja !== CLEARANCE_POPULATION_LABEL_JA ||
+    definition.interpretation_policy !==
+      CLEARANCE_POPULATION_INTERPRETATION_POLICY ||
+    definition.ui_caveat !== CLEARANCE_POPULATION_UI_CAVEAT ||
+    definition.display_multiplier !== 1000 ||
+    definition.display_unit_label_ja !== '人口1,000人当たり'
+  ) {
+    clearancePopulationSemanticError('definition binding differs');
+  }
+
+  const selectedRows = dashboard.records.clearance_population_trends.filter(
+    (row) =>
+      row.trend_id === CLEARANCE_POPULATION_TREND_ID && row.metric === metric,
+  );
+  if (selectedRows.length === 0) {
+    throw new Error(`No clearance-population rows exist for ${metric}.`);
+  }
+
+  const rowsByYear = new Map<
+    number,
+    Map<ClearancePopulationGroup, ClearancePopulationRow>
+  >();
+  for (const row of selectedRows) {
+    requireClearancePopulationRow(row, definition);
+    const groupRows = rowsByYear.get(row.year) ?? new Map();
+    if (groupRows.has(row.population_group)) {
+      throw new Error(
+        `Duplicate clearance-population row for ${metric}/${row.population_group}/${row.year}.`,
+      );
+    }
+    groupRows.set(row.population_group, row);
+    rowsByYear.set(row.year, groupRows);
+  }
+
+  const years = [...rowsByYear.keys()].sort((left, right) => left - right);
+  const japanesePoints: ClearancePopulationTrendPoint[] = [];
+  const foreignPoints: ClearancePopulationTrendPoint[] = [];
+  for (const year of years) {
+    const groupRows = rowsByYear.get(year);
+    const japanese = groupRows?.get('japanese_etc_residual');
+    const foreign = groupRows?.get('all_foreign');
+    if (!japanese || !foreign || groupRows?.size !== 2) {
+      throw new Error(
+        `Clearance-population groups are incomplete for ${metric}/${year}.`,
+      );
+    }
+    const clearanceShare = dashboard.records.clearance_share_trends.find(
+      (row) =>
+        row.year === year &&
+        row.metric === metric &&
+        row.foreign_scope === 'all_foreign',
+    );
+    if (
+      clearanceShare &&
+      (foreign.numerator_value !== clearanceShare.numerator_value ||
+        !stringArraysEqual(
+          foreign.numerator_source_ids,
+          clearanceShare.numerator_source_ids,
+        ) ||
+        japanese.source_components[0]?.value !==
+          clearanceShare.denominator_value)
+    ) {
+      clearancePopulationSemanticError(
+        `clearance counts differ from clearance-share inputs for ${metric}/${year}`,
+      );
+    }
+    const toPoint = (
+      row: ClearancePopulationRow,
+    ): ClearancePopulationTrendPoint => ({
+      year,
+      numeratorValue: row.numerator_value,
+      populationValue: row.denominator_value,
+      referenceRatio: row.display_value,
+      calculationStatus: row.calculation_status,
+      refusalReason: row.refusal_reason,
+      populationReferenceDate: row.population_reference_date,
+    });
+    japanesePoints.push(toPoint(japanese));
+    foreignPoints.push(toPoint(foreign));
+  }
+
+  const sourceIds = selectedRows.flatMap((row) => [
+    ...row.numerator_source_ids,
+    ...(row.denominator_source_id ? [row.denominator_source_id] : []),
+  ]);
+  return {
+    trendId: CLEARANCE_POPULATION_TREND_ID,
+    metric,
+    metricLabel: metric === 'cleared_cases' ? '検挙件数' : '検挙人員',
+    unitLabel: metric === 'cleared_cases' ? '件' : '人',
+    label: definition.label_ja,
+    years,
+    japanese: {
+      group: 'japanese_etc_residual',
+      label: CLEARANCE_POPULATION_GROUP_CONTRACTS.japanese_etc_residual.label,
+      points: japanesePoints,
+    },
+    foreign: {
+      group: 'all_foreign',
+      label: CLEARANCE_POPULATION_GROUP_CONTRACTS.all_foreign.label,
+      points: foreignPoints,
+    },
     uiCaveat: definition.ui_caveat,
     interpretationPolicy: definition.interpretation_policy,
     warningCodes: [

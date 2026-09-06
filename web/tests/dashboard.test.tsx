@@ -391,9 +391,7 @@ describe('CrimeAtlasDashboard', () => {
     expect(
       within(section).getByTestId('foreign-clearance-population-table'),
     ).toHaveTextContent(/2015.*16,017.*分母未登録.*未算出/);
-    expect(
-      within(section).getByText(/対象範囲は一致しない/),
-    ).toBeVisible();
+    expect(within(section).getByText(/対象範囲は一致しない/)).toBeVisible();
     expect(
       within(section).getByText(/犯罪を行う確率や公的な犯罪率を示さない/),
     ).toBeVisible();

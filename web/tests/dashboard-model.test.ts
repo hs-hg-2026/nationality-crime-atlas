@@ -132,10 +132,10 @@ describe('regional dashboard model', () => {
     ).toThrow(/schema version/i);
   });
 
-  it('rejects a schema-v7 payload without required dashboard records', () => {
+  it('rejects a schema-v8 payload without required dashboard records', () => {
     expect(() =>
       parseDashboardData({
-        compact_export_schema_version: 7,
+        compact_export_schema_version: 8,
         definitions: {},
         records: {},
         sources: {},
@@ -614,12 +614,12 @@ describe('clearance population reference trend model', () => {
       numeratorValue: 10_464,
       populationValue: 3_768_977,
     });
-    expect(persons.japanese.points.map((point) => point.populationValue)).toEqual(
-      cases.japanese.points.map((point) => point.populationValue),
-    );
-    expect(persons.foreign.points.map((point) => point.populationValue)).toEqual(
-      cases.foreign.points.map((point) => point.populationValue),
-    );
+    expect(
+      persons.japanese.points.map((point) => point.populationValue),
+    ).toEqual(cases.japanese.points.map((point) => point.populationValue));
+    expect(
+      persons.foreign.points.map((point) => point.populationValue),
+    ).toEqual(cases.foreign.points.map((point) => point.populationValue));
   });
 
   it.each([
