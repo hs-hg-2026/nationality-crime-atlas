@@ -1132,6 +1132,11 @@ body {
     gap: 1.25rem;
     margin-top: 1.25rem;
   }
+  .clearance-share-panel-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
   .clearance-share-chart-card,
   .clearance-share-table-card {
     min-width: 0;
@@ -1143,7 +1148,7 @@ body {
     aspect-ratio: auto;
   }
   .clearance-share-table {
-    min-width: 720px;
+    min-width: 890px;
   }
   .clearance-share-table th:first-child {
     text-align: left;
@@ -1404,6 +1409,7 @@ body {
     .nationality-controls,
     .nationality-grid,
     .clearance-share-grid,
+    .clearance-share-panel-grid,
     .offense-controls,
     .offense-evidence-grid {
       grid-template-columns: 1fr;

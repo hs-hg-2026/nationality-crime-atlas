@@ -89,6 +89,13 @@ const clearanceShareChartConfig = {
   },
 } satisfies ChartConfig;
 
+const japaneseClearanceShareChartConfig = {
+  japaneseEtcResidualShare: {
+    label: '日本人等（残差）',
+    color: 'var(--chart-4)',
+  },
+} satisfies ChartConfig;
+
 const PROJECT_README_URL =
   'https://github.com/hs-hg-2026/nationality-crime-atlas/blob/main/README.ja.md';
 const INTERPRETATION_NOTE_URL =
@@ -447,9 +454,9 @@ function ClearanceShareTrend({
       <div className="section-heading-row">
         <div>
           <p className="section-kicker">全国の時系列</p>
-          <h2 id="clearance-share-heading">検挙全体に占める外国人区分の割合</h2>
+          <h2 id="clearance-share-heading">検挙全体に占める区分別の割合</h2>
           <p className="intro-copy">
-            日本人等を含む全国の刑法犯検挙総数に対し、「外国人全体」「来日外国人」と、その算術差分が占める割合を示します。
+            日本人等を含む全国の刑法犯検挙総数を、日本人等の残差と外国人区分に分けて示します。値の幅が大きく異なるため、別々のy軸で表示します。
           </p>
         </div>
         <Badge variant="outline">
@@ -494,6 +501,9 @@ function ClearanceShareTrend({
         <AlertDescription>
           {view.uiCaveat}
           <span className="method-contract">
+            日本人等は全国総数から外国人全体を引いた残差で、日本人について直接公表された値ではありません。
+          </span>
+          <span className="method-contract">
             算式{' '}
             <code>
               外国人区分の{view.metricLabel} ÷ 全国の{view.metricLabel} × 100
@@ -503,90 +513,161 @@ function ClearanceShareTrend({
       </Alert>
 
       <div className="clearance-share-grid">
-        <Card className="clearance-share-chart-card">
-          <CardHeader>
-            <CardTitle>{view.metricLabel}の割合の変化</CardTitle>
-            <CardDescription>
-              差分には定着居住者だけでなく、在日米軍関係者や在留資格不明者も含まれ得るため、普段から住む外国人だけを表す値ではありません。
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer
-              config={clearanceShareChartConfig}
-              className="clearance-share-chart"
-              data-testid="clearance-share-chart"
-              initialDimension={{ width: 760, height: 360 }}
-            >
-              <LineChart
-                accessibilityLayer
-                data={view.points}
-                margin={{ left: 4, right: 20, top: 12, bottom: 4 }}
+        <div className="clearance-share-panel-grid">
+          <Card className="clearance-share-chart-card">
+            <CardHeader>
+              <CardTitle>外国人3区分の{view.metricLabel}構成比</CardTitle>
+              <CardDescription>
+                差分には定着居住者だけでなく、在日米軍関係者や在留資格不明者も含まれ得るため、普段から住む外国人だけを表す値ではありません。
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer
+                config={clearanceShareChartConfig}
+                className="clearance-share-chart"
+                data-testid="clearance-share-chart"
+                initialDimension={{ width: 760, height: 360 }}
               >
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="year"
-                  axisLine={false}
-                  tickLine={false}
-                  tickMargin={8}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => `${Number(value)}%`}
-                  width={44}
-                />
-                <ChartTooltip
-                  content={
-                    <ChartTooltipContent
-                      labelFormatter={(_, payload) =>
-                        payload[0]?.payload?.year
-                          ? `${payload[0].payload.year}年`
-                          : ''
-                      }
-                      formatter={(value, name) => (
-                        <>
-                          <span>
-                            {name === 'allForeignShare'
-                              ? '外国人全体'
-                              : name === 'visitingForeignShare'
-                                ? '来日外国人'
-                                : '外国人全体−来日外国人（差分）'}
-                          </span>
-                          <strong>{formatClearanceShare(Number(value))}</strong>
-                        </>
-                      )}
-                    />
-                  }
-                />
-                <Line
-                  dataKey="allForeignShare"
-                  name="allForeignShare"
-                  type="monotone"
-                  stroke="var(--color-allForeignShare)"
-                  strokeWidth={2.5}
-                  dot={{ r: 3 }}
-                />
-                <Line
-                  dataKey="visitingForeignShare"
-                  name="visitingForeignShare"
-                  type="monotone"
-                  stroke="var(--color-visitingForeignShare)"
-                  strokeWidth={2.5}
-                  dot={{ r: 3 }}
-                />
-                <Line
-                  dataKey="allForeignMinusVisitingShare"
-                  name="allForeignMinusVisitingShare"
-                  type="monotone"
-                  stroke="var(--color-allForeignMinusVisitingShare)"
-                  strokeWidth={2.5}
-                  dot={{ r: 3 }}
-                />
-              </LineChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
+                <LineChart
+                  accessibilityLayer
+                  data={view.points}
+                  margin={{ left: 4, right: 20, top: 12, bottom: 4 }}
+                >
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="year"
+                    axisLine={false}
+                    tickLine={false}
+                    tickMargin={8}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tickMargin={8}
+                    tickFormatter={(value) => `${Number(value)}%`}
+                    width={44}
+                  />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        labelFormatter={(_, payload) =>
+                          payload[0]?.payload?.year
+                            ? `${payload[0].payload.year}年`
+                            : ''
+                        }
+                        formatter={(value, name) => (
+                          <>
+                            <span>
+                              {name === 'allForeignShare'
+                                ? '外国人全体'
+                                : name === 'visitingForeignShare'
+                                  ? '来日外国人'
+                                  : '外国人全体−来日外国人（差分）'}
+                            </span>
+                            <strong>
+                              {formatClearanceShare(Number(value))}
+                            </strong>
+                          </>
+                        )}
+                      />
+                    }
+                  />
+                  <Line
+                    dataKey="allForeignShare"
+                    name="allForeignShare"
+                    type="monotone"
+                    stroke="var(--color-allForeignShare)"
+                    strokeWidth={2.5}
+                    dot={{ r: 3 }}
+                  />
+                  <Line
+                    dataKey="visitingForeignShare"
+                    name="visitingForeignShare"
+                    type="monotone"
+                    stroke="var(--color-visitingForeignShare)"
+                    strokeWidth={2.5}
+                    dot={{ r: 3 }}
+                  />
+                  <Line
+                    dataKey="allForeignMinusVisitingShare"
+                    name="allForeignMinusVisitingShare"
+                    type="monotone"
+                    stroke="var(--color-allForeignMinusVisitingShare)"
+                    strokeWidth={2.5}
+                    dot={{ r: 3 }}
+                  />
+                </LineChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          <Card className="clearance-share-chart-card">
+            <CardHeader>
+              <CardTitle>日本人等（残差）の{view.metricLabel}構成比</CardTitle>
+              <CardDescription>
+                <code>100% − 外国人全体の割合</code>
+                。変化を読めるようにy軸は90–100%とし、外国人区分とは分けています。
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer
+                config={japaneseClearanceShareChartConfig}
+                className="clearance-share-chart"
+                data-testid="japanese-clearance-share-chart"
+                initialDimension={{ width: 760, height: 360 }}
+              >
+                <LineChart
+                  accessibilityLayer
+                  data={view.points}
+                  margin={{ left: 4, right: 20, top: 12, bottom: 4 }}
+                >
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="year"
+                    axisLine={false}
+                    tickLine={false}
+                    tickMargin={8}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tickMargin={8}
+                    domain={[90, 100]}
+                    tickFormatter={(value) => `${Number(value)}%`}
+                    width={44}
+                  />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        labelFormatter={(_, payload) =>
+                          payload[0]?.payload?.year
+                            ? `${payload[0].payload.year}年`
+                            : ''
+                        }
+                        formatter={(value) => (
+                          <>
+                            <span>日本人等（残差）</span>
+                            <strong>
+                              {formatClearanceShare(Number(value))}
+                            </strong>
+                          </>
+                        )}
+                      />
+                    }
+                  />
+                  <Line
+                    dataKey="japaneseEtcResidualShare"
+                    name="japaneseEtcResidualShare"
+                    type="monotone"
+                    stroke="var(--color-japaneseEtcResidualShare)"
+                    strokeWidth={2.5}
+                    dot={{ r: 3 }}
+                  />
+                </LineChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        </div>
 
         <Card className="clearance-share-table-card">
           <CardHeader>
@@ -607,6 +688,7 @@ function ClearanceShareTrend({
                 <tr>
                   <th scope="col">年</th>
                   <th scope="col">全国総数</th>
+                  <th scope="col">日本人等（残差）</th>
                   <th scope="col">外国人全体</th>
                   <th scope="col">来日外国人</th>
                   <th scope="col">外国人全体−来日外国人（差分）</th>
@@ -619,6 +701,13 @@ function ClearanceShareTrend({
                     <td>
                       {point.allPersonsTotal.toLocaleString('ja-JP')}
                       <small>{view.unitLabel}</small>
+                    </td>
+                    <td>
+                      {point.japaneseEtcResidualCount.toLocaleString('ja-JP')}
+                      <small>{view.unitLabel}</small>{' '}
+                      <strong>
+                        {formatClearanceShare(point.japaneseEtcResidualShare)}
+                      </strong>
                     </td>
                     <td>
                       {point.allForeignCount.toLocaleString('ja-JP')}
@@ -658,7 +747,7 @@ function ClearanceShareTrend({
           <BookOpen aria-hidden="true" />
           <CardTitle>この時系列の出典</CardTitle>
           <CardDescription>
-            外国人全体、来日外国人、その差分、日本人等を含む全国総数を、元の公表値まで辿れます。
+            外国人全体、来日外国人、その差分、日本人等の残差、全国総数を、元の公表値まで辿れます。
           </CardDescription>
         </CardHeader>
         <CardContent>

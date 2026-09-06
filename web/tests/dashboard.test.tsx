@@ -346,9 +346,7 @@ describe('CrimeAtlasDashboard', () => {
       within(section).getByText(/普段から住む外国人だけを表す値ではありません/),
     ).toBeVisible();
     expect(
-      within(section).getByText(
-        /日本人等は全国総数から外国人全体を引いた残差/,
-      ),
+      within(section).getByText(/日本人等は全国総数から外国人全体を引いた残差/),
     ).toBeVisible();
 
     await user.click(within(section).getByRole('button', { name: '検挙人員' }));

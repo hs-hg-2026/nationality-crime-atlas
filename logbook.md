@@ -363,3 +363,14 @@
 - **どう判断したか／なぜ**: scope、source、算式、安全なlabel、warning、出典cell座標の意味的結合をrelease boundaryとする。hashと算術のみでは検出できない「意味を改変してhashを再計算したdata」も公開前に停止させるため。
 - **検証結果**: Blocking／High／Medium／Low findingは0件。17種類のsemantic mutationを三つのgateそれぞれが17/17拒否した。60行の算術・式・warning・S08／S09／S15 cell座標の独立再計算も一致。Python 162 tests、Web 91 tests、typecheck、lint、format、公開data検証、`git diff --check`はPASS。compact exportとpublic JSONはbyte-identicalでSHA-256 `38421caea476ba64c8ce38ecb1855eec5422db35cad4779b1fa66d6b972cd80f`。production buildはsandboxのlocalhost bind制限で`EPERM`となるためsandbox外で同一commandを実行し、static route 1件のpre-render完了を確認した。公開対象変更へのprivate local path、個人mail、secret混入は0件。
 - **関連パス**: `src/nationality_crime_atlas/compact_export.py`, `web/scripts/sync-dashboard-export.mjs`, `web/lib/dashboard.ts`, `config/publication/compact_export/20260906_081500_compact_export/`
+
+## 2026-09-06 日本人等の全国検挙構成比を別panelに追加
+- **何が**: 外国人3区分だけでなく、日本人等側の検挙構成比も年次で確認できるようにした。
+- **どう判断したか／なぜ**: 日本人等は`S15全国総数 − S08外国人全体`、構成比は`100% − 外国人全体の構成比`とし、direct公表の日本人値とは呼ばない。日本人等は90%以上、外国人区分はおおむね7%以下のため、同じy軸に重ねず、日本人等は90–100%と明記した別panelにする。
+- **検証結果**: 2024年は検挙件数268,412 / 287,273 = 93.43%、検挙人員181,362 / 191,826 = 94.55%。先に3件のREDを確認し、view model、別chart、全件表を実装後にfocused 50 tests、typecheck、lint、formatをPASSした。
+- **関連パス**: `web/lib/dashboard.ts`, `web/components/crime-atlas-dashboard.tsx`, `web/app/globals.css`, `web/tests/dashboard-model.test.ts`, `web/tests/dashboard.test.tsx`
+
+## 2026-09-06 公開サイトから可視化requestを受ける導線の提案
+- **何が**: userから、公開サイト下部からGitHub Issuesへ移動できる導線と、可視化requestを受け取りやすくする鋳型の提案があった。
+- **どう判断したか／なぜ**: 現在の人口当たり年次表示を先に完了し、次の候補とする。可視化提案と不具合報告はtemplateを分け、前者には「見たい対象、分子、分母、期間、地域粒度、希望する図、知りたいこと」を含める。
+- **関連候補**: `.github/ISSUE_TEMPLATE/`, `web/components/crime-atlas-dashboard.tsx`

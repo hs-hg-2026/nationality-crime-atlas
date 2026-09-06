@@ -534,6 +534,8 @@ export interface NationalityComparisonViewModel {
 export interface ClearanceShareTrendPoint {
   year: number;
   allPersonsTotal: number;
+  japaneseEtcResidualCount: number;
+  japaneseEtcResidualShare: number;
   allForeignCount: number;
   allForeignShare: number;
   visitingForeignCount: number;
@@ -1748,6 +1750,9 @@ export function buildClearanceShareTrendViewModel(
     return {
       year,
       allPersonsTotal: allForeign.denominator_value,
+      japaneseEtcResidualCount:
+        allForeign.denominator_value - allForeign.numerator_value,
+      japaneseEtcResidualShare: 100 - allForeign.display_value,
       allForeignCount: allForeign.numerator_value,
       allForeignShare: allForeign.display_value,
       visitingForeignCount: visitingForeign.numerator_value,
