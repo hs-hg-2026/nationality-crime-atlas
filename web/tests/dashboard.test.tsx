@@ -395,6 +395,18 @@ describe('CrimeAtlasDashboard', () => {
     expect(
       within(section).getByText(/犯罪を行う確率や公的な犯罪率を示さない/),
     ).toBeVisible();
+    expect(
+      within(section).getAllByText('総務省統計局').length,
+    ).toBeGreaterThan(0);
+    expect(
+      within(section).getAllByText('出入国在留管理庁').length,
+    ).toBeGreaterThan(0);
+    expect(
+      within(section).queryByText('Statistics Bureau of Japan'),
+    ).not.toBeInTheDocument();
+    expect(
+      within(section).queryByText('Immigration Services Agency of Japan'),
+    ).not.toBeInTheDocument();
 
     await user.click(within(section).getByRole('button', { name: '検挙人員' }));
     expect(
