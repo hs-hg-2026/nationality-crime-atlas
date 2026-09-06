@@ -96,7 +96,31 @@ function writeHashClosedDashboard(
   writeFileSync(source.pointerPath, `${JSON.stringify(pointer, null, 2)}\n`);
 }
 
-function addClearancePopulationFixture(payload: Record<string, any>): void {
+type MutableFixtureRecord = Record<string, unknown> & {
+  denominator_value?: number | null;
+  foreign_scope?: string;
+  metric?: string;
+  numerator_source_ids?: string[];
+  numerator_value?: number;
+  population_group?: string;
+  source_components?: MutableFixtureRecord[];
+  year?: number;
+};
+
+interface FixturePayload {
+  compact_export_schema_version: number;
+  definitions: {
+    clearance_population_ids: Record<string, Record<string, unknown>>;
+  } & Record<string, unknown>;
+  publication_policy: Record<string, unknown>;
+  records: {
+    clearance_population_trends: MutableFixtureRecord[];
+    clearance_share_trends: MutableFixtureRecord[];
+  } & Record<string, unknown>;
+  sources: Record<string, Record<string, unknown>>;
+}
+
+function addClearancePopulationFixture(payload: FixturePayload): void {
   const trendId = 'national_clearance_population_reference_ratio';
   const uiCaveat =
     '1年間の刑法犯検挙件数または検挙人員を、10月1日の日本人人口または12月31日の在留外国人数で単純に割った公表統計由来の参考比率である。犯罪統計の分子から居住者だけを識別できず、特に「外国人全体」と在留外国人人口の対象範囲は一致しない。犯罪を行う確率や公的な犯罪率を示さない。';
@@ -124,13 +148,20 @@ function addClearancePopulationFixture(payload: Record<string, any>): void {
   const metrics = ['cleared_cases', 'cleared_persons'];
   payload.records.clearance_population_trends = metrics.flatMap((metric) => {
     const share = payload.records.clearance_share_trends.find(
-      (row: Record<string, unknown>) =>
+      (row) =>
         row.year === 2024 &&
         row.metric === metric &&
         row.foreign_scope === 'all_foreign',
     );
-    const allPerson = share.denominator_value;
-    const allForeign = share.numerator_value;
+    if (
+      !share ||
+      !Number.isSafeInteger(share.denominator_value) ||
+      !Number.isSafeInteger(share.numerator_value)
+    ) {
+      throw new Error('Clearance-share fixture row is missing.');
+    }
+    const allPerson = share.denominator_value as number;
+    const allForeign = share.numerator_value as number;
     const japanese = allPerson - allForeign;
     const metricLabel = metric === 'cleared_cases' ? '検挙件数' : '検挙人員';
     const clearanceColumn = metric === 'cleared_cases' ? 5 : 6;
@@ -260,7 +291,7 @@ function addClearancePopulationFixture(payload: Record<string, any>): void {
 
 function writeHashClosedSchema8Dashboard(
   source: ReturnType<typeof makeCompactSource>,
-  payload: Record<string, any>,
+  payload: FixturePayload,
 ): void {
   const dashboardBytes = Buffer.from(`${JSON.stringify(payload, null, 2)}\n`);
   writeFileSync(source.dashboardPath, dashboardBytes);
@@ -347,7 +378,7 @@ describe('dashboard publication bundle', () => {
     const manifest = JSON.parse(firstManifest.toString('utf8'));
     expect(manifest).toMatchObject({
       publication_manifest_schema_version: 1,
-      compact_export_schema_version: 7,
+      compact_export_schema_version: 8,
       source_run_relpath: pointer.run_relpath,
       dashboard_export_sha256: pointer.dashboard_export_sha256,
       record_counts: {
@@ -355,14 +386,16 @@ describe('dashboard publication bundle', () => {
         nationality_comparison: 26,
         nationality_indicators: 290,
         clearance_share_trends: 60,
+        clearance_population_trends: 40,
       },
       definition_counts: {
         context_ids: 4,
         indicator_ids: 10,
         nationality_comparison_ids: 1,
         clearance_share_ids: 1,
+        clearance_population_ids: 1,
       },
-      source_count: 8,
+      source_count: 21,
       source_pointer_sha256: sha256(readFileSync(source.pointerPath)),
     });
 
@@ -372,6 +405,8 @@ describe('dashboard publication bundle', () => {
       secondary_view: 'nationality_comparison',
       supplementary_view: 'nationality_indicators',
       clearance_share_view: 'national_criminal_code_clearance_foreign_share',
+      clearance_population_view:
+        'national_clearance_population_reference_ratio',
       same_year_gap_view: 'all_resident_same_year_recognition_clearance_gap',
       same_year_gap_is_unresolved_cohort: false,
     });
@@ -410,6 +445,35 @@ describe('dashboard publication bundle', () => {
       denominator_source_id: 'S15',
       derivation_method:
         'arithmetic_residual_all_foreign_minus_visiting_foreign',
+    });
+    const latestForeignPopulationReference =
+      published.records.clearance_population_trends.find(
+        (row: { year?: number; metric?: string; population_group?: string }) =>
+          row.year === 2024 &&
+          row.metric === 'cleared_cases' &&
+          row.population_group === 'all_foreign',
+      );
+    expect(latestForeignPopulationReference).toMatchObject({
+      numerator_value: 18_861,
+      denominator_value: 3_768_977,
+      numerator_source_ids: ['S08'],
+      denominator_source_id: 'S19_2024',
+      population_reference_date: '2024-12-31',
+      calculation_status: 'calculated',
+    });
+    const missing2015ForeignPopulation =
+      published.records.clearance_population_trends.find(
+        (row: { year?: number; metric?: string; population_group?: string }) =>
+          row.year === 2015 &&
+          row.metric === 'cleared_cases' &&
+          row.population_group === 'all_foreign',
+      );
+    expect(missing2015ForeignPopulation).toMatchObject({
+      numerator_value: 16_017,
+      denominator_value: null,
+      calculation_status: 'refused',
+      refusal_reason:
+        'resident_foreigner_population_source_not_registered_for_year',
     });
 
     const second = syncCanonicalBundle(directory);
@@ -684,7 +748,7 @@ describe('dashboard publication bundle', () => {
     const source = makeCompactSource(directory);
     const payload = JSON.parse(readFileSync(source.dashboardPath, 'utf8'));
     addClearancePopulationFixture(payload);
-    const rows: Array<Record<string, any>> =
+    const rows: MutableFixtureRecord[] =
       payload.records.clearance_population_trends;
     const target = rows.find(
       (row) =>
@@ -705,6 +769,9 @@ describe('dashboard publication bundle', () => {
         'national_clearance_population_reference_ratio'
       ].interpretation_policy = 'official_population_crime_probability';
     } else if (mutation === 'source_coordinates') {
+      if (!target.source_components?.[1]) {
+        throw new Error('Population source component is missing.');
+      }
       target.source_components[1].source_row = 999;
     } else if (mutation === 'population_reference_date') {
       target.population_reference_date = '2024-10-01';

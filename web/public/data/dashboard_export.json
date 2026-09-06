@@ -1,6 +1,17 @@
 {
-  "compact_export_schema_version": 7,
+  "compact_export_schema_version": 8,
   "definitions": {
+    "clearance_population_ids": {
+      "national_clearance_population_reference_ratio": {
+        "clearance_population_trend_schema_version": 1,
+        "display_multiplier": 1000,
+        "display_unit_label_ja": "人口1,000人当たり",
+        "interpretation_policy": "public_data_reference_ratio_not_probability",
+        "label_en": "Criminal-code clearances per 1,000 reference population",
+        "label_ja": "人口1,000人当たりの刑法犯検挙参考比率",
+        "ui_caveat": "1年間の刑法犯検挙件数または検挙人員を、10月1日の日本人人口または12月31日の在留外国人数で単純に割った公表統計由来の参考比率である。犯罪統計の分子から居住者だけを識別できず、特に「外国人全体」と在留外国人人口の対象範囲は一致しない。犯罪を行う確率や公的な犯罪率を示さない。"
+      }
+    },
     "clearance_share_ids": {
       "national_criminal_code_clearance_foreign_share": {
         "display_multiplier": 100,
@@ -414,8 +425,9 @@
       }
     }
   },
-  "generated_at": "2026-09-06T08:15:00+09:00",
+  "generated_at": "2026-09-06T10:45:00+09:00",
   "publication_policy": {
+    "clearance_population_view": "national_clearance_population_reference_ratio",
     "clearance_share_view": "national_criminal_code_clearance_foreign_share",
     "composition_view": "offense_composition",
     "count_and_reference_ratio_toggle_required": true,
@@ -12956,6 +12968,2386 @@
         "reference_date": "2024-12-31",
         "refusal_reason": "individual_nationality_prefecture_numerator_unpublished",
         "targets_complete": false,
+        "year": 2024
+      }
+    ],
+    "clearance_population_trends": [
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S18",
+        "denominator_value": 125319000,
+        "derivation_formula": "(S15.cleared_cases - S08.cleared_cases) / S18.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 2.724782355428945,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 341467,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2015-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.002724782355428945,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_minuend",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 9,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 357484
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_subtrahend",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 8,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 16017
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 125319,
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S18",
+            "source_row": 11,
+            "source_sheet": "日本人人口 (2015年～2020年)",
+            "source_table": "5",
+            "value": 125319000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2015
+      },
+      {
+        "calculation_status": "refused",
+        "denominator_rounding": null,
+        "denominator_source_id": null,
+        "denominator_value": null,
+        "derivation_formula": null,
+        "derivation_method": "direct_published_count_division_refused",
+        "display_value": null,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "population_denominator_unavailable",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 16017,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": null,
+        "population_scope": "resident_foreigner_population",
+        "quotient": null,
+        "refusal_reason": "resident_foreigner_population_source_not_registered_for_year",
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 8,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 16017
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2015
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S18",
+        "denominator_value": 125319000,
+        "derivation_formula": "(S15.cleared_persons - S08.cleared_persons) / S18.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 1.8218227084480405,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 228309,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2015-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.0018218227084480405,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_minuend",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 9,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 239355
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_subtrahend",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 8,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 11046
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 125319,
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S18",
+            "source_row": 11,
+            "source_sheet": "日本人人口 (2015年～2020年)",
+            "source_table": "5",
+            "value": 125319000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2015
+      },
+      {
+        "calculation_status": "refused",
+        "denominator_rounding": null,
+        "denominator_source_id": null,
+        "denominator_value": null,
+        "derivation_formula": null,
+        "derivation_method": "direct_published_count_division_refused",
+        "display_value": null,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "population_denominator_unavailable",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 11046,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": null,
+        "population_scope": "resident_foreigner_population",
+        "quotient": null,
+        "refusal_reason": "resident_foreigner_population_source_not_registered_for_year",
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 8,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 11046
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2015
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S18",
+        "denominator_value": 125071000,
+        "derivation_formula": "(S15.cleared_cases - S08.cleared_cases) / S18.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 2.572858616305938,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 321790,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2016-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.002572858616305938,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_minuend",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 10,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 337066
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_subtrahend",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 9,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 15276
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 125071,
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S18",
+            "source_row": 11,
+            "source_sheet": "日本人人口 (2015年～2020年)",
+            "source_table": "5",
+            "value": 125071000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2016
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2016",
+        "denominator_value": 2382822,
+        "derivation_formula": "S08.cleared_cases / S19_2016.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 6.410885915943364,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 15276,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2016-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.006410885915943364,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 9,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 15276
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 2382822,
+            "role": "denominator",
+            "source_column": 3,
+            "source_id": "S19_2016",
+            "source_row": 7,
+            "source_sheet": "16-12-01-1",
+            "source_table": "1",
+            "value": 2382822
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2016
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S18",
+        "denominator_value": 125071000,
+        "derivation_formula": "(S15.cleared_persons - S08.cleared_persons) / S18.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 1.724028751669052,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 215626,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2016-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.001724028751669052,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_minuend",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 10,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 226376
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_subtrahend",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 9,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 10750
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 125071,
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S18",
+            "source_row": 11,
+            "source_sheet": "日本人人口 (2015年～2020年)",
+            "source_table": "5",
+            "value": 125071000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2016
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2016",
+        "denominator_value": 2382822,
+        "derivation_formula": "S08.cleared_persons / S19_2016.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 4.511457423173028,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 10750,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2016-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.004511457423173028,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 9,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 10750
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 2382822,
+            "role": "denominator",
+            "source_column": 3,
+            "source_id": "S19_2016",
+            "source_row": 7,
+            "source_sheet": "16-12-01-1",
+            "source_table": "1",
+            "value": 2382822
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2016
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S18",
+        "denominator_value": 124745000,
+        "derivation_formula": "(S15.cleared_cases - S08.cleared_cases) / S18.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 2.484468315363341,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 309925,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2017-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.002484468315363341,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_minuend",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 11,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 327081
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_subtrahend",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 10,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 17156
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 124745,
+            "role": "denominator",
+            "source_column": 7,
+            "source_id": "S18",
+            "source_row": 11,
+            "source_sheet": "日本人人口 (2015年～2020年)",
+            "source_table": "5",
+            "value": 124745000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2017
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2017",
+        "denominator_value": 2561848,
+        "derivation_formula": "S08.cleared_cases / S19_2017.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 6.6967282992589725,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 17156,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2017-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.0066967282992589725,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 10,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 17156
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 2561848,
+            "role": "denominator",
+            "source_column": 3,
+            "source_id": "S19_2017",
+            "source_row": 7,
+            "source_sheet": "17-12-01-1",
+            "source_table": "1",
+            "value": 2561848
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2017
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S18",
+        "denominator_value": 124745000,
+        "derivation_formula": "(S15.cleared_persons - S08.cleared_persons) / S18.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 1.638727003086296,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 204423,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2017-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.001638727003086296,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_minuend",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 11,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 215003
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_subtrahend",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 10,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 10580
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 124745,
+            "role": "denominator",
+            "source_column": 7,
+            "source_id": "S18",
+            "source_row": 11,
+            "source_sheet": "日本人人口 (2015年～2020年)",
+            "source_table": "5",
+            "value": 124745000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2017
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2017",
+        "denominator_value": 2561848,
+        "derivation_formula": "S08.cleared_persons / S19_2017.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 4.129831278046161,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 10580,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2017-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.00412983127804616,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 10,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 10580
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 2561848,
+            "role": "denominator",
+            "source_column": 3,
+            "source_id": "S19_2017",
+            "source_row": 7,
+            "source_sheet": "17-12-01-1",
+            "source_table": "1",
+            "value": 2561848
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2017
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S18",
+        "denominator_value": 124349000,
+        "derivation_formula": "(S15.cleared_cases - S08.cleared_cases) / S18.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 2.3631874803979125,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 293860,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2018-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.0023631874803979125,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_minuend",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 12,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 309409
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_subtrahend",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 11,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 15549
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 124349,
+            "role": "denominator",
+            "source_column": 8,
+            "source_id": "S18",
+            "source_row": 11,
+            "source_sheet": "日本人人口 (2015年～2020年)",
+            "source_table": "5",
+            "value": 124349000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2018
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2018",
+        "denominator_value": 2731093,
+        "derivation_formula": "S08.cleared_cases / S19_2018.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 5.693324980145312,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 15549,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2018-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.005693324980145312,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 11,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 15549
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 2731093,
+            "role": "denominator",
+            "source_column": 3,
+            "source_id": "S19_2018",
+            "source_row": 7,
+            "source_sheet": "18-12-01-1",
+            "source_table": "1",
+            "value": 2731093
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2018
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S18",
+        "denominator_value": 124349000,
+        "derivation_formula": "(S15.cleared_persons - S08.cleared_persons) / S18.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 1.576442110511544,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 196029,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2018-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.001576442110511544,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_minuend",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 12,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 206094
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_subtrahend",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 11,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 10065
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 124349,
+            "role": "denominator",
+            "source_column": 8,
+            "source_id": "S18",
+            "source_row": 11,
+            "source_sheet": "日本人人口 (2015年～2020年)",
+            "source_table": "5",
+            "value": 124349000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2018
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2018",
+        "denominator_value": 2731093,
+        "derivation_formula": "S08.cleared_persons / S19_2018.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 3.68533770179192,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 10065,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2018-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.00368533770179192,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 11,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 10065
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 2731093,
+            "role": "denominator",
+            "source_column": 3,
+            "source_id": "S19_2018",
+            "source_row": 7,
+            "source_sheet": "18-12-01-1",
+            "source_table": "1",
+            "value": 2731093
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2018
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S18",
+        "denominator_value": 123886000,
+        "derivation_formula": "(S15.cleared_cases - S08.cleared_cases) / S18.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 2.2554364496391845,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 279417,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2019-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.0022554364496391844,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_minuend",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 13,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 294206
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_subtrahend",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 12,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 14789
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 123886,
+            "role": "denominator",
+            "source_column": 9,
+            "source_id": "S18",
+            "source_row": 11,
+            "source_sheet": "日本人人口 (2015年～2020年)",
+            "source_table": "5",
+            "value": 123886000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2019
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2019",
+        "denominator_value": 2933137,
+        "derivation_formula": "S08.cleared_cases / S19_2019.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 5.042042018494192,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 14789,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2019-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.005042042018494192,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 12,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 14789
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 2933137,
+            "role": "denominator",
+            "source_column": 2,
+            "source_id": "S19_2019",
+            "source_row": 7,
+            "source_sheet": "19-12-01-1",
+            "source_table": "1",
+            "value": 2933137
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2019
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S18",
+        "denominator_value": 123886000,
+        "derivation_formula": "(S15.cleared_persons - S08.cleared_persons) / S18.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 1.4771967776827082,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 183004,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2019-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.0014771967776827082,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_minuend",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 13,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 192607
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_subtrahend",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 12,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 9603
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 123886,
+            "role": "denominator",
+            "source_column": 9,
+            "source_id": "S18",
+            "source_row": 11,
+            "source_sheet": "日本人人口 (2015年～2020年)",
+            "source_table": "5",
+            "value": 123886000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2019
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2019",
+        "denominator_value": 2933137,
+        "derivation_formula": "S08.cleared_persons / S19_2019.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 3.273969132706723,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 9603,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2019-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.003273969132706723,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 12,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 9603
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 2933137,
+            "role": "denominator",
+            "source_column": 2,
+            "source_id": "S19_2019",
+            "source_row": 7,
+            "source_sheet": "19-12-01-1",
+            "source_table": "1",
+            "value": 2933137
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2019
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S18",
+        "denominator_value": 123399000,
+        "derivation_formula": "(S15.cleared_cases - S08.cleared_cases) / S18.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 2.144660815727842,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 264649,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2020-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.002144660815727842,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_minuend",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 14,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 279185
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_subtrahend",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 13,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 14536
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 123399,
+            "role": "denominator",
+            "source_column": 10,
+            "source_id": "S18",
+            "source_row": 11,
+            "source_sheet": "日本人人口 (2015年～2020年)",
+            "source_table": "5",
+            "value": 123399000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2020
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2020",
+        "denominator_value": 2887116,
+        "derivation_formula": "S08.cleared_cases / S19_2020.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 5.034782114747035,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 14536,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2020-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.005034782114747035,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 13,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 14536
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 2887116,
+            "role": "denominator",
+            "source_column": 2,
+            "source_id": "S19_2020",
+            "source_row": 7,
+            "source_sheet": "20-12-01-1",
+            "source_table": "1",
+            "value": 2887116
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2020
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S18",
+        "denominator_value": 123399000,
+        "derivation_formula": "(S15.cleared_persons - S08.cleared_persons) / S18.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 1.4023857567727454,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 173053,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2020-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.0014023857567727453,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_minuend",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 14,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 182582
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_subtrahend",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 13,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 9529
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 123399,
+            "role": "denominator",
+            "source_column": 10,
+            "source_id": "S18",
+            "source_row": 11,
+            "source_sheet": "日本人人口 (2015年～2020年)",
+            "source_table": "5",
+            "value": 123399000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2020
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2020",
+        "denominator_value": 2887116,
+        "derivation_formula": "S08.cleared_persons / S19_2020.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 3.3005255071150588,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 9529,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2020-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.0033005255071150586,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 13,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 9529
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 2887116,
+            "role": "denominator",
+            "source_column": 2,
+            "source_id": "S19_2020",
+            "source_row": 7,
+            "source_sheet": "20-12-01-1",
+            "source_table": "1",
+            "value": 2887116
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2020
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S17_2021",
+        "denominator_value": 122780000,
+        "derivation_formula": "(S15.cleared_cases - S08.cleared_cases) / S17_2021.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 2.039705163707444,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 250435,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2021-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.002039705163707444,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_minuend",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 15,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 264485
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_subtrahend",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 14,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 14050
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 122780,
+            "role": "denominator",
+            "source_column": 9,
+            "source_id": "S17_2021",
+            "source_row": 12,
+            "source_sheet": "第2表",
+            "source_table": "2",
+            "value": 122780000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2021
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2021",
+        "denominator_value": 2760635,
+        "derivation_formula": "S08.cleared_cases / S19_2021.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 5.089408777328405,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 14050,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2021-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.005089408777328405,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 14,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 14050
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 2760635,
+            "role": "denominator",
+            "source_column": 2,
+            "source_id": "S19_2021",
+            "source_row": 7,
+            "source_sheet": "21-12-01-1",
+            "source_table": "1",
+            "value": 2760635
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2021
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S17_2021",
+        "denominator_value": 122780000,
+        "derivation_formula": "(S15.cleared_persons - S08.cleared_persons) / S17_2021.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 1.349055220719987,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 165637,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2021-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.001349055220719987,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_minuend",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 15,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 175041
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_subtrahend",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 14,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 9404
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 122780,
+            "role": "denominator",
+            "source_column": 9,
+            "source_id": "S17_2021",
+            "source_row": 12,
+            "source_sheet": "第2表",
+            "source_table": "2",
+            "value": 122780000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2021
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2021",
+        "denominator_value": 2760635,
+        "derivation_formula": "S08.cleared_persons / S19_2021.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 3.4064626435584566,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 9404,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2021-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.003406462643558457,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 14,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 9404
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 2760635,
+            "role": "denominator",
+            "source_column": 2,
+            "source_id": "S19_2021",
+            "source_row": 7,
+            "source_sheet": "21-12-01-1",
+            "source_table": "1",
+            "value": 2760635
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2021
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S17_2022",
+        "denominator_value": 122031000,
+        "derivation_formula": "(S15.cleared_cases - S08.cleared_cases) / S17_2022.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 1.9454318984520327,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 237403,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2022-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.0019454318984520327,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_minuend",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 16,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 250350
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_subtrahend",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 15,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 12947
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 122031,
+            "role": "denominator",
+            "source_column": 9,
+            "source_id": "S17_2022",
+            "source_row": 12,
+            "source_sheet": "第2表",
+            "source_table": "2",
+            "value": 122031000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2022
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2022",
+        "denominator_value": 3075213,
+        "derivation_formula": "S08.cleared_cases / S19_2022.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 4.21011487659554,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 12947,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2022-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.00421011487659554,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 15,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 12947
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 3075213,
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S19_2022",
+            "source_row": 5,
+            "source_sheet": "22-12-01m",
+            "source_table": "1",
+            "value": 3075213
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2022
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S17_2022",
+        "denominator_value": 122031000,
+        "derivation_formula": "(S15.cleared_persons - S08.cleared_persons) / S17_2022.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 1.3169358605600217,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 160707,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2022-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.0013169358605600217,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_minuend",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 16,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 169409
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_subtrahend",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 15,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 8702
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 122031,
+            "role": "denominator",
+            "source_column": 9,
+            "source_id": "S17_2022",
+            "source_row": 12,
+            "source_sheet": "第2表",
+            "source_table": "2",
+            "value": 122031000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2022
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2022",
+        "denominator_value": 3075213,
+        "derivation_formula": "S08.cleared_persons / S19_2022.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 2.82972268912755,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 8702,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2022-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.00282972268912755,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 15,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 8702
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 3075213,
+            "role": "denominator",
+            "source_column": 6,
+            "source_id": "S19_2022",
+            "source_row": 5,
+            "source_sheet": "22-12-01m",
+            "source_table": "1",
+            "value": 3075213
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2022
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S17_2023",
+        "denominator_value": 121193000,
+        "derivation_formula": "(S15.cleared_cases - S08.cleared_cases) / S17_2023.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 2.0959048789946615,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 254009,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2023-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.0020959048789946613,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_minuend",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 17,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 269550
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_subtrahend",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 16,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 15541
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 121193,
+            "role": "denominator",
+            "source_column": 9,
+            "source_id": "S17_2023",
+            "source_row": 12,
+            "source_sheet": "第2表",
+            "source_table": "2",
+            "value": 121193000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2023
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2023",
+        "denominator_value": 3410992,
+        "derivation_formula": "S08.cleared_cases / S19_2023.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 4.556152579660111,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 15541,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2023-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.004556152579660111,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 16,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 15541
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 3410992,
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S19_2023",
+            "source_row": 5,
+            "source_sheet": "23-12-01m",
+            "source_table": "1",
+            "value": 3410992
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2023
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S17_2023",
+        "denominator_value": 121193000,
+        "derivation_formula": "(S15.cleared_persons - S08.cleared_persons) / S17_2023.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 1.4319556410023682,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 173543,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2023-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.001431955641002368,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_minuend",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 17,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 183269
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_subtrahend",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 16,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 9726
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 121193,
+            "role": "denominator",
+            "source_column": 9,
+            "source_id": "S17_2023",
+            "source_row": 12,
+            "source_sheet": "第2表",
+            "source_table": "2",
+            "value": 121193000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2023
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2023",
+        "denominator_value": 3410992,
+        "derivation_formula": "S08.cleared_persons / S19_2023.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 2.851369924057283,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 9726,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2023-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.0028513699240572832,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 16,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 9726
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 3410992,
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S19_2023",
+            "source_row": 5,
+            "source_sheet": "23-12-01m",
+            "source_table": "1",
+            "value": 3410992
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2023
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S17",
+        "denominator_value": 120296000,
+        "derivation_formula": "(S15.cleared_cases - S08.cleared_cases) / S17.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 2.231262884883953,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 268412,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2024-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.002231262884883953,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_minuend",
+            "source_column": 5,
+            "source_id": "S15",
+            "source_row": 18,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 287273
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_subtrahend",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 17,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 18861
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 120296,
+            "role": "denominator",
+            "source_column": 9,
+            "source_id": "S17",
+            "source_row": 12,
+            "source_sheet": "第2表",
+            "source_table": "2",
+            "value": 120296000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2024
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2024",
+        "denominator_value": 3768977,
+        "derivation_formula": "S08.cleared_cases / S19_2024.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 5.004275696031045,
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 18861,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2024-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.005004275696031045,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 7,
+            "source_id": "S08",
+            "source_row": 17,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 18861
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 3768977,
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S19_2024",
+            "source_row": 5,
+            "source_sheet": "24-12-01m",
+            "source_table": "1",
+            "value": 3768977
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2024
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "nearest_1000_persons",
+        "denominator_source_id": "S17",
+        "denominator_value": 120296000,
+        "derivation_formula": "(S15.cleared_persons - S08.cleared_persons) / S17.population * 1000",
+        "derivation_method": "arithmetic_residual_all_person_minus_all_foreign_division",
+        "display_value": 1.507631176431469,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "japanese_numerator_is_arithmetic_residual",
+          "japanese_population_rounded_to_nearest_1000",
+          "numerator_residency_scope_not_established",
+          "october_1_population_reference_date",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S15",
+          "S08"
+        ],
+        "numerator_value": 181362,
+        "population_group": "japanese_etc_residual",
+        "population_group_label_ja": "日本人等（全国総数−外国人全体の残差）",
+        "population_reference_date": "2024-10-01",
+        "population_scope": "japanese_population",
+        "quotient": 0.001507631176431469,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_minuend",
+            "source_column": 6,
+            "source_id": "S15",
+            "source_row": 18,
+            "source_sheet": "刑法犯総数",
+            "source_table": "3",
+            "value": 191826
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_subtrahend",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 17,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 10464
+          },
+          {
+            "metric": "population",
+            "published_unit": "1000_persons",
+            "published_value": 120296,
+            "role": "denominator",
+            "source_column": 9,
+            "source_id": "S17",
+            "source_row": 12,
+            "source_sheet": "第2表",
+            "source_table": "2",
+            "value": 120296000
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
+        "year": 2024
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_rounding": "as_published_persons",
+        "denominator_source_id": "S19_2024",
+        "denominator_value": 3768977,
+        "derivation_formula": "S08.cleared_persons / S19_2024.population * 1000",
+        "derivation_method": "direct_published_count_division",
+        "display_value": 2.776350187332,
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_numerator_vs_resident_foreigner_denominator",
+          "annual_clearance_flow_vs_point_in_time_population_stock",
+          "december_31_population_reference_date",
+          "numerator_residency_scope_not_established",
+          "public_data_reference_ratio_not_official_crime_rate"
+        ],
+        "numerator_source_ids": [
+          "S08"
+        ],
+        "numerator_value": 10464,
+        "population_group": "all_foreign",
+        "population_group_label_ja": "外国人全体（分母は在留外国人数）",
+        "population_reference_date": "2024-12-31",
+        "population_scope": "resident_foreigner_population",
+        "quotient": 0.002776350187332,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 8,
+            "source_id": "S08",
+            "source_row": 17,
+            "source_sheet": "01",
+            "source_table": "130",
+            "value": 10464
+          },
+          {
+            "metric": "population",
+            "published_unit": "persons",
+            "published_value": 3768977,
+            "role": "denominator",
+            "source_column": 5,
+            "source_id": "S19_2024",
+            "source_row": 5,
+            "source_sheet": "24-12-01m",
+            "source_table": "1",
+            "value": 3768977
+          }
+        ],
+        "trend_id": "national_clearance_population_reference_ratio",
         "year": 2024
       }
     ],
@@ -39578,6 +41970,27 @@
       "summary_path": "20260901_225500_all_resident_context/summary.json",
       "summary_sha256": "c60a66b2136c9cda76a5b70139d6be7fadabe80cabc747ff618492f684e35437"
     },
+    "clearance_population_trend": {
+      "latest_manifest": {
+        "clearance_population_records_csv_sha256": "052c8cf596054accd9e5c4e12f6fe9b0e557aea96daa6741369b77e5db39d496",
+        "clearance_population_records_sha256": "9c95763b00292e3ee327c1b891d257300488e00b9c2a3f28987349c3b19c8b3f",
+        "clearance_population_trend_schema_version": 1,
+        "generated_at": "2026-09-06T09:30:02+09:00",
+        "run_relpath": "20260906_093002_clearance_population_trend",
+        "summary_sha256": "1759143a7b55c89d89a30217966d101402c95a6ede014a1b6f75d56624c0c9a0"
+      },
+      "latest_path": "latest.json",
+      "latest_sha256": "166e2ce9257d7b92a2fef3576d469f03bec7d414e9a70c65179fb9e0f3f2c245",
+      "record_count": 40,
+      "records_path": "20260906_093002_clearance_population_trend/clearance_population_records.jsonl",
+      "records_sha256": "9c95763b00292e3ee327c1b891d257300488e00b9c2a3f28987349c3b19c8b3f",
+      "status_counts": {
+        "calculated": 38,
+        "refused": 2
+      },
+      "summary_path": "20260906_093002_clearance_population_trend/summary.json",
+      "summary_sha256": "1759143a7b55c89d89a30217966d101402c95a6ede014a1b6f75d56624c0c9a0"
+    },
     "clearance_share_trend": {
       "latest_manifest": {
         "clearance_share_records_csv_sha256": "83b82f6d6788c4cd407229f1772cef0b7f93a825eb5a2aa2d4d770fed757e9a0",
@@ -39774,6 +42187,175 @@
       "sha256": "171c9930a3c881c42ded00fbaace83b4e6dd226d1a90cfddecd1daca2e376e82",
       "source_period": "2024-10-01 Japanese-national population estimate",
       "source_table": "2",
+      "verification_level": "binary_and_primary"
+    },
+    "S17_2021": {
+      "dataset": "Population Estimates 2024 Table 2: total and Japanese-national population by prefecture and sex",
+      "download_url": "https://www.stat.go.jp/data/jinsui/2021np/zuhyou/05k2021-2.xlsx",
+      "landing_url": "https://www.stat.go.jp/data/jinsui/2021np/index.html",
+      "publisher": "Statistics Bureau of Japan",
+      "retrieved_at": "2026-09-05T16:20:21+09:00",
+      "revision": "annual_population_estimate",
+      "series_id": "statistics-bureau-japanese-population-prefecture",
+      "sha256": "5acd98b56ab29648d39c780098826c8916cd5daddf663bcf72d1198e32aef226",
+      "source_period": "2021-10-01 Japanese-national population estimate",
+      "source_table": "2",
+      "verification_level": "binary_and_primary"
+    },
+    "S17_2022": {
+      "dataset": "Population Estimates 2024 Table 2: total and Japanese-national population by prefecture and sex",
+      "download_url": "https://www.stat.go.jp/data/jinsui/2022np/zuhyou/05k2022-2.xlsx",
+      "landing_url": "https://www.stat.go.jp/data/jinsui/2022np/index.html",
+      "publisher": "Statistics Bureau of Japan",
+      "retrieved_at": "2026-09-05T16:20:25+09:00",
+      "revision": "annual_population_estimate",
+      "series_id": "statistics-bureau-japanese-population-prefecture",
+      "sha256": "c91ad5d7dd29f067f0d20d27575e8fcc1ab1fb8dc7871b1393080a3b5e682fc2",
+      "source_period": "2022-10-01 Japanese-national population estimate",
+      "source_table": "2",
+      "verification_level": "binary_and_primary"
+    },
+    "S17_2023": {
+      "dataset": "Population Estimates 2024 Table 2: total and Japanese-national population by prefecture and sex",
+      "download_url": "https://www.stat.go.jp/data/jinsui/2023np/zuhyou/05k2023-2.xlsx",
+      "landing_url": "https://www.stat.go.jp/data/jinsui/2023np/index.html",
+      "publisher": "Statistics Bureau of Japan",
+      "retrieved_at": "2026-09-05T16:20:30+09:00",
+      "revision": "annual_population_estimate",
+      "series_id": "statistics-bureau-japanese-population-prefecture",
+      "sha256": "53a63aea1b02c672f25a9e9e563f9c698901a52e651dd8d2e81c2ef1092d1a47",
+      "source_period": "2023-10-01 Japanese-national population estimate",
+      "source_table": "2",
+      "verification_level": "binary_and_primary"
+    },
+    "S18": {
+      "dataset": "Population Estimates Table 5: intercensally adjusted total and Japanese-national population by prefecture",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?fileKind=4&statInfId=000013168605",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000013168605",
+      "publisher": "Statistics Bureau of Japan",
+      "retrieved_at": "2026-09-05T16:42:54+09:00",
+      "revision": "intercensally_adjusted_after_2020_census",
+      "series_id": "statistics-bureau-intercensal-population-prefecture",
+      "sha256": "9e28da4c0ef8c2680577ad5ef0b0a78023d389113f66c85ab9e52bdbed89a1fc",
+      "source_period": "2015-10-01 through 2020-10-01 intercensally adjusted population",
+      "source_table": "5",
+      "verification_level": "binary_and_primary"
+    },
+    "S19_2016": {
+      "dataset": "Resident-foreigner statistics Table 1: nationality and region totals",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000031557945&fileKind=0",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000031557945",
+      "publisher": "Immigration Services Agency of Japan",
+      "retrieved_at": "2026-09-05T22:06:43+09:00",
+      "revision": "e_stat_published_edition",
+      "series_id": "isa-resident-foreigner-population-total",
+      "sha256": "9c22453746ec6cc1e696db9e5b338e5c76b422aac23a1e9678a3f8a7ee872481",
+      "source_period": "2016-12-31 resident-foreigner stock by nationality or region",
+      "source_table": "1",
+      "verification_level": "binary_and_primary"
+    },
+    "S19_2017": {
+      "dataset": "Resident-foreigner statistics Table 1: nationality and region totals",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000031669224&fileKind=0",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000031669224",
+      "publisher": "Immigration Services Agency of Japan",
+      "retrieved_at": "2026-09-05T22:07:02+09:00",
+      "revision": "e_stat_published_edition",
+      "series_id": "isa-resident-foreigner-population-total",
+      "sha256": "ab1773d57f0dafc9f8e77273ac3bfa317a28b0081f09cb8ea9e051de63c0f0c2",
+      "source_period": "2017-12-31 resident-foreigner stock by nationality or region",
+      "source_table": "1",
+      "verification_level": "binary_and_primary"
+    },
+    "S19_2018": {
+      "dataset": "Resident-foreigner statistics Table 1: nationality and region totals",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000031832809&fileKind=0",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000031832809",
+      "publisher": "Immigration Services Agency of Japan",
+      "retrieved_at": "2026-09-05T22:07:08+09:00",
+      "revision": "e_stat_published_edition",
+      "series_id": "isa-resident-foreigner-population-total",
+      "sha256": "247a2ae232ec04d1360920148aa8d0d01c7c1d802b11b3c050c854919c4c4185",
+      "source_period": "2018-12-31 resident-foreigner stock by nationality or region",
+      "source_table": "1",
+      "verification_level": "binary_and_primary"
+    },
+    "S19_2019": {
+      "dataset": "Resident-foreigner statistics Table 1: nationality and region totals",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000031964914&fileKind=0",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000031964914",
+      "publisher": "Immigration Services Agency of Japan",
+      "retrieved_at": "2026-09-05T22:07:20+09:00",
+      "revision": "e_stat_published_edition",
+      "series_id": "isa-resident-foreigner-population-total",
+      "sha256": "b4c9774ee641ad02ba96c5117b254ded4e16bb4ad19b844148015c2f31883792",
+      "source_period": "2019-12-31 resident-foreigner stock by nationality or region",
+      "source_table": "1",
+      "verification_level": "binary_and_primary"
+    },
+    "S19_2020": {
+      "dataset": "Resident-foreigner statistics Table 1: nationality and region totals",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000032104290&fileKind=4",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000032104290",
+      "publisher": "Immigration Services Agency of Japan",
+      "retrieved_at": "2026-09-05T22:07:26+09:00",
+      "revision": "e_stat_published_edition",
+      "series_id": "isa-resident-foreigner-population-total",
+      "sha256": "b798ad3f892d4da60fd0925ced185eab30b134aab5f5cbb238b04afba52c91a1",
+      "source_period": "2020-12-31 resident-foreigner stock by nationality or region",
+      "source_table": "1",
+      "verification_level": "binary_and_primary"
+    },
+    "S19_2021": {
+      "dataset": "Resident-foreigner statistics Table 1: nationality and region totals",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000032212359&fileKind=4",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000032212359",
+      "publisher": "Immigration Services Agency of Japan",
+      "retrieved_at": "2026-09-05T22:07:32+09:00",
+      "revision": "e_stat_published_edition",
+      "series_id": "isa-resident-foreigner-population-total",
+      "sha256": "2a2253ef440d0444d1f901cadb7798fb334b44994745c9fcf2a282cdd01fc619",
+      "source_period": "2021-12-31 resident-foreigner stock by nationality or region",
+      "source_table": "1",
+      "verification_level": "binary_and_primary"
+    },
+    "S19_2022": {
+      "dataset": "Resident-foreigner statistics Table 1: nationality and region totals",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040068461&fileKind=0",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000040068461",
+      "publisher": "Immigration Services Agency of Japan",
+      "retrieved_at": "2026-09-05T22:07:50+09:00",
+      "revision": "e_stat_published_edition",
+      "series_id": "isa-resident-foreigner-population-total",
+      "sha256": "2acb2d84748d533ffc8b5bf37f99667ac06c924b9a0fdb2da82c38a970817e25",
+      "source_period": "2022-12-31 resident-foreigner stock by nationality or region",
+      "source_table": "1",
+      "verification_level": "binary_and_primary"
+    },
+    "S19_2023": {
+      "dataset": "Resident-foreigner statistics Table 1: nationality and region totals",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040186952&fileKind=0",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000040186952",
+      "publisher": "Immigration Services Agency of Japan",
+      "retrieved_at": "2026-09-05T22:07:56+09:00",
+      "revision": "e_stat_published_edition",
+      "series_id": "isa-resident-foreigner-population-total",
+      "sha256": "16f703a47b83448902c332b4a268dc4ade95acf0ec45facecb306d2abf8efcab",
+      "source_period": "2023-12-31 resident-foreigner stock by nationality or region",
+      "source_table": "1",
+      "verification_level": "binary_and_primary"
+    },
+    "S19_2024": {
+      "dataset": "Resident-foreigner statistics Table 1: nationality and region totals",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040292366&fileKind=0",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000040292366",
+      "publisher": "Immigration Services Agency of Japan",
+      "retrieved_at": "2026-09-05T22:08:01+09:00",
+      "revision": "e_stat_published_edition",
+      "series_id": "isa-resident-foreigner-population-total",
+      "sha256": "d400d8e2b46d2e6384eb6787ad04568e8bfe2b7a5e89f2d2191d5d079c4f4306",
+      "source_period": "2024-12-31 resident-foreigner stock by nationality or region",
+      "source_table": "1",
       "verification_level": "binary_and_primary"
     }
   }
