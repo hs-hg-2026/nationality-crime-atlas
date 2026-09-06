@@ -299,6 +299,11 @@
 - **注記**: Actionsが使う一部のGitHub公式actionにNode.js 20 deprecation warningが出たが、GitHub側でNode.js 24に強制実行され、build・deployは成功した。将来のworkflow maintenance候補とする。
 - **関連パス**: `.github/workflows/pages.yml`, `web/public/data/dashboard_export.json`, `docs/workflow.md`
 
+## 2026-09-06 v0.2.0のrelease boundaryを確定
+- **何が**: v0.1.0後に追加した2015–2024年の全国検挙構成比、日本人等／外国人全体の人口当たり参考比率、過去年source、schema v8、semantic gate強化をv0.2.0の範囲とした。
+- **どう判断したか／なぜ**: 互換性を壊すmajor changeではない一方、利用者が確認できる時系列viewと公開data schemaが拡張されたため、patchではなくminor releaseとする。
+- **関連パス**: `docs/20260906_113048_v0.2.0_release_notes.md`, `web/package.json`, `web/package-lock.json`
+
 ## 2026-09-05 v0.1.0前のdependency security audit
 - **何が**: GitHub Release前に`npm audit`を実行し、full treeで11件（low 1／moderate 2／high 8）、`--omit=dev`でも6件（low 1／high 5）のadvisoryを検出した。Dependabot alertsはrepository設定で無効、secret-scanningのopen alertは0件だった。
 - **どう判断**: `npm audit fix --force`はdirect dependencyのrange外更新を要求するため、release直前に無検証で適用しない。公式advisoryとdependency treeを照合し、該当attack surfaceはReact Server Functions、network公開したWindows development server、Node側のuntrusted image処理、SOCKS proxy／WebSocket等だった。v0.1.0が配信するのはGitHub Pagesの32-file static client artifactだけで、server endpoint、development server、画像upload処理を公開しないため、deployed siteのrelease blockerとはしない。
