@@ -324,7 +324,7 @@ describe('CrimeAtlasDashboard', () => {
     const section = screen.getByTestId('clearance-share-trend-section');
     expect(
       within(section).getByRole('heading', {
-        name: '検挙全体に占める外国人区分の割合',
+        name: '検挙全体に占める区分別の割合',
       }),
     ).toBeVisible();
     expect(
@@ -332,9 +332,12 @@ describe('CrimeAtlasDashboard', () => {
     ).toBeVisible();
     expect(within(section).getByTestId('clearance-share-chart')).toBeVisible();
     expect(
+      within(section).getByTestId('japanese-clearance-share-chart'),
+    ).toBeVisible();
+    expect(
       within(section).getByTestId('clearance-share-table'),
     ).toHaveTextContent(
-      /2024.*287,273.*18,861.*6\.57%.*13,405.*4\.67%.*5,456.*1\.90%/,
+      /2024.*287,273.*268,412.*93\.43%.*18,861.*6\.57%.*13,405.*4\.67%.*5,456.*1\.90%/,
     );
     expect(
       within(section).getAllByText('外国人全体−来日外国人（差分）'),
@@ -342,12 +345,17 @@ describe('CrimeAtlasDashboard', () => {
     expect(
       within(section).getByText(/普段から住む外国人だけを表す値ではありません/),
     ).toBeVisible();
+    expect(
+      within(section).getByText(
+        /日本人等は全国総数から外国人全体を引いた残差/,
+      ),
+    ).toBeVisible();
 
     await user.click(within(section).getByRole('button', { name: '検挙人員' }));
     expect(
       within(section).getByTestId('clearance-share-table'),
     ).toHaveTextContent(
-      /2024.*191,826.*10,464.*5\.45%.*6,368.*3\.32%.*4,096.*2\.14%/,
+      /2024.*191,826.*181,362.*94\.55%.*10,464.*5\.45%.*6,368.*3\.32%.*4,096.*2\.14%/,
     );
   });
 

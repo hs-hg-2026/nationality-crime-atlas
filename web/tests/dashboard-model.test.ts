@@ -423,11 +423,15 @@ describe('national clearance foreign-share trend model', () => {
       allForeignCount: 18_861,
       visitingForeignCount: 13_405,
       allForeignMinusVisitingCount: 5_456,
+      japaneseEtcResidualCount: 268_412,
     });
     expect(latest?.allForeignShare).toBeCloseTo(6.565531742);
     expect(latest?.visitingForeignShare).toBeCloseTo(4.666293038);
     expect(latest?.allForeignMinusVisitingShare).toBeCloseTo(
       ((18_861 - 13_405) / 287_273) * 100,
+    );
+    expect(latest?.japaneseEtcResidualShare).toBeCloseTo(
+      (268_412 / 287_273) * 100,
     );
     expect(view.metricLabel).toBe('検挙件数');
     expect(view.sources.map((source) => source.id)).toEqual([
@@ -453,11 +457,15 @@ describe('national clearance foreign-share trend model', () => {
       allForeignCount: 10_464,
       visitingForeignCount: 6_368,
       allForeignMinusVisitingCount: 4_096,
+      japaneseEtcResidualCount: 181_362,
     });
     expect(latest?.allForeignShare).toBeCloseTo(5.454943543);
     expect(latest?.visitingForeignShare).toBeCloseTo(3.319675122);
     expect(latest?.allForeignMinusVisitingShare).toBeCloseTo(
       ((10_464 - 6_368) / 191_826) * 100,
+    );
+    expect(latest?.japaneseEtcResidualShare).toBeCloseTo(
+      (181_362 / 191_826) * 100,
     );
     expect(view.metricLabel).toBe('検挙人員');
   });
