@@ -195,7 +195,8 @@ M1の要点:
 - [x] 一般読者向けに、サイトの目的、分かること／分からないこと、用語説明、ページ内導線、日本語READMEへのリンクを冒頭へ置き、画面上の英語混じりの内部用語を平易な日本語へ改める。
 - [x] 2015–2024年について、外国人全体／来日外国人／両者の算術差分が日本人等を含む全国検挙総数に占める割合を、検挙件数／検挙人員のline chartと全件表で表示する。人口当たりの犯罪率ではなく、残差も在留外国人とは同義でないことを常設する。
 - [x] 2015–2024年について、日本人等の算術残差／日本人人口と、外国人全体／在留外国人数を別panelで表示し、検挙件数／検挙人員、参照人口、人口1,000人当たり参考比率を同じ年軸で確認できるようにする。2015年の外国人分母未登録は0補完せず、分子を残して未算出とする。
-- [ ] 公開サイト下部からGitHub Issuesへ移る導線と、可視化要望／不具合報告の定型を追加する。
+- [x] 公開サイト下部からGitHub Issuesへ移る導線と、公開投稿・個人情報に関する注意を追加する。
+- [ ] 可視化要望／不具合報告のGitHub Issue定型を追加する。
 - [ ] サイト内の定義が必要な用語から、公式定義・平易な説明・引用元・適用範囲を持つ用語集へ移動できるようにする。最初の対象は「来日外国人」とする。
 - [x] reviewed release commitをpushし、GitHub Pagesのdeployed URLとlive data hashを実地確認し、v0.2.0を公開する。
 
@@ -250,7 +251,7 @@ Local MVP実装・検証結果:
 - 2026-09-05: 全国籍比較の高い側／低い側各5件と重複するcount／ratio切替を廃止し、全categoryを参考比率の降順で並べる横棒plotへ変更した。日本は別色、算出不能は末尾、countとratioは全件表に保持し、desktop／mobileで目視確認した。
 - 2026-09-06: userの指摘を受け、外国人全体−来日外国人を第三系列として追加した。警察庁定義を確認すると差分は定着居住者だけでなく在日米軍関係者・在留資格不明者も含み得るため、「在日外国人」「普段から住む外国人」とは表示せず、算術差分・direct非公表と明示した。
 - 2026-09-06: 人口増減と人口当たり参考比率を分けて確認するため、2015–2024年の日本人等／外国人全体 × 検挙件数／検挙人員40行を追加した。日本人等の分子は全国総数−外国人全体の算術残差、外国人分子と在留外国人数はscope不一致とし、2015年は分子を保持して分母未登録の2行をrefuseした。schema v8のpublication semantic gateと、desktop／mobileの別panel表示まで検証した。
-- 現段階の結論: 全住民regional context、日本を欠落させない選択式全国籍比較、全件order plot、犯罪類型構成、未解決率とは呼ばない同年差、2015–2024年の3-scope全国検挙構成比と2-group人口当たり参考比率、dashboard-ready compact export v8、responsive visualization、GitHub Pages workflowまで成立した。schema v8はpush・deployされ、2026年9月6日にActions成功とlive data hash一致を確認した。次はGitHub Issuesのfeedback導線、その後は2020–2024年の地域別・国籍等別・犯罪種類別の詳細panelである。
+- 現段階の結論: 全住民regional context、日本を欠落させない選択式全国籍比較、全件order plot、犯罪類型構成、未解決率とは呼ばない同年差、2015–2024年の3-scope全国検挙構成比と2-group人口当たり参考比率、dashboard-ready compact export v8、responsive visualization、GitHub Pages workflow、GitHub Issues入口まで成立した。schema v8はpush・deployされ、2026年9月6日にActions成功とlive data hash一致を確認した。次はIssue定型、根拠付き用語集、その後は2020–2024年の地域別・国籍等別・犯罪種類別の詳細panelである。
 
 ## 想定される成果 (Outcome)
 

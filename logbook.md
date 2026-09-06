@@ -419,3 +419,10 @@
 - **何が**: userから、「来日外国人」等のサイト内用語について、公式定義、必要最小限の引用、根拠資料へのリンクを用語集で確認できるようにする提案があった。
 - **どう判断したか／なぜ**: 数値の対象範囲の誤読を避けるため、Issue導線・templateの次の実装とする。警察庁と法務省犯罪白書の両URLで、来日外国人の定義と警察庁統計に基づくことを実地確認した。
 - **関連パス**: `docs/20260906_114255_glossary_backlog.md`, `docs/brief.md`
+
+## 2026-09-06 公開サイトにGitHub Issues入口を追加
+- **何が**: 公開サイト下部に、可視化の提案や表示上の不具合をGitHub Issuesへ送る入口と、既存Issueを見る入口を追加した。
+- **どう判断したか／なぜ**: 新規投稿先は、次に追加する複数のissue templateを選べる`/issues/new/choose`にした。Issueは公開されるため、個人情報や個別事件を特定できる情報を書かない注意を常時表示する。
+- **検証結果**: 先にUI testのREDを確認し、実装後に118 frontend test、statement coverage 88.20%、branch coverage 84.28%、typecheck、lint、format、公開data検証、production buildをPASSした。1440pxと390pxの実画面でfooterの欠落と横はみ出しがないことを目視確認した。
+- **用語集への追記**: userの「visaを取得した人で、有効／失効の両方を含むのか」という具体的な問いは、未確認のまま保持した。「来日外国人」をvisa状態だけで言い換えず、公式QA等の実例を確認できた場合だけ根拠と適用範囲を添える。
+- **関連パス**: `web/components/crime-atlas-dashboard.tsx`, `web/app/globals.css`, `web/tests/dashboard.test.tsx`, `docs/20260906_114255_glossary_backlog.md`
