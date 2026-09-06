@@ -414,3 +414,8 @@
 - **どう判断したか／なぜ**: source metadata自体はprovenanceとして変更せず、公開画面の表示層でsource IDから日本語名と基準日を組み立てる。以前確定した「内部用語や英語混じりを一般読者へそのまま出さない」方針を新sourceにも一貫させるため。
 - **検証結果**: 英語publisher名が残る状態でUI testのREDを確認し、日本語表示追加後にfocused 13 test、typecheck、lint、formatをPASSした。
 - **関連パス**: `web/components/crime-atlas-dashboard.tsx`, `web/tests/dashboard.test.tsx`
+
+## 2026-09-06 根拠付き用語集をIssue導線の次に実装する
+- **何が**: userから、「来日外国人」等のサイト内用語について、公式定義、必要最小限の引用、根拠資料へのリンクを用語集で確認できるようにする提案があった。
+- **どう判断したか／なぜ**: 数値の対象範囲の誤読を避けるため、Issue導線・templateの次の実装とする。警察庁と法務省犯罪白書の両URLで、来日外国人の定義と警察庁統計に基づくことを実地確認した。
+- **関連パス**: `docs/20260906_114255_glossary_backlog.md`, `docs/brief.md`
