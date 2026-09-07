@@ -937,9 +937,10 @@ describe('nationality time-series model', () => {
         ui_caveat: '公表統計由来の参考比率である。',
       },
     };
-    payload.records.nationality_trends = [
-      ...Array.from({ length: 5 }, (_, index) => 2020 + index),
-    ].flatMap((year, index) =>
+    payload.records.nationality_trends = Array.from(
+      { length: 5 },
+      (_, index) => 2020 + index,
+    ).flatMap((year, index) =>
       ['cleared_cases', 'cleared_persons'].flatMap((metric) =>
         [
           {
@@ -950,7 +951,8 @@ describe('nationality time-series model', () => {
             is_japanese_reference: true,
             calculation_status: 'calculated',
             refusal_reason: null,
-            numerator_value: metric === 'cleared_cases' ? 200 + index : 150 + index,
+            numerator_value:
+              metric === 'cleared_cases' ? 200 + index : 150 + index,
             denominator_value: 100_000,
             display_value:
               ((metric === 'cleared_cases' ? 200 + index : 150 + index) /
@@ -979,18 +981,14 @@ describe('nationality time-series model', () => {
             numerator_source_ids: ['S08'],
             denominator_source_id: 'S19_2024',
             denominator_reference_date: `${year}-12-31`,
-            mismatch_flags: [
-              'all_foreign_vs_resident_population_mismatch',
-            ],
+            mismatch_flags: ['all_foreign_vs_resident_population_mismatch'],
             small_number_warning_flags: [],
           },
         ].map((row) => ({
           ...row,
-          trend_id:
-            'nationality_criminal_code_clearance_reference_ratio_trend',
+          trend_id: 'nationality_criminal_code_clearance_reference_ratio_trend',
           metric,
-          metric_label_ja:
-            metric === 'cleared_cases' ? '検挙件数' : '検挙人員',
+          metric_label_ja: metric === 'cleared_cases' ? '検挙件数' : '検挙人員',
           year,
         })),
       ),
@@ -1001,10 +999,7 @@ describe('nationality time-series model', () => {
     const persons = buildNationalityTrendViewModel(dashboard, 'persons');
 
     expect(cases.years).toEqual([2020, 2021, 2022, 2023, 2024]);
-    expect(cases.rows.map((row) => row.label)).toEqual([
-      '日本',
-      'ベトナム',
-    ]);
+    expect(cases.rows.map((row) => row.label)).toEqual(['日本', 'ベトナム']);
     expect(cases.rows[0].japaneseReference).toBe(true);
     expect(cases.rows[1].values[0]).toMatchObject({
       year: 2020,

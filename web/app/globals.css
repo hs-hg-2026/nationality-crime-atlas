@@ -121,6 +121,25 @@
     background: var(--primary);
   }
 
+  .nationality-trend-caveat {
+    padding: 0.85rem 1rem;
+    border: 1px solid color-mix(in oklch, var(--chart-4), var(--border) 45%);
+    border-radius: calc(var(--radius) * 0.9);
+    background: color-mix(in oklch, var(--chart-4), transparent 93%);
+  }
+
+  .nationality-trend-caveat strong {
+    display: block;
+    font-size: 0.82rem;
+  }
+
+  .nationality-trend-caveat p {
+    margin-top: 0.35rem;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    line-height: 1.7;
+  }
+
   .nationality-trend-heatmap-wrap {
     overflow-x: auto;
     border: 1px solid var(--border);
@@ -257,6 +276,43 @@
     stroke-width: 3;
   }
 
+  .nationality-trend-detail-table-wrap {
+    grid-column: 2;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) * 0.9);
+  }
+
+  .nationality-trend-detail-table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+    font-size: 0.76rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nationality-trend-detail-table caption {
+    padding: 0.7rem 0.85rem;
+    color: var(--muted-foreground);
+    text-align: left;
+    line-height: 1.6;
+  }
+
+  .nationality-trend-detail-table th,
+  .nationality-trend-detail-table td {
+    padding: 0.55rem 0.7rem;
+    border-top: 1px solid var(--border);
+    text-align: right;
+  }
+
+  .nationality-trend-detail-table thead th {
+    color: var(--muted-foreground);
+  }
+
+  .nationality-trend-detail-table th:first-child {
+    text-align: left;
+  }
+
   @media (max-width: 700px) {
     .nationality-trend-heading,
     .nationality-trend-detail {
@@ -266,6 +322,10 @@
 
     .nationality-trend-heading {
       display: grid;
+    }
+
+    .nationality-trend-detail-table-wrap {
+      grid-column: 1;
     }
   }
 }

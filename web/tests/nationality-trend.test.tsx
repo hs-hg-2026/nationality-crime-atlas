@@ -120,9 +120,9 @@ describe('NationalityTrend', () => {
     const detailTable = screen.getByRole('table', {
       name: '選択した国籍等の年別分子・分母・参考比率',
     });
-    expect(within(detailTable).getByRole('row', { name: /2020年/ })).toHaveTextContent(
-      /120.*100,000.*1\.20/,
-    );
+    expect(
+      within(detailTable).getByRole('row', { name: /2020年/ }),
+    ).toHaveTextContent(/120.*100,000.*1\.20/);
   });
 
   it('notifies its parent when the metric or selected category changes', () => {

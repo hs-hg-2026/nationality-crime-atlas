@@ -2496,7 +2496,9 @@ export function buildNationalityTrendViewModel(
   const rowsByEntity = new Map<string, NationalityTrendRow[]>();
   for (const row of selectedRows) {
     if (row.metric_label_ja !== expectedMetricLabel) {
-      throw new Error(`Nationality trend metric label differs for ${row.entity_id}.`);
+      throw new Error(
+        `Nationality trend metric label differs for ${row.entity_id}.`,
+      );
     }
     const entityRows = rowsByEntity.get(row.entity_id) ?? [];
     entityRows.push(row);
@@ -2517,7 +2519,9 @@ export function buildNationalityTrendViewModel(
             row.is_japanese_reference !== first.is_japanese_reference,
         )
       ) {
-        throw new Error(`Nationality trend series is incomplete for ${entityId}.`);
+        throw new Error(
+          `Nationality trend series is incomplete for ${entityId}.`,
+        );
       }
       return {
         entityId,
@@ -2568,7 +2572,9 @@ export function buildNationalityTrendViewModel(
         left.label.localeCompare(right.label, 'ja'),
     );
   if (rows.filter((row) => row.japaneseReference).length !== 1) {
-    throw new Error('Nationality trend requires exactly one Japanese reference series.');
+    throw new Error(
+      'Nationality trend requires exactly one Japanese reference series.',
+    );
   }
   const otherMetric =
     metric === 'cleared_cases' ? 'cleared_persons' : 'cleared_cases';

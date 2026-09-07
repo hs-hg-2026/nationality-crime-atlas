@@ -651,7 +651,9 @@ function validateNationalityTrendRecords(payload, definitions, sources) {
       typeof record.display_label !== 'string' ||
       record.display_included !== true
     ) {
-      nationalityTrendSemanticError(`key or display policy differs at ${label}`);
+      nationalityTrendSemanticError(
+        `key or display policy differs at ${label}`,
+      );
     }
     const expectedMetricLabel =
       record.metric === 'cleared_cases' ? '検挙件数' : '検挙人員';
@@ -779,8 +781,7 @@ function validateRecordLinks(payload) {
   const clearanceShareDefinitions = payload.definitions.clearance_share_ids;
   const clearancePopulationDefinitions =
     payload.definitions.clearance_population_ids;
-  const nationalityTrendDefinitions =
-    payload.definitions.nationality_trend_ids;
+  const nationalityTrendDefinitions = payload.definitions.nationality_trend_ids;
   const sources = payload.sources;
   const clearanceShareDefinition =
     clearanceShareDefinitions[CLEARANCE_SHARE_TREND_ID];

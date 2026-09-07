@@ -30,6 +30,7 @@ export interface NationalityTrendProps {
   years: number[];
   rows: NationalityTrendRow[];
   selectedEntityId: string;
+  caveat?: string;
   onMetricChange: (metric: NationalityTrendMetric) => void;
   onEntityChange: (entityId: string) => void;
 }
@@ -80,6 +81,7 @@ export function NationalityTrend({
   years,
   rows,
   selectedEntityId,
+  caveat,
   onMetricChange,
   onEntityChange,
 }: NationalityTrendProps) {
@@ -134,10 +136,11 @@ export function NationalityTrend({
     >
       <div className="nationality-trend-heading">
         <div>
-          <p className="section-kicker">2020–2024 NATIONAL TREND</p>
+          <p className="section-kicker">2020–2024年 / 全国</p>
           <h3 id="nationality-trend-heading">国籍等別の時系列</h3>
           <p>
-            全区分を同じ表に残し、各年の人口1,000人当たりの公表統計由来の参考比率を表示します。
+            日本を含む全{rows.length}
+            区分を同じ表に残し、各年の人口1,000人当たりの公表統計由来の参考比率を表示します。
           </p>
         </div>
         <fieldset
@@ -163,6 +166,13 @@ export function NationalityTrend({
           </div>
         </fieldset>
       </div>
+
+      {caveat ? (
+        <aside className="nationality-trend-caveat" aria-label="時系列の注意点">
+          <strong>年ごとの差も、属性の評価には使いません</strong>
+          <p>{caveat} 未算出は0として扱わず、年と区分を残して表示します。</p>
+        </aside>
+      ) : null}
 
       <div className="nationality-trend-heatmap-wrap">
         <table
@@ -314,6 +324,44 @@ export function NationalityTrend({
               ),
             )}
           </svg>
+        </div>
+        <div className="nationality-trend-detail-table-wrap">
+          <table
+            className="nationality-trend-detail-table"
+            aria-label="選択した国籍等の年別分子・分母・参考比率"
+          >
+            <caption>
+              {selectedLabel}の公表値と、このサイトで算出した参考比率
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">年</th>
+                <th scope="col">{metricLabel}</th>
+                <th scope="col">分母人口</th>
+                <th scope="col">人口1,000人当たり</th>
+                <th scope="col">算出状態</th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedValues.map((item) => (
+                <tr key={item.year}>
+                  <th scope="row">{item.year}年</th>
+                  <td>{item.numerator?.toLocaleString('ja-JP') ?? '—'}</td>
+                  <td>{item.denominator?.toLocaleString('ja-JP') ?? '—'}</td>
+                  <td>
+                    {item.displayValue === null
+                      ? '未算出'
+                      : `${item.displayValue} / 1,000人`}
+                  </td>
+                  <td>
+                    {item.calculationStatus === 'calculated'
+                      ? '算出済み'
+                      : '未算出'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </section>

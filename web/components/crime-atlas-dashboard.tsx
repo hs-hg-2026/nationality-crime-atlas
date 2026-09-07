@@ -42,10 +42,12 @@ import {
   NativeSelect,
   NativeSelectOption,
 } from '@/components/ui/native-select';
+import { NationalityTrend } from '@/components/nationality-trend';
 import { PrefectureMap } from '@/components/prefecture-map';
 import {
   buildClearancePopulationTrendViewModel,
   buildClearanceShareTrendViewModel,
+  buildNationalityTrendViewModel,
   buildOffenseCompositionViewModel,
   buildSelectableNationalityViewModel,
   buildRegionalViewModel,
@@ -57,6 +59,7 @@ import {
   type DashboardData,
   formatDashboardValue,
   type NationalityComparisonViewModel,
+  type NationalityTrendMetric,
   NATIONALITY_CASES_COMPARISON_ID,
   NATIONALITY_PERSPECTIVES,
   type NationalityPerspectiveId,
@@ -322,7 +325,15 @@ function offenseHeatmapColor(color: string, share: number | null): string {
   return `color-mix(in srgb, ${color} ${strength}%, white)`;
 }
 
-function SourceList({ sources }: { sources: RegionalViewModel['sources'] }) {
+function SourceList({
+  sources,
+  linkContext,
+}: {
+  sources: RegionalViewModel['sources'];
+  linkContext?: string;
+}) {
+  const linkLabel = (sourceId: string, destination: string) =>
+    [sourceId, linkContext, destination].filter(Boolean).join(' ');
   return (
     <div className="source-list">
       {sources.map((source) => {
@@ -341,7 +352,7 @@ function SourceList({ sources }: { sources: RegionalViewModel['sources'] }) {
                 href={source.landingUrl}
                 target="_blank"
                 rel="noreferrer"
-                aria-label={`${source.id} 公表ページ`}
+                aria-label={linkLabel(source.id, '公表ページ')}
               >
                 公表ページ <ExternalLink aria-hidden="true" />
               </a>
@@ -349,7 +360,7 @@ function SourceList({ sources }: { sources: RegionalViewModel['sources'] }) {
                 href={source.downloadUrl}
                 target="_blank"
                 rel="noreferrer"
-                aria-label={`${source.id} 元データ`}
+                aria-label={linkLabel(source.id, '元データ')}
               >
                 元データ <ExternalLink aria-hidden="true" />
               </a>
@@ -1290,6 +1301,11 @@ export function CrimeAtlasDashboard({
     useState<ClearanceShareMetric>('cleared_cases');
   const [clearancePopulationMetric, setClearancePopulationMetric] =
     useState<ClearanceShareMetric>('cleared_cases');
+  const [nationalityTrendMetric, setNationalityTrendMetric] =
+    useState<NationalityTrendMetric>('cases');
+  const [nationalityTrendEntityId, setNationalityTrendEntityId] = useState(
+    'jp-nationality:japanese',
+  );
   const [offenseMetric, setOffenseMetric] =
     useState<OffenseCompositionMetric>('cleared_persons');
   const [offenseOrder, setOffenseOrder] =
@@ -1320,6 +1336,10 @@ export function CrimeAtlasDashboard({
         clearancePopulationMetric,
       ),
     [clearancePopulationMetric, dashboard],
+  );
+  const nationalityTrendView = useMemo(
+    () => buildNationalityTrendViewModel(dashboard, nationalityTrendMetric),
+    [dashboard, nationalityTrendMetric],
   );
   const offenseView = useMemo(
     () =>
@@ -1959,6 +1979,32 @@ export function CrimeAtlasDashboard({
               ))}
             </div>
           </div>
+
+          <NationalityTrend
+            selectedMetric={nationalityTrendMetric}
+            years={nationalityTrendView.years}
+            rows={nationalityTrendView.rows}
+            selectedEntityId={nationalityTrendEntityId}
+            caveat={nationalityTrendView.uiCaveat}
+            onMetricChange={setNationalityTrendMetric}
+            onEntityChange={setNationalityTrendEntityId}
+          />
+
+          <Card className="nationality-trend-sources">
+            <CardHeader>
+              <BookOpen aria-hidden="true" />
+              <CardTitle>この時系列の出典</CardTitle>
+              <CardDescription>
+                各年の犯罪統計と人口統計を、元の公表資料まで辿れます。
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SourceList
+                sources={nationalityTrendView.sources}
+                linkContext="時系列"
+              />
+            </CardContent>
+          </Card>
         </section>
 
         <ClearanceShareTrend
