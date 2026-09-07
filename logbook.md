@@ -452,3 +452,9 @@
 - **どう判断したか／なぜ**: 距離を定義どおり平方差和の平方根へ修正し、`[0,0]`と`[3,4]`が5になる回帰testを追加した。1点だけ値がある行は変化パターンをclusterできないため、cluster済み行の後・全期間未算出行の前へ分離した。heatmapには「区分を選ぶと注意点と未算出理由を確認できる」と常設し、未算出cellの読み上げ名とhoverにも平易な理由を含めた。
 - **検証結果**: reviewerの重要度中1件をclosed。軽微2件も将来の部分欠測と説明の発見性を改善した。frontend 131 test、typecheck、lint、format、data hash verification、production buildをPASS。再build後のChrome 1440px／390px確認でもbody幅はviewport幅と一致し、page横overflowは0だった。
 - **関連パス**: `web/components/nationality-trend.tsx`, `web/tests/nationality-trend.test.tsx`, `web/app/globals.css`
+
+## 2026-09-08 v0.3.0のrelease boundaryを確定
+- **何が**: v0.2.0後に追加した、日本を含む26区分 × 2020–2024年 × 検挙件数／検挙人員の全国参考比率時系列、2色heatmap、階層クラスタリング、日本との2系列比較、schema v9をv0.3.0の範囲とした。
+- **どう判断したか／なぜ**: 後方互換性を壊さず、新しいdata productと主要な可視化を追加したminor releaseであるため、versionを0.3.0とする。cluster順は変化パターン探索用で、危険度や順位ではないという責任範囲もrelease notesへ固定する。
+- **検証状態**: release準備前にPython 180 test、Web 131 test、typecheck、lint、format、公開data hash verification、production build、1440px／390pxの実画面、独立reviewをPASS済み。release commitでもfrontend quality gateを再実行する。
+- **関連パス**: `docs/20260908_082601_v0.3.0_release_notes.md`, `web/package.json`, `web/package-lock.json`
