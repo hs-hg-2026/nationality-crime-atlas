@@ -8,6 +8,7 @@ from nationality_crime_atlas.nationality_trend import (
     generate_nationality_trend_report,
     load_nationality_trend_contract,
 )
+from nationality_crime_atlas.nationality_trend_cli import main as trend_main
 from nationality_crime_atlas.provenance import sha256_file
 
 
@@ -390,3 +391,30 @@ def test_report_rejects_changed_processed_input(tmp_path):
 
     with pytest.raises(IntegrityError, match="contract pin"):
         generate_nationality_trend_report(**paths)
+
+
+def test_cli_generates_nationality_trend_product(tmp_path, capsys):
+    paths = _fixture(tmp_path)
+
+    exit_code = trend_main(
+        [
+            "--catalog",
+            str(paths["catalog_path"]),
+            "--processed-root",
+            str(paths["processed_root"]),
+            "--mapping-latest",
+            str(paths["mapping_latest_path"]),
+            "--contract",
+            str(paths["contract_path"]),
+            "--output-root",
+            str(paths["output_root"]),
+            "--generated-at",
+            paths["generated_at"],
+        ]
+    )
+
+    assert exit_code == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["record_count"] == 20
+    assert payload["status_counts"] == {"calculated": 16, "refused": 4}
+    assert Path(payload["records"]).exists()
