@@ -18,6 +18,7 @@ Codex 用の作業指示（この repo 固有の *確定ルール* だけ）。�
 - regenerate canonical dimension audit: `.venv/bin/nca-map-dimensions`
 - regenerate all-resident regional context: `.venv/bin/nca-build-all-resident-context`
 - regenerate nationality offense composition: `.venv/bin/nca-build-offense-composition`
+- regenerate nationality clearance reference-ratio trend: `.venv/bin/nca-build-nationality-trend`
 - regenerate national clearance-share trend: `.venv/bin/nca-build-clearance-share-trend`
 - regenerate national clearance population-reference trend: `.venv/bin/nca-build-clearance-population-trend`
 - regenerate compact dashboard export: `.venv/bin/nca-build-compact-export`
