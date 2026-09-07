@@ -348,6 +348,44 @@ describe('CrimeAtlasDashboard', () => {
     }
   });
 
+  it('shows five years for all nationality categories and switches cases to persons', async () => {
+    const user = userEvent.setup();
+    render(<CrimeAtlasDashboard dashboard={dashboard} />);
+
+    const heading = screen.getByRole('heading', {
+      name: '国籍等別の時系列',
+    });
+    const section = heading.closest('section');
+    expect(section).not.toBeNull();
+    if (!section) return;
+    const heatmap = within(section).getByRole('table', {
+      name: '国籍等別・人口1,000人当たりの時系列ヒートマップ',
+    });
+    expect(within(heatmap).getAllByRole('row')).toHaveLength(27);
+    expect(
+      within(heatmap).getByRole('columnheader', { name: '2020年' }),
+    ).toBeVisible();
+    expect(
+      within(heatmap).getByRole('columnheader', { name: '2024年' }),
+    ).toBeVisible();
+    expect(
+      within(heatmap).getByRole('row', { name: /日本（参考値）/ }),
+    ).toBeVisible();
+    expect(
+      within(heatmap).getByRole('row', { name: /ベトナム/ }),
+    ).toHaveTextContent(/6\.89.*8\.82.*7\.51.*7\.51.*9\.72/);
+
+    await user.click(within(section).getByRole('button', { name: '検挙人員' }));
+    expect(
+      within(heatmap).getByRole('row', { name: /ベトナム/ }),
+    ).toHaveTextContent(/3\.54.*4\.62.*3\.43.*3\.00.*2\.65/);
+    expect(within(section).getAllByText('未算出')).toHaveLength(20);
+    expect(within(section).getByText(/2020–2024年/)).toBeVisible();
+    expect(
+      within(section).getByText(/犯罪を行う確率や公的な犯罪率/),
+    ).toBeVisible();
+  });
+
   it('shows the ten-year clearance share and switches cases and persons', async () => {
     const user = userEvent.setup();
     render(<CrimeAtlasDashboard dashboard={dashboard} />);
