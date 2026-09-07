@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "processed_input_pins": {
+    "S08": "3fe1d78fe8d4c12b436e09b42641276cd2ba39fc1f1c446af588266d5b6d0029",
+    "S08_2020": "4621fca449cc316be9610b82c6db8ddd2cbcccaa9842d5fa42f2f7b960b42a14",
+    "S08_2021": "0c6be892b2b20dcc6fcb28ffe9b6f8941ce6cb217bc666ea94bb54af2d6fc097",
+    "S08_2022": "fa1a63d4b5d451ee7633f3a1111db88288b9e2d7dd16fa53336840b0721f5035",
+    "S08_2023": "4ea626d1199fa4c2a697bbf3a4984f2fe4ca3ee72f2fb1851f3fbedee1882ffd",
+    "S15": "d112ce129e94d635da47aa0efe748d0bb91ae8b76fdf4ad1d5eb46f67bdcf8c6",
+    "S15_2020": "66fe08de1018140f3241417493dfb5e543e635c4ab06ef8c44cdf4a69b5a76df",
+    "S15_2021": "e68114a6edead21e23acb923af13171890e43830f230458a412326fa4a04b215",
+    "S15_2022": "adf238704cce9a8a44970218a491940844e0f109f24240cc13f247905f2bb538",
+    "S15_2023": "a14bcd6ae7d1d3dfddde4a0eec9b66815ac2ad3da877ddb0e0816c492090a0df",
+    "S17": "f82690c52a318abcdd2252b578075651d3daca5ebca16cbaabbf1278be62203b",
+    "S17_2021": "0f9fd9d758dede0b07c816ab1839b45455fd08e850ad7b40872fba1d9866066d",
+    "S17_2022": "3d65ed5e5c4d554c08adaf4689b9b082a5b03dc415f4bc30d278b4b263bd4f0f",
+    "S17_2023": "79462160bfeafd59680bd7b4ef1ffedad15ce35294a5508d16aff389ac854aaf",
+    "S18": "42a15bd3ffdb2ef612497b75c9c8aa05624a854f20654ab5f13856114cdf171b",
+    "S19_2020": "2a80b08a37c0e5b745f1b793c2f4a5a356fe0f277738d1718520db35e104d154",
+    "S19_2021": "d7afb948e8a3e770448303c0f5bd4e0a27d072b76b72c2f2c036fcbfc1cd4a64",
+    "S19_2022": "ccb7f8d5d0b5bcbb79280845fb16e6c7260b87776d5a640bdee825f2b4b90a79",
+    "S19_2023": "040e0917da391b79e40197c79083cf76778c10e48b8dd91917c078888847fc9a",
+    "S19_2024": "cc19ff12bb287d465422cf89a20eca86d31371ce97dfce7047741b47e40b975a"
+  },
+  "trend": {
+    "trend_id": "nationality_criminal_code_clearance_reference_ratio_trend",
+    "label_ja": "日本を含む国籍等別の刑法犯検挙参考比率の推移",
+    "label_en": "Criminal-code clearance reference-ratio trend by nationality including Japan",
+    "years": [2020, 2021, 2022, 2023, 2024],
+    "metrics": ["cleared_cases", "cleared_persons"],
+    "foreign_numerator_sources": {
+      "2020": "S08_2020",
+      "2021": "S08_2021",
+      "2022": "S08_2022",
+      "2023": "S08_2023",
+      "2024": "S08"
+    },
+    "all_person_numerator_sources": {
+      "2020": "S15_2020",
+      "2021": "S15_2021",
+      "2022": "S15_2022",
+      "2023": "S15_2023",
+      "2024": "S15"
+    },
+    "foreign_population_sources": {
+      "2020": "S19_2020",
+      "2021": "S19_2021",
+      "2022": "S19_2022",
+      "2023": "S19_2023",
+      "2024": "S19_2024"
+    },
+    "japanese_population_sources": {
+      "2020": "S18",
+      "2021": "S17_2021",
+      "2022": "S17_2022",
+      "2023": "S17_2023",
+      "2024": "S17"
+    },
+    "foreign_population_label_aliases": {
+      "（朝鮮）": "朝鮮"
+    },
+    "expected_foreign_country_row_count": 24,
+    "expected_foreign_region_total_row_count": 5,
+    "foreign_total_outside_region_labels": ["\u7121\u56fd\u7c4d", "\u56fd\u7c4d\u4e0d\u660e"],
+    "aggregated_nationality_label": "アメリカ",
+    "expected_aggregated_subcategory_row_count": 4,
+    "display_multiplier": 1000,
+    "display_unit_label_ja": "人口1,000人当たり",
+    "display_unit_label_en": "per 1,000 persons",
+    "small_number_denominator_threshold": 1000,
+    "small_number_numerator_threshold": 20,
+    "default_display_behavior": "include_all_with_warnings",
+    "interpretation_policy": "observed_time_series_without_intrinsic_group_inference",
+    "ui_caveat": "1年間の刑法犯検挙件数または検挙人員を、10月1日の日本人口または12月31日の在留外国人数で単純に割った公表統計由来の参考比率である。日本の分子は全人員・全件数から全外国人値を差し引いた残差である。外国人の犯罪統計と在留外国人人口は対象範囲が一致しない。犯罪を行う確率や公的な犯罪率、集団の本質を示さない。"
+  }
+}
