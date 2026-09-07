@@ -124,7 +124,7 @@ function addClearancePopulationFixture(payload: FixturePayload): void {
   const trendId = 'national_clearance_population_reference_ratio';
   const uiCaveat =
     '1年間の刑法犯検挙件数または検挙人員を、10月1日の日本人人口または12月31日の在留外国人数で単純に割った公表統計由来の参考比率である。犯罪統計の分子から居住者だけを識別できず、特に「外国人全体」と在留外国人人口の対象範囲は一致しない。犯罪を行う確率や公的な犯罪率を示さない。';
-  payload.compact_export_schema_version = 8;
+  payload.compact_export_schema_version = 9;
   payload.publication_policy.clearance_population_view = trendId;
   payload.definitions.clearance_population_ids = {
     [trendId]: {
@@ -289,7 +289,7 @@ function addClearancePopulationFixture(payload: FixturePayload): void {
   });
 }
 
-function writeHashClosedSchema8Dashboard(
+function writeHashClosedSchema9Dashboard(
   source: ReturnType<typeof makeCompactSource>,
   payload: FixturePayload,
 ): void {
@@ -297,7 +297,7 @@ function writeHashClosedSchema8Dashboard(
   writeFileSync(source.dashboardPath, dashboardBytes);
 
   const summary = JSON.parse(readFileSync(source.summaryPath, 'utf8'));
-  summary.compact_export_schema_version = 8;
+  summary.compact_export_schema_version = 9;
   summary.dashboard_export_sha256 = sha256(dashboardBytes);
   summary.record_counts.clearance_population_trends =
     payload.records.clearance_population_trends.length;
@@ -309,7 +309,7 @@ function writeHashClosedSchema8Dashboard(
   writeFileSync(source.summaryPath, summaryBytes);
 
   const pointer = JSON.parse(readFileSync(source.pointerPath, 'utf8'));
-  pointer.compact_export_schema_version = 8;
+  pointer.compact_export_schema_version = 9;
   pointer.dashboard_export_sha256 = sha256(dashboardBytes);
   pointer.summary_sha256 = sha256(summaryBytes);
   writeFileSync(source.pointerPath, `${JSON.stringify(pointer, null, 2)}\n`);
@@ -378,7 +378,7 @@ describe('dashboard publication bundle', () => {
     const manifest = JSON.parse(firstManifest.toString('utf8'));
     expect(manifest).toMatchObject({
       publication_manifest_schema_version: 1,
-      compact_export_schema_version: 8,
+      compact_export_schema_version: 9,
       source_run_relpath: pointer.run_relpath,
       dashboard_export_sha256: pointer.dashboard_export_sha256,
       record_counts: {
@@ -387,6 +387,7 @@ describe('dashboard publication bundle', () => {
         nationality_indicators: 290,
         clearance_share_trends: 60,
         clearance_population_trends: 40,
+        nationality_trends: 260,
       },
       definition_counts: {
         context_ids: 4,
@@ -394,8 +395,9 @@ describe('dashboard publication bundle', () => {
         nationality_comparison_ids: 1,
         clearance_share_ids: 1,
         clearance_population_ids: 1,
+        nationality_trend_ids: 1,
       },
-      source_count: 21,
+      source_count: 29,
       source_pointer_sha256: sha256(readFileSync(source.pointerPath)),
     });
 
@@ -407,6 +409,8 @@ describe('dashboard publication bundle', () => {
       clearance_share_view: 'national_criminal_code_clearance_foreign_share',
       clearance_population_view:
         'national_clearance_population_reference_ratio',
+      nationality_trend_view:
+        'nationality_criminal_code_clearance_reference_ratio_trend',
       same_year_gap_view: 'all_resident_same_year_recognition_clearance_gap',
       same_year_gap_is_unresolved_cohort: false,
     });
@@ -474,6 +478,23 @@ describe('dashboard publication bundle', () => {
       calculation_status: 'refused',
       refusal_reason:
         'resident_foreigner_population_source_not_registered_for_year',
+    });
+    const vietnamPersonsTrend = published.records.nationality_trends.filter(
+      (row: { published_label?: string; metric?: string }) =>
+        row.published_label === 'ベトナム' && row.metric === 'cleared_persons',
+    );
+    expect(vietnamPersonsTrend).toHaveLength(5);
+    expect(vietnamPersonsTrend[0]).toMatchObject({
+      year: 2020,
+      numerator_value: 1_587,
+      denominator_value: 448_053,
+      calculation_status: 'calculated',
+    });
+    expect(vietnamPersonsTrend[4]).toMatchObject({
+      year: 2024,
+      numerator_value: 1_679,
+      denominator_value: 634_361,
+      calculation_status: 'calculated',
     });
 
     const second = syncCanonicalBundle(directory);
@@ -717,7 +738,7 @@ describe('dashboard publication bundle', () => {
     const directory = makeTemporaryDirectory();
     const source = makeCompactSource(directory);
     const payload = JSON.parse(readFileSync(source.dashboardPath, 'utf8'));
-    writeHashClosedSchema8Dashboard(source, payload);
+    writeHashClosedSchema9Dashboard(source, payload);
 
     const result = runScript([
       '--pointer',
@@ -738,7 +759,7 @@ describe('dashboard publication bundle', () => {
     const source = makeCompactSource(directory);
     const payload = JSON.parse(readFileSync(source.dashboardPath, 'utf8'));
     addClearancePopulationFixture(payload);
-    writeHashClosedSchema8Dashboard(source, payload);
+    writeHashClosedSchema9Dashboard(source, payload);
 
     const result = runScript([
       '--pointer',
@@ -810,7 +831,7 @@ describe('dashboard publication bundle', () => {
         (row) => row.year !== 2015,
       );
     }
-    writeHashClosedSchema8Dashboard(source, payload);
+    writeHashClosedSchema9Dashboard(source, payload);
 
     const result = runScript([
       '--pointer',

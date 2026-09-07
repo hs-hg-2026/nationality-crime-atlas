@@ -133,10 +133,10 @@ describe('regional dashboard model', () => {
     ).toThrow(/schema version/i);
   });
 
-  it('rejects a schema-v8 payload without required dashboard records', () => {
+  it('rejects a schema-v9 payload without required dashboard records', () => {
     expect(() =>
       parseDashboardData({
-        compact_export_schema_version: 8,
+        compact_export_schema_version: 9,
         definitions: {},
         records: {},
         sources: {},
