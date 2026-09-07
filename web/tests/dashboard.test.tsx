@@ -369,7 +369,9 @@ describe('CrimeAtlasDashboard', () => {
       within(heatmap).getByRole('columnheader', { name: '2024年' }),
     ).toBeVisible();
     expect(
-      within(heatmap).getByRole('row', { name: /日本（参考値）/ }),
+      within(heatmap).getByRole('row', {
+        name: /日本（残差による参考値）/,
+      }),
     ).toBeVisible();
     expect(
       within(heatmap).getByRole('row', { name: /ベトナム/ }),
@@ -394,7 +396,7 @@ describe('CrimeAtlasDashboard', () => {
     expect(
       within(heatmap).getByRole('row', { name: /ベトナム/ }),
     ).toHaveTextContent(/3\.54.*4\.62.*3\.43.*3\.00.*2\.65/);
-    expect(within(section).getAllByText('未算出')).toHaveLength(20);
+    expect(within(heatmap).getAllByText('未算出')).toHaveLength(20);
     expect(within(section).getByText(/2020–2024年/)).toBeVisible();
     expect(
       within(section).getByText(/犯罪を行う確率や公的な犯罪率/),

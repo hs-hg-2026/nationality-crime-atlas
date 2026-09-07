@@ -999,7 +999,10 @@ describe('nationality time-series model', () => {
     const persons = buildNationalityTrendViewModel(dashboard, 'persons');
 
     expect(cases.years).toEqual([2020, 2021, 2022, 2023, 2024]);
-    expect(cases.rows.map((row) => row.label)).toEqual(['日本', 'ベトナム']);
+    expect(cases.rows.map((row) => row.label)).toEqual([
+      '日本（残差による参考値）',
+      'ベトナム',
+    ]);
     expect(cases.rows[0].japaneseReference).toBe(true);
     expect(cases.rows[1].values[0]).toMatchObject({
       year: 2020,

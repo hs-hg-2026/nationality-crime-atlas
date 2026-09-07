@@ -86,6 +86,40 @@ const props: NationalityTrendProps = {
         },
       ],
     },
+    {
+      entityId: 'maximum',
+      label: '最大値の区分',
+      japaneseReference: false,
+      values: [
+        {
+          year: 2020,
+          value: 10.87,
+          displayValue: '10.87',
+          numerator: 109,
+          denominator: 10_000,
+          calculationStatus: 'calculated',
+          warningCodes: [],
+        },
+        {
+          year: 2021,
+          value: 10,
+          displayValue: '10.00',
+          numerator: 100,
+          denominator: 10_000,
+          calculationStatus: 'calculated',
+          warningCodes: [],
+        },
+        {
+          year: 2022,
+          value: 9,
+          displayValue: '9.00',
+          numerator: 90,
+          denominator: 10_000,
+          calculationStatus: 'calculated',
+          warningCodes: [],
+        },
+      ],
+    },
   ],
 };
 
@@ -158,10 +192,12 @@ describe('NationalityTrend', () => {
       'nationality-trend-missing',
     );
     const detailTable = screen.getByRole('table', {
-      name: '選択した国籍等の年別分子・分母・参考比率',
+      name: '日本参考値と選択した国籍等の年別分子・分母・参考比率',
     });
     expect(
-      within(detailTable).getByRole('row', { name: /2020年/ }),
+      within(detailTable).getByRole('row', {
+        name: /2020年 日本（参考値）/,
+      }),
     ).toHaveTextContent(/120.*100,000.*1\.20/);
   });
 
@@ -179,9 +215,12 @@ describe('NationalityTrend', () => {
     fireEvent.click(screen.getByRole('button', { name: '検挙人員' }));
     expect(onMetricChange).toHaveBeenCalledWith('persons');
 
-    fireEvent.change(screen.getByRole('combobox', { name: '表示する国籍等' }), {
-      target: { value: 'vietnam' },
-    });
+    fireEvent.change(
+      screen.getByRole('combobox', { name: '日本と比較する国籍等' }),
+      {
+        target: { value: 'vietnam' },
+      },
+    );
     expect(onEntityChange).toHaveBeenCalledWith('vietnam');
   });
 
@@ -195,7 +234,7 @@ describe('NationalityTrend', () => {
     expect(legend).toHaveTextContent('良い・悪いを表す色ではありません');
     expect(legend.querySelector('[data-colour-count="2"]')).toBeVisible();
     expect(
-      screen.getByText(/行は.*階層クラスタリング.*平均連結/),
+      screen.getByText(/行は.*平均連結法.*階層クラスタリング/),
     ).toBeVisible();
   });
 
@@ -225,6 +264,16 @@ describe('NationalityTrend', () => {
     expect(chart.querySelectorAll('path.nationality-trend-line')).toHaveLength(
       3,
     );
+    expect(
+      chart.querySelector('[data-series-id="japan"] path'),
+    ).toHaveClass('nationality-trend-line-reference');
+    expect(
+      chart.querySelector('[data-series-id="vietnam"] path'),
+    ).toHaveClass('nationality-trend-line-selected');
+    expect(chart).toHaveAttribute('data-y-axis-maximum', '11');
+    for (const tick of ['0', '2', '4', '6', '8', '10']) {
+      expect(within(chart).getByText(tick)).toBeVisible();
+    }
     expect(chart).toHaveTextContent('2020');
     expect(chart).toHaveTextContent('2022');
 
@@ -275,9 +324,7 @@ describe('NationalityTrend', () => {
       />,
     );
 
-    expect(
-      screen.getByText('犯罪統計と人口統計の国籍区分が一致しない'),
-    ).toBeVisible();
+    expect(screen.getByText(/犯罪統計と人口統計の国籍区分が一致しない/)).toBeVisible();
   });
 
   it('server-renders SVG titles without hydration warnings', async () => {
