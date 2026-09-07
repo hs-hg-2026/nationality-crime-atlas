@@ -89,26 +89,34 @@ describe('NationalityTrend', () => {
   it('shows every provided category and year with exact values, including missing values', () => {
     render(<NationalityTrend {...props} />);
 
-    expect(screen.getByRole('heading', { name: '国籍等別の時系列' })).toBeVisible();
+    expect(
+      screen.getByRole('heading', { name: '国籍等別の時系列' }),
+    ).toBeVisible();
     expect(screen.getByRole('button', { name: '検挙件数' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
-    expect(screen.getByRole('button', { name: '検挙人員' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '検挙人員' }),
+    ).toBeInTheDocument();
 
     const table = screen.getByRole('table', {
       name: '国籍等別・人口1,000人当たりの時系列ヒートマップ',
     });
-    expect(within(table).getByRole('columnheader', { name: '2020年' })).toBeVisible();
-    expect(within(table).getByRole('rowheader', { name: '日本（参考値）' })).toBeVisible();
+    expect(
+      within(table).getByRole('columnheader', { name: '2020年' }),
+    ).toBeVisible();
+    expect(
+      within(table).getByRole('rowheader', { name: '日本（参考値）' }),
+    ).toBeVisible();
     expect(within(table).getByText('7.00')).toBeVisible();
     expect(within(table).getByText('未算出')).toHaveAttribute(
       'data-calculation-status',
       'refused',
     );
-    expect(
-      within(table).getByText('未算出').closest('td'),
-    ).toHaveClass('nationality-trend-missing');
+    expect(within(table).getByText('未算出').closest('td')).toHaveClass(
+      'nationality-trend-missing',
+    );
   });
 
   it('notifies its parent when the metric or selected category changes', () => {
@@ -135,9 +143,11 @@ describe('NationalityTrend', () => {
     render(<NationalityTrend {...props} />);
 
     const chart = screen.getByRole('img', {
-      name: '日本の人口1,000人当たり検挙件数の推移',
+      name: '日本（参考値）の人口1,000人当たり検挙件数の推移',
     });
-    expect(chart.querySelectorAll('path.nationality-trend-line')).toHaveLength(1);
+    expect(chart.querySelectorAll('path.nationality-trend-line')).toHaveLength(
+      1,
+    );
     expect(chart).toHaveTextContent('2020');
     expect(chart).toHaveTextContent('2022');
   });
