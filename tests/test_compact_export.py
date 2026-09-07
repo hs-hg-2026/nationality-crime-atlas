@@ -479,6 +479,144 @@ def _comparison_fixture(tmp_path: Path) -> Path:
     return root / "latest.json"
 
 
+def _nationality_trend_fixture(tmp_path: Path) -> Path:
+    root = tmp_path / "processed" / "_nationality_trend"
+    run_dir = root / "20260907_103000_nationality_trend"
+    records_path = run_dir / "nationality_trend_records.jsonl"
+    summary_path = run_dir / "summary.json"
+    records = []
+    for year, source_suffix in ((2023, "_2023"), (2024, "")):
+        foreign_source = "S08%s" % source_suffix
+        all_person_source = "S15%s" % source_suffix
+        japanese_population_source = "S17%s" % source_suffix
+        foreign_population_source = "S19_%d" % year
+        for metric, metric_label, japanese_value, foreign_value in (
+            ("cleared_cases", "検挙件数", 200 + year - 2023, 20 + year - 2023),
+            ("cleared_persons", "検挙人員", 150 + year - 2023, 12 + year - 2023),
+        ):
+            for (
+                entity_id,
+                published_label,
+                display_label,
+                source_order,
+                is_japanese,
+                numerator,
+                denominator,
+                denominator_source,
+                denominator_date,
+                numerator_sources,
+                derivation_method,
+                mismatch_flags,
+            ) in (
+                (
+                    "jp-nationality:japanese",
+                    "日本",
+                    "日本（残差による参考値）",
+                    0,
+                    True,
+                    japanese_value,
+                    100_000,
+                    japanese_population_source,
+                    "%d-10-01" % year,
+                    [foreign_source, all_person_source],
+                    "residual_subtraction",
+                    ["japanese_numerator_derived_by_residual_subtraction"],
+                ),
+                (
+                    "isa-nationality:vn",
+                    "ベトナム",
+                    "ベトナム",
+                    30,
+                    False,
+                    foreign_value,
+                    10_000,
+                    foreign_population_source,
+                    "%d-12-31" % year,
+                    [foreign_source],
+                    "published_direct",
+                    [
+                        "all_foreign_vs_resident_population_mismatch",
+                        "annual_flow_vs_point_in_time_stock",
+                    ],
+                ),
+            ):
+                records.append(
+                    {
+                        "nationality_trend_schema_version": 1,
+                        "trend_id": "nationality_criminal_code_clearance_reference_ratio_trend",
+                        "label_ja": "日本を含む国籍等別の刑法犯検挙参考比率の推移",
+                        "label_en": "Criminal-code clearance reference-ratio trend by nationality including Japan",
+                        "metric": metric,
+                        "metric_label_ja": metric_label,
+                        "display_multiplier": 1000.0,
+                        "display_unit_label_ja": "人口1,000人当たり",
+                        "display_unit_label_en": "per 1,000 persons",
+                        "interpretation_policy": "observed_time_series_without_intrinsic_group_inference",
+                        "ui_caveat": "公表統計由来の参考比率である。",
+                        "entity_id": entity_id,
+                        "published_label": published_label,
+                        "display_label": display_label,
+                        "source_order": source_order,
+                        "is_japanese_reference": is_japanese,
+                        "year": year,
+                        "denominator_reference_date": denominator_date,
+                        "numerator_source_ids": numerator_sources,
+                        "denominator_source_id": denominator_source,
+                        "numerator_value": numerator,
+                        "denominator_value": denominator,
+                        "quotient": numerator / denominator,
+                        "display_value": numerator / denominator * 1000,
+                        "calculation_status": "calculated",
+                        "refusal_reason": None,
+                        "crosswalk_status": None if is_japanese else "matched",
+                        "targets_complete": True,
+                        "canonical_component_ids": [entity_id],
+                        "canonical_component_labels": [published_label],
+                        "derivation_method": derivation_method,
+                        "derivation_formula": "fixture formula",
+                        "mismatch_flags": mismatch_flags,
+                        "small_number_warning_flags": [],
+                        "display_included": True,
+                    }
+                )
+    records_hash = _write_jsonl(records_path, records)
+    source_artifacts = {
+        "S08": _s08_source_artifact(),
+        "S08_2023": _source_artifact("S08_2023", "130"),
+        "S15": _source_artifact("S15", "3"),
+        "S15_2023": _source_artifact("S15_2023", "3"),
+        "S17": _source_artifact("S17", "2"),
+        "S17_2023": _source_artifact("S17_2023", "2"),
+        "S19_2023": _source_artifact("S19_2023", "1"),
+        "S19_2024": _source_artifact("S19_2024", "1"),
+    }
+    _write_json(
+        summary_path,
+        {
+            "nationality_trend_schema_version": 1,
+            "generated_at": "2026-09-07T10:30:00+09:00",
+            "years": [2023, 2024],
+            "metrics": ["cleared_cases", "cleared_persons"],
+            "entity_count": 2,
+            "record_count": len(records),
+            "status_counts": {"calculated": len(records), "refused": 0},
+            "source_artifacts": source_artifacts,
+        },
+    )
+    _write_json(
+        root / "latest.json",
+        {
+            "nationality_trend_schema_version": 1,
+            "generated_at": "2026-09-07T10:30:00+09:00",
+            "run_relpath": run_dir.name,
+            "summary_sha256": sha256_file(summary_path),
+            "nationality_trend_records_sha256": records_hash,
+            "nationality_trend_records_csv_sha256": "0" * 64,
+        },
+    )
+    return root / "latest.json"
+
+
 def _offense_composition_fixture(tmp_path: Path) -> Path:
     root = tmp_path / "processed" / "_offense_composition"
     run_dir = root / "20260903_080000_offense_composition"
@@ -1230,6 +1368,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     indicator_latest_path = _indicator_fixture(tmp_path)
     all_resident_latest_path = _all_resident_fixture(tmp_path)
     comparison_latest_path = _comparison_fixture(tmp_path)
+    nationality_trend_latest_path = _nationality_trend_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
     clearance_share_latest_path = _clearance_share_fixture(tmp_path)
     clearance_population_latest_path = _clearance_population_fixture(tmp_path)
@@ -1241,6 +1380,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
         offense_composition_latest_path=offense_latest_path,
         clearance_share_latest_path=clearance_share_latest_path,
         clearance_population_latest_path=clearance_population_latest_path,
+        nationality_trend_latest_path=nationality_trend_latest_path,
         output_root=tmp_path / "output" / "compact_export",
         generated_at="2026-09-01T18:00:00+09:00",
     )
@@ -1249,7 +1389,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     latest = json.loads(report.latest_path.read_text(encoding="utf-8"))
     summary = json.loads(report.summary_path.read_text(encoding="utf-8"))
 
-    assert payload["compact_export_schema_version"] == 8
+    assert payload["compact_export_schema_version"] == 9
     assert payload["publication_policy"]["primary_view"] == "all_resident_context"
     assert payload["publication_policy"]["secondary_view"] == "nationality_comparison"
     assert payload["publication_policy"]["supplementary_view"] == "nationality_indicators"
@@ -1259,6 +1399,9 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     )
     assert payload["publication_policy"]["clearance_population_view"] == (
         "national_clearance_population_reference_ratio"
+    )
+    assert payload["publication_policy"]["nationality_trend_view"] == (
+        "nationality_criminal_code_clearance_reference_ratio_trend"
     )
     assert payload["source_runs"]["nationality_indicators"]["latest_manifest"]["run_relpath"] == (
         "20260901_133239_indicators"
@@ -1278,6 +1421,9 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert payload["source_runs"]["clearance_population_trend"]["latest_manifest"][
         "run_relpath"
     ] == "20260906_103000_clearance_population_trend"
+    assert payload["source_runs"]["nationality_trend"]["latest_manifest"][
+        "run_relpath"
+    ] == "20260907_103000_nationality_trend"
     assert payload["definitions"]["indicator_ids"]["x_cleared_cases_as_published_mismatch"][
         "label_ja"
     ].startswith("全国・国籍別")
@@ -1313,6 +1459,11 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert payload["definitions"]["clearance_population_ids"][
         "national_clearance_population_reference_ratio"
     ]["interpretation_policy"] == "public_data_reference_ratio_not_probability"
+    assert payload["definitions"]["nationality_trend_ids"][
+        "nationality_criminal_code_clearance_reference_ratio_trend"
+    ]["interpretation_policy"] == (
+        "observed_time_series_without_intrinsic_group_inference"
+    )
     assert "label_ja" not in payload["records"]["nationality_indicators"][0]
     assert "label_en" not in payload["records"]["all_resident_context"][0]
     assert "label_ja" not in payload["records"]["nationality_comparison"][0]
@@ -1320,6 +1471,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert "offense_label" not in payload["records"]["offense_composition"][0]
     assert "label_ja" not in payload["records"]["clearance_share_trends"][0]
     assert "label_ja" not in payload["records"]["clearance_population_trends"][0]
+    assert "label_ja" not in payload["records"]["nationality_trends"][0]
     assert payload["records"]["nationality_indicators"][0]["indicator_id"] in payload[
         "definitions"
     ]["indicator_ids"]
@@ -1341,6 +1493,9 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert payload["records"]["clearance_population_trends"][0][
         "trend_id"
     ] in payload["definitions"]["clearance_population_ids"]
+    assert payload["records"]["nationality_trends"][0]["trend_id"] in payload[
+        "definitions"
+    ]["nationality_trend_ids"]
     residual_share = next(
         row
         for row in payload["records"]["clearance_share_trends"]
@@ -1404,6 +1559,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
         "offense_composition": 12,
         "clearance_share_trends": 6,
         "clearance_population_trends": 40,
+        "nationality_trends": 8,
     }
     assert latest["run_relpath"] == "20260901_180000_compact_export"
     assert latest["dashboard_export_sha256"] == sha256_file(report.export_path)
@@ -1414,6 +1570,7 @@ def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     assert summary["record_counts"]["offense_composition"] == 12
     assert summary["record_counts"]["clearance_share_trends"] == 6
     assert summary["record_counts"]["clearance_population_trends"] == 40
+    assert summary["record_counts"]["nationality_trends"] == 8
     assert payload["sources"]["S08"]["publisher"] == "National Police Agency of Japan"
     assert payload["sources"]["S16"]["source_table"] == "144"
     assert payload["sources"]["S17"]["source_table"] == "2"
