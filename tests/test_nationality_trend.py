@@ -170,18 +170,16 @@ def _fixture(tmp_path: Path):
                 {
                     "source_id": sources["foreign_population"],
                     "period_end": "%d-12-31" % year,
-                    "nationality_code": code,
                     "nationality": label,
-                    "prefecture_code": "00",
-                    "prefecture": "全国",
-                    "value": value * scale,
-                    "suppressed": False,
+                    "region": "fixture",
+                    "row_kind": "country_or_area",
+                    "population": value * scale,
                 }
-                for code, label, value in (
-                    ("vn", "ベトナム", 1000),
-                    ("cn", "中国", 1500),
-                    ("tw", "台湾", 500),
-                    ("us", "米国", 500),
+                for label, value in (
+                    ("ベトナム", 1000),
+                    ("中国", 1500),
+                    ("台湾", 500),
+                    ("米国", 500),
                 )
             ],
             sources["japanese_population"]: [
@@ -260,6 +258,7 @@ def _fixture(tmp_path: Path):
                 "japanese_population_sources": {
                     str(year): source_ids[year]["japanese_population"] for year in years
                 },
+                "foreign_population_label_aliases": {},
                 "expected_foreign_country_row_count": 3,
                 "expected_foreign_region_total_row_count": 2,
                 "foreign_total_outside_region_labels": [],
@@ -298,6 +297,7 @@ def test_contract_requires_five_point_project_series():
     assert contract.years == (2020, 2021, 2022, 2023, 2024)
     assert contract.metrics == ("cleared_cases", "cleared_persons")
     assert len(pins) == 20
+    assert contract.foreign_population_label_aliases == {"（朝鮮）": "朝鮮"}
     assert set(contract.foreign_numerator_sources.values()) == {
         "S08_2020",
         "S08_2021",
