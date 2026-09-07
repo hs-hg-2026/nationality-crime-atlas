@@ -1,16 +1,17 @@
 {
   "publication_manifest_schema_version": 1,
-  "compact_export_schema_version": 8,
-  "source_run_relpath": "20260906_104500_compact_export",
-  "generated_at": "2026-09-06T10:45:00+09:00",
-  "dashboard_export_sha256": "80b33e28babe7285c67e03e1d92fee1d0ca082d33176c272d5d8334b402e4e67",
+  "compact_export_schema_version": 9,
+  "source_run_relpath": "20260907_173100_compact_export",
+  "generated_at": "2026-09-07T17:31:00+09:00",
+  "dashboard_export_sha256": "0f28913c4a67f0062a7eb95f7327100e9a121d4ebbabfc258b406e58fb7736ef",
   "record_counts": {
     "all_resident_context": 248,
     "nationality_comparison": 26,
     "nationality_indicators": 290,
     "offense_composition": 156,
     "clearance_share_trends": 60,
-    "clearance_population_trends": 40
+    "clearance_population_trends": 40,
+    "nationality_trends": 260
   },
   "definition_counts": {
     "context_ids": 4,
@@ -19,10 +20,11 @@
     "offense_composition_ids": 1,
     "offense_category_ids": 6,
     "clearance_share_ids": 1,
-    "clearance_population_ids": 1
+    "clearance_population_ids": 1,
+    "nationality_trend_ids": 1
   },
-  "source_count": 21,
-  "source_pointer_sha256": "f99f0dc8b4969f84cf3a1de1c41cbf42cc0a3d641981a611ffb92ef3a801dcb8",
-  "source_summary_sha256": "45137bc2dc15a7aa3d9e9ef48cbec82ffc70b7c04690eb77d5592054a13f0a4e",
-  "source_run_generated_at": "2026-09-06T10:45:00+09:00"
+  "source_count": 29,
+  "source_pointer_sha256": "d24eb9546074d914adb28fd38caf235358b6666b5c97c1a01df26fba808ee6c7",
+  "source_summary_sha256": "88b414f72bd98300fef681b560e038eda76c6210f745470043b175f76b3abd65",
+  "source_run_generated_at": "2026-09-07T17:31:00+09:00"
 }

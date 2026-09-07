@@ -9,7 +9,7 @@ import {
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const EXPECTED_COMPACT_EXPORT_SCHEMA_VERSION = 8;
+const EXPECTED_COMPACT_EXPORT_SCHEMA_VERSION = 9;
 const SAME_YEAR_GAP_CONTEXT_ID =
   'all_resident_same_year_recognition_clearance_gap';
 const CLEARANCE_SHARE_TREND_ID =
@@ -70,6 +70,11 @@ const CLEARANCE_POPULATION_INTERPRETATION_POLICY =
   'public_data_reference_ratio_not_probability';
 const CLEARANCE_POPULATION_UI_CAVEAT =
   '1年間の刑法犯検挙件数または検挙人員を、10月1日の日本人人口または12月31日の在留外国人数で単純に割った公表統計由来の参考比率である。犯罪統計の分子から居住者だけを識別できず、特に「外国人全体」と在留外国人人口の対象範囲は一致しない。犯罪を行う確率や公的な犯罪率を示さない。';
+const NATIONALITY_TREND_ID =
+  'nationality_criminal_code_clearance_reference_ratio_trend';
+const NATIONALITY_TREND_YEARS = [2020, 2021, 2022, 2023, 2024];
+const NATIONALITY_TREND_INTERPRETATION_POLICY =
+  'observed_time_series_without_intrinsic_group_inference';
 const CLEARANCE_POPULATION_GROUP_CONTRACTS = {
   japanese_etc_residual: {
     label: '日本人等（全国総数−外国人全体の残差）',
@@ -191,6 +196,10 @@ function clearanceShareSemanticError(detail) {
 
 function clearancePopulationSemanticError(detail) {
   throw new Error(`Clearance-population semantic contract: ${detail}.`);
+}
+
+function nationalityTrendSemanticError(detail) {
+  throw new Error(`Nationality-trend semantic contract: ${detail}.`);
 }
 
 function arraysEqual(actual, expected) {
@@ -614,6 +623,153 @@ function validateClearancePopulationRecords(payload, definitions, sources) {
   }
 }
 
+function validateNationalityTrendRecords(payload, definitions, sources) {
+  const definition = definitions[NATIONALITY_TREND_ID];
+  if (
+    !isObject(definition) ||
+    definition.interpretation_policy !==
+      NATIONALITY_TREND_INTERPRETATION_POLICY ||
+    definition.display_multiplier !== 1000 ||
+    definition.display_unit_label_ja !== '人口1,000人当たり'
+  ) {
+    nationalityTrendSemanticError('definition binding differs');
+  }
+  const records = payload.records.nationality_trends;
+  const expectedMetrics = ['cleared_cases', 'cleared_persons'];
+  const entitySignatures = new Map();
+  const seen = new Set();
+  const japaneseCounts = new Map();
+  for (const [index, record] of records.entries()) {
+    const label = `records.nationality_trends[${index}]`;
+    requireObject(record, label);
+    if (
+      record.trend_id !== NATIONALITY_TREND_ID ||
+      !NATIONALITY_TREND_YEARS.includes(record.year) ||
+      !expectedMetrics.includes(record.metric) ||
+      typeof record.entity_id !== 'string' ||
+      typeof record.published_label !== 'string' ||
+      typeof record.display_label !== 'string' ||
+      record.display_included !== true
+    ) {
+      nationalityTrendSemanticError(`key or display policy differs at ${label}`);
+    }
+    const expectedMetricLabel =
+      record.metric === 'cleared_cases' ? '検挙件数' : '検挙人員';
+    if (record.metric_label_ja !== expectedMetricLabel) {
+      nationalityTrendSemanticError(`metric label differs at ${label}`);
+    }
+    const key = `${record.year}:${record.metric}:${record.entity_id}`;
+    if (seen.has(key)) nationalityTrendSemanticError(`duplicate cell ${key}`);
+    seen.add(key);
+    const signature = JSON.stringify([
+      record.published_label,
+      record.display_label,
+      record.source_order,
+      record.is_japanese_reference,
+    ]);
+    if (
+      entitySignatures.has(record.entity_id) &&
+      entitySignatures.get(record.entity_id) !== signature
+    ) {
+      nationalityTrendSemanticError(
+        `entity definition changes for ${record.entity_id}`,
+      );
+    }
+    entitySignatures.set(record.entity_id, signature);
+    if (
+      !Array.isArray(record.numerator_source_ids) ||
+      record.numerator_source_ids.length === 0 ||
+      record.numerator_source_ids.some(
+        (sourceId) => !Object.hasOwn(sources, sourceId),
+      ) ||
+      !Object.hasOwn(sources, record.denominator_source_id)
+    ) {
+      nationalityTrendSemanticError(`source binding differs at ${label}`);
+    }
+    if (
+      !Array.isArray(record.mismatch_flags) ||
+      !Array.isArray(record.small_number_warning_flags) ||
+      !Number.isSafeInteger(record.numerator_value) ||
+      record.numerator_value < 0
+    ) {
+      nationalityTrendSemanticError(`value metadata differs at ${label}`);
+    }
+    if (record.is_japanese_reference === true) {
+      const slice = `${record.year}:${record.metric}`;
+      japaneseCounts.set(slice, (japaneseCounts.get(slice) ?? 0) + 1);
+      if (
+        record.derivation_method !== 'residual_subtraction' ||
+        record.numerator_source_ids.length !== 2 ||
+        record.denominator_reference_date !== `${record.year}-10-01` ||
+        !record.mismatch_flags.includes(
+          'japanese_numerator_derived_by_residual_subtraction',
+        )
+      ) {
+        nationalityTrendSemanticError(
+          `Japanese residual semantics differ at ${label}`,
+        );
+      }
+    } else if (
+      record.numerator_source_ids.length !== 1 ||
+      record.denominator_reference_date !== `${record.year}-12-31` ||
+      !record.mismatch_flags.includes(
+        'all_foreign_vs_resident_population_mismatch',
+      )
+    ) {
+      nationalityTrendSemanticError(`foreign scope differs at ${label}`);
+    }
+    if (record.calculation_status === 'refused') {
+      if (
+        record.denominator_value !== null ||
+        record.quotient !== null ||
+        record.display_value !== null ||
+        typeof record.refusal_reason !== 'string'
+      ) {
+        nationalityTrendSemanticError(`refusal differs at ${label}`);
+      }
+    } else if (record.calculation_status === 'calculated') {
+      if (
+        !Number.isSafeInteger(record.denominator_value) ||
+        record.denominator_value <= 0 ||
+        typeof record.quotient !== 'number' ||
+        typeof record.display_value !== 'number' ||
+        record.refusal_reason !== null
+      ) {
+        nationalityTrendSemanticError(`calculated value differs at ${label}`);
+      }
+      const expectedQuotient =
+        record.numerator_value / record.denominator_value;
+      if (
+        Math.abs(record.quotient - expectedQuotient) > 1e-12 ||
+        Math.abs(record.display_value - expectedQuotient * 1000) > 1e-10
+      ) {
+        nationalityTrendSemanticError(`arithmetic differs at ${label}`);
+      }
+    } else {
+      nationalityTrendSemanticError(`status differs at ${label}`);
+    }
+  }
+  if (entitySignatures.size !== 26 || records.length !== 260) {
+    nationalityTrendSemanticError('expected 26 entities and 260 cells');
+  }
+  for (const year of NATIONALITY_TREND_YEARS) {
+    for (const metric of expectedMetrics) {
+      if (japaneseCounts.get(`${year}:${metric}`) !== 1) {
+        nationalityTrendSemanticError(
+          `Japanese series is missing for ${year}/${metric}`,
+        );
+      }
+      for (const entityId of entitySignatures.keys()) {
+        if (!seen.has(`${year}:${metric}:${entityId}`)) {
+          nationalityTrendSemanticError(
+            `grid cell is missing for ${year}/${metric}/${entityId}`,
+          );
+        }
+      }
+    }
+  }
+}
+
 function validateRecordLinks(payload) {
   const indicatorDefinitions = payload.definitions.indicator_ids;
   const contextDefinitions = payload.definitions.context_ids;
@@ -623,6 +779,8 @@ function validateRecordLinks(payload) {
   const clearanceShareDefinitions = payload.definitions.clearance_share_ids;
   const clearancePopulationDefinitions =
     payload.definitions.clearance_population_ids;
+  const nationalityTrendDefinitions =
+    payload.definitions.nationality_trend_ids;
   const sources = payload.sources;
   const clearanceShareDefinition =
     clearanceShareDefinitions[CLEARANCE_SHARE_TREND_ID];
@@ -1027,6 +1185,11 @@ function validateRecordLinks(payload) {
     clearancePopulationDefinitions,
     sources,
   );
+  validateNationalityTrendRecords(
+    payload,
+    nationalityTrendDefinitions,
+    sources,
+  );
 }
 
 export function inspectDashboardPayload(payload) {
@@ -1059,6 +1222,10 @@ export function inspectDashboardPayload(payload) {
     payload.definitions.clearance_population_ids,
     'definitions.clearance_population_ids',
   );
+  requireObject(
+    payload.definitions.nationality_trend_ids,
+    'definitions.nationality_trend_ids',
+  );
   requireObject(payload.records, 'records');
   if (!Array.isArray(payload.records.nationality_indicators)) {
     throw new Error('records.nationality_indicators must be an array.');
@@ -1077,6 +1244,9 @@ export function inspectDashboardPayload(payload) {
   }
   if (!Array.isArray(payload.records.clearance_population_trends)) {
     throw new Error('records.clearance_population_trends must be an array.');
+  }
+  if (!Array.isArray(payload.records.nationality_trends)) {
+    throw new Error('records.nationality_trends must be an array.');
   }
   requireObject(payload.sources, 'sources');
   requireObject(payload.publication_policy, 'publication_policy');
@@ -1109,6 +1279,11 @@ export function inspectDashboardPayload(payload) {
     payload.publication_policy.clearance_population_view,
     CLEARANCE_POPULATION_TREND_ID,
     'publication clearance-population view mismatch',
+  );
+  assertEqual(
+    payload.publication_policy.nationality_trend_view,
+    NATIONALITY_TREND_ID,
+    'publication nationality-trend view mismatch',
   );
   assertEqual(
     payload.publication_policy.same_year_gap_view,
@@ -1156,6 +1331,7 @@ export function inspectDashboardPayload(payload) {
       clearance_share_trends: payload.records.clearance_share_trends.length,
       clearance_population_trends:
         payload.records.clearance_population_trends.length,
+      nationality_trends: payload.records.nationality_trends.length,
     },
     definition_counts: {
       context_ids: Object.keys(payload.definitions.context_ids).length,
@@ -1173,6 +1349,9 @@ export function inspectDashboardPayload(payload) {
         .length,
       clearance_population_ids: Object.keys(
         payload.definitions.clearance_population_ids,
+      ).length,
+      nationality_trend_ids: Object.keys(
+        payload.definitions.nationality_trend_ids,
       ).length,
     },
     source_count: Object.keys(payload.sources).length,

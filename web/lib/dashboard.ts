@@ -70,6 +70,9 @@ export const CLEARANCE_SHARE_TREND_ID =
 export const CLEARANCE_POPULATION_TREND_ID =
   'national_clearance_population_reference_ratio' as const;
 
+export const NATIONALITY_TREND_ID =
+  'nationality_criminal_code_clearance_reference_ratio_trend' as const;
+
 const CLEARANCE_SHARE_LABEL_JA =
   '全国の刑法犯検挙（日本人等を含む）に占める外国人区分の割合';
 const CLEARANCE_SHARE_INTERPRETATION_POLICY =
@@ -235,6 +238,7 @@ export type ValueMode = 'ratio' | 'count';
 export type OffenseCompositionMetric = 'cleared_persons' | 'cleared_cases';
 export type OffenseCompositionOrder = 'cluster' | 'source';
 export type ClearanceShareMetric = 'cleared_cases' | 'cleared_persons';
+export type NationalityTrendMetric = 'cases' | 'persons';
 
 const COMPARISON_SIDE_SIZE = 5;
 
@@ -314,6 +318,15 @@ interface ClearancePopulationDefinition {
   label_ja: string;
   label_en: string;
   interpretation_policy: 'public_data_reference_ratio_not_probability';
+  ui_caveat: string;
+  display_multiplier: 1000;
+  display_unit_label_ja: '人口1,000人当たり';
+}
+
+interface NationalityTrendDefinition {
+  label_ja: string;
+  label_en: string;
+  interpretation_policy: 'observed_time_series_without_intrinsic_group_inference';
   ui_caveat: string;
   display_multiplier: 1000;
   display_unit_label_ja: '人口1,000人当たり';
@@ -485,6 +498,28 @@ interface ClearancePopulationRow {
   mismatch_flags: string[];
 }
 
+interface NationalityTrendRow {
+  trend_id: string;
+  metric: 'cleared_cases' | 'cleared_persons';
+  metric_label_ja: '検挙件数' | '検挙人員';
+  entity_id: string;
+  published_label: string;
+  display_label: string;
+  source_order: number;
+  is_japanese_reference: boolean;
+  year: number;
+  denominator_reference_date: string;
+  numerator_source_ids: string[];
+  denominator_source_id: string;
+  numerator_value: number;
+  denominator_value: number | null;
+  display_value: number | null;
+  calculation_status: 'calculated' | 'refused';
+  refusal_reason: string | null;
+  mismatch_flags: string[];
+  small_number_warning_flags: string[];
+}
+
 interface PublicSource {
   dataset: string;
   publisher: string;
@@ -498,7 +533,7 @@ interface PublicSource {
 }
 
 export interface DashboardData {
-  compact_export_schema_version: 8;
+  compact_export_schema_version: 9;
   generated_at: string;
   definitions: {
     context_ids: Record<string, ContextDefinition>;
@@ -508,6 +543,7 @@ export interface DashboardData {
     offense_category_ids: Record<string, OffenseCategoryDefinition>;
     clearance_share_ids: Record<string, ClearanceShareDefinition>;
     clearance_population_ids: Record<string, ClearancePopulationDefinition>;
+    nationality_trend_ids: Record<string, NationalityTrendDefinition>;
   };
   records: {
     all_resident_context: ContextRow[];
@@ -516,6 +552,7 @@ export interface DashboardData {
     offense_composition: OffenseCompositionRow[];
     clearance_share_trends: ClearanceShareRow[];
     clearance_population_trends: ClearancePopulationRow[];
+    nationality_trends: NationalityTrendRow[];
   };
   sources: Record<string, PublicSource>;
 }
@@ -715,6 +752,38 @@ export interface ClearancePopulationTrendViewModel {
   sources: DashboardSource[];
 }
 
+export interface NationalityTrendValueModel {
+  year: number;
+  value: number | null;
+  displayValue: string | null;
+  numerator: number | null;
+  denominator: number | null;
+  calculationStatus: 'calculated' | 'refused';
+  refusalCode: string | null;
+  warningCodes: string[];
+}
+
+export interface NationalityTrendEntityModel {
+  entityId: string;
+  label: string;
+  japaneseReference: boolean;
+  sourceOrder: number;
+  values: NationalityTrendValueModel[];
+}
+
+export interface NationalityTrendViewModel {
+  trendId: typeof NATIONALITY_TREND_ID;
+  selectedMetric: NationalityTrendMetric;
+  metricLabel: '検挙件数' | '検挙人員';
+  years: number[];
+  rows: NationalityTrendEntityModel[];
+  label: string;
+  uiCaveat: string;
+  interpretationPolicy: 'observed_time_series_without_intrinsic_group_inference';
+  warningCodes: string[];
+  sources: DashboardSource[];
+}
+
 export interface OffenseCompositionCategory {
   id: string;
   label: string;
@@ -774,7 +843,7 @@ function isObject(value: unknown): value is JsonObject {
 }
 
 export function parseDashboardData(value: unknown): DashboardData {
-  if (!isObject(value) || value.compact_export_schema_version !== 8) {
+  if (!isObject(value) || value.compact_export_schema_version !== 9) {
     throw new Error('Unsupported compact export schema version.');
   }
 
@@ -790,6 +859,7 @@ export function parseDashboardData(value: unknown): DashboardData {
     !isObject(definitions.offense_category_ids) ||
     !isObject(definitions.clearance_share_ids) ||
     !isObject(definitions.clearance_population_ids) ||
+    !isObject(definitions.nationality_trend_ids) ||
     !isObject(records) ||
     !Array.isArray(records.all_resident_context) ||
     !Array.isArray(records.nationality_indicators) ||
@@ -797,6 +867,7 @@ export function parseDashboardData(value: unknown): DashboardData {
     !Array.isArray(records.offense_composition) ||
     !Array.isArray(records.clearance_share_trends) ||
     !Array.isArray(records.clearance_population_trends) ||
+    !Array.isArray(records.nationality_trends) ||
     !isObject(sources)
   ) {
     throw new Error('Compact export is missing the regional dashboard data.');
@@ -2385,6 +2456,153 @@ export function buildClearancePopulationTrendViewModel(
     interpretationPolicy: definition.interpretation_policy,
     warningCodes: [
       ...new Set(selectedRows.flatMap((row) => row.mismatch_flags)),
+    ].sort(),
+    sources: collectSources(dashboard, sourceIds),
+  };
+}
+
+export function buildNationalityTrendViewModel(
+  dashboard: DashboardData,
+  selectedMetric: NationalityTrendMetric = 'cases',
+): NationalityTrendViewModel {
+  const definition =
+    dashboard.definitions.nationality_trend_ids[NATIONALITY_TREND_ID];
+  if (!definition) {
+    throw new Error(
+      `Nationality trend definition is missing: ${NATIONALITY_TREND_ID}`,
+    );
+  }
+  const allRows = dashboard.records.nationality_trends.filter(
+    (row) => row.trend_id === NATIONALITY_TREND_ID,
+  );
+  const metric =
+    selectedMetric === 'cases' ? 'cleared_cases' : 'cleared_persons';
+  const expectedMetricLabel =
+    metric === 'cleared_cases' ? '検挙件数' : '検挙人員';
+  const selectedRows = allRows.filter((row) => row.metric === metric);
+  if (selectedRows.length === 0) {
+    throw new Error(`No nationality trend rows exist for ${metric}.`);
+  }
+  const years = [...new Set(allRows.map((row) => row.year))].sort(
+    (left, right) => left - right,
+  );
+  const expectedYears = [2020, 2021, 2022, 2023, 2024];
+  if (
+    years.length !== expectedYears.length ||
+    years.some((year, index) => year !== expectedYears[index])
+  ) {
+    throw new Error('Nationality trend year coverage differs.');
+  }
+  const rowsByEntity = new Map<string, NationalityTrendRow[]>();
+  for (const row of selectedRows) {
+    if (row.metric_label_ja !== expectedMetricLabel) {
+      throw new Error(`Nationality trend metric label differs for ${row.entity_id}.`);
+    }
+    const entityRows = rowsByEntity.get(row.entity_id) ?? [];
+    entityRows.push(row);
+    rowsByEntity.set(row.entity_id, entityRows);
+  }
+  const rows = [...rowsByEntity.entries()]
+    .map(([entityId, entityRows]): NationalityTrendEntityModel => {
+      entityRows.sort((left, right) => left.year - right.year);
+      const first = entityRows[0];
+      if (
+        entityRows.length !== years.length ||
+        entityRows.some(
+          (row, index) =>
+            row.year !== years[index] ||
+            row.published_label !== first.published_label ||
+            row.display_label !== first.display_label ||
+            row.source_order !== first.source_order ||
+            row.is_japanese_reference !== first.is_japanese_reference,
+        )
+      ) {
+        throw new Error(`Nationality trend series is incomplete for ${entityId}.`);
+      }
+      return {
+        entityId,
+        label: first.published_label,
+        japaneseReference: first.is_japanese_reference,
+        sourceOrder: first.source_order,
+        values: entityRows.map((row): NationalityTrendValueModel => {
+          if (
+            row.calculation_status === 'calculated' &&
+            (row.denominator_value === null || row.display_value === null)
+          ) {
+            throw new Error(
+              `Calculated nationality trend cell has missing values: ${entityId}/${row.year}.`,
+            );
+          }
+          if (
+            row.calculation_status === 'refused' &&
+            (row.denominator_value !== null || row.display_value !== null)
+          ) {
+            throw new Error(
+              `Refused nationality trend cell contains a calculated value: ${entityId}/${row.year}.`,
+            );
+          }
+          return {
+            year: row.year,
+            value: row.display_value,
+            displayValue:
+              row.display_value === null
+                ? null
+                : formatDashboardValue(row.display_value, 'ratio'),
+            numerator: row.numerator_value,
+            denominator: row.denominator_value,
+            calculationStatus: row.calculation_status,
+            refusalCode: row.refusal_reason,
+            warningCodes: [
+              ...new Set([
+                ...row.small_number_warning_flags,
+                ...row.mismatch_flags,
+              ]),
+            ].sort(),
+          };
+        }),
+      };
+    })
+    .sort(
+      (left, right) =>
+        left.sourceOrder - right.sourceOrder ||
+        left.label.localeCompare(right.label, 'ja'),
+    );
+  if (rows.filter((row) => row.japaneseReference).length !== 1) {
+    throw new Error('Nationality trend requires exactly one Japanese reference series.');
+  }
+  const otherMetric =
+    metric === 'cleared_cases' ? 'cleared_persons' : 'cleared_cases';
+  const otherEntityIds = new Set(
+    allRows
+      .filter((row) => row.metric === otherMetric)
+      .map((row) => row.entity_id),
+  );
+  if (
+    otherEntityIds.size !== rows.length ||
+    rows.some((row) => !otherEntityIds.has(row.entityId))
+  ) {
+    throw new Error('Nationality trend entities differ between metrics.');
+  }
+  const sourceIds = selectedRows.flatMap((row) => [
+    ...row.numerator_source_ids,
+    row.denominator_source_id,
+  ]);
+  return {
+    trendId: NATIONALITY_TREND_ID,
+    selectedMetric,
+    metricLabel: expectedMetricLabel,
+    years,
+    rows,
+    label: definition.label_ja,
+    uiCaveat: definition.ui_caveat,
+    interpretationPolicy: definition.interpretation_policy,
+    warningCodes: [
+      ...new Set(
+        selectedRows.flatMap((row) => [
+          ...row.mismatch_flags,
+          ...row.small_number_warning_flags,
+        ]),
+      ),
     ].sort(),
     sources: collectSources(dashboard, sourceIds),
   };
