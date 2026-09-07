@@ -1,4 +1,6 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { hydrateRoot } from 'react-dom/client';
+import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
@@ -156,5 +158,30 @@ describe('NationalityTrend', () => {
     );
     expect(chart).toHaveTextContent('2020');
     expect(chart).toHaveTextContent('2022');
+  });
+
+  it('server-renders SVG titles without hydration warnings', async () => {
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    const container = document.createElement('div');
+    container.innerHTML = renderToString(<NationalityTrend {...props} />);
+    document.body.append(container);
+
+    const root = hydrateRoot(container, <NationalityTrend {...props} />);
+    await act(async () => undefined);
+
+    expect(
+      consoleError.mock.calls.some((call) =>
+        call.some(
+          (part) =>
+            typeof part === 'string' &&
+            part.includes('children prop of <title> tags'),
+        ),
+      ),
+    ).toBe(false);
+    await act(async () => root.unmount());
+    container.remove();
+    consoleError.mockRestore();
   });
 });
