@@ -299,6 +299,8 @@ def test_contract_requires_five_point_project_series():
     assert contract.metrics == ("cleared_cases", "cleared_persons")
     assert len(pins) == 20
     assert contract.foreign_population_label_aliases == {"（朝鮮）": "朝鮮"}
+    assert "10月1日の日本人人口" in contract.ui_caveat
+    assert "10月1日の日本人口" not in contract.ui_caveat
     assert set(contract.foreign_numerator_sources.values()) == {
         "S08_2020",
         "S08_2021",

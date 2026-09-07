@@ -160,6 +160,22 @@ describe('NationalityTrend', () => {
     expect(chart).toHaveTextContent('2022');
   });
 
+  it('shows the selected series warnings in plain language', () => {
+    const warningProps = {
+      ...props,
+      warningLabels: {
+        japanese_numerator_derived_by_residual_subtraction:
+          '日本の犯罪件数・人員は差し引きによる参考値',
+      },
+    };
+
+    render(<NationalityTrend {...warningProps} />);
+
+    expect(
+      screen.getByText('日本の犯罪件数・人員は差し引きによる参考値'),
+    ).toBeVisible();
+  });
+
   it('server-renders SVG titles without hydration warnings', async () => {
     const consoleError = vi
       .spyOn(console, 'error')

@@ -384,6 +384,20 @@ describe('CrimeAtlasDashboard', () => {
     expect(
       within(section).getByText(/犯罪を行う確率や公的な犯罪率/),
     ).toBeVisible();
+
+    const historicalSource = within(
+      screen.getByTestId('nationality-comparison-section'),
+    )
+      .getByText('S08_2020')
+      .closest('article');
+    expect(historicalSource).not.toBeNull();
+    if (!historicalSource) return;
+    expect(historicalSource).toHaveTextContent(
+      '外国人の国籍等別・検挙件数と検挙人員',
+    );
+    expect(historicalSource).toHaveTextContent('警察庁');
+    expect(historicalSource).toHaveTextContent('2020年（国籍等別内訳）');
+    expect(historicalSource).not.toHaveTextContent('National Police Agency');
   });
 
   it('shows the ten-year clearance share and switches cases and persons', async () => {
