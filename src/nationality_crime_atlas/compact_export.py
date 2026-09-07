@@ -16,8 +16,8 @@ from .errors import IntegrityError, SchemaError
 from .provenance import sha256_file
 
 
-COMPACT_EXPORT_SCHEMA_VERSION = 8
-LATEST_SCHEMA_VERSION = 8
+COMPACT_EXPORT_SCHEMA_VERSION = 9
+LATEST_SCHEMA_VERSION = 9
 CALCULATION_STATUSES = ("calculated", "refused")
 SAME_YEAR_GAP_CONTEXT_ID = "all_resident_same_year_recognition_clearance_gap"
 RECOGNIZED_CONTEXT_ID = "all_resident_recognized_cases"
@@ -49,6 +49,12 @@ CLEARANCE_POPULATION_UI_CAVEAT = (
     "12月31日の在留外国人数で単純に割った公表統計由来の参考比率である。犯罪統計の分子から"
     "居住者だけを識別できず、特に「外国人全体」と在留外国人人口の対象範囲は一致しない。"
     "犯罪を行う確率や公的な犯罪率を示さない。"
+)
+NATIONALITY_TREND_ID = (
+    "nationality_criminal_code_clearance_reference_ratio_trend"
+)
+NATIONALITY_TREND_INTERPRETATION_POLICY = (
+    "observed_time_series_without_intrinsic_group_inference"
 )
 CLEARANCE_POPULATION_GROUP_CONTRACTS = {
     "japanese_etc_residual": {
@@ -225,6 +231,17 @@ _CLEARANCE_POPULATION_DEFINITION_FIELDS = (
     "ui_caveat",
     "display_multiplier",
     "display_unit_label_ja",
+)
+_NATIONALITY_TREND_DEFINITION_FIELDS = (
+    "nationality_trend_schema_version",
+    "trend_id",
+    "label_ja",
+    "label_en",
+    "display_multiplier",
+    "display_unit_label_ja",
+    "display_unit_label_en",
+    "interpretation_policy",
+    "ui_caveat",
 )
 _SAFE_RELATIVE_PATH_KEYS = ("run_relpath",)
 _PUBLIC_SOURCE_FIELDS = (
@@ -1474,6 +1491,129 @@ def _validate_clearance_population_share_consistency(
             )
 
 
+def _validate_nationality_trend_bundle(bundle: _DatasetBundle) -> None:
+    years = bundle.summary.get("years")
+    metrics = bundle.summary.get("metrics")
+    entity_count = bundle.summary.get("entity_count")
+    if (
+        not isinstance(years, list)
+        or len(years) < 2
+        or any(isinstance(year, bool) or not isinstance(year, int) for year in years)
+        or years != sorted(set(years))
+        or metrics != ["cleared_cases", "cleared_persons"]
+        or isinstance(entity_count, bool)
+        or not isinstance(entity_count, int)
+        or entity_count <= 0
+    ):
+        raise SchemaError("Nationality trend summary grid metadata differs")
+    seen = set()
+    entity_signatures = set()
+    japanese_slice_counts = Counter()
+    for index, row in enumerate(bundle.records, start=1):
+        if (
+            row.get("trend_id") != NATIONALITY_TREND_ID
+            or row.get("interpretation_policy")
+            != NATIONALITY_TREND_INTERPRETATION_POLICY
+            or row.get("display_multiplier") != 1000
+            or row.get("display_unit_label_ja") != "人口1,000人当たり"
+            or row.get("display_included") is not True
+        ):
+            raise SchemaError("Nationality trend definition differs at row %d" % index)
+        year = row.get("year")
+        metric = row.get("metric")
+        entity_id = row.get("entity_id")
+        if year not in years or metric not in metrics or not isinstance(entity_id, str):
+            raise SchemaError("Nationality trend key differs at row %d" % index)
+        expected_metric_label = "検挙件数" if metric == "cleared_cases" else "検挙人員"
+        if row.get("metric_label_ja") != expected_metric_label:
+            raise SchemaError("Nationality trend metric label differs at row %d" % index)
+        key = (year, metric, entity_id)
+        if key in seen:
+            raise SchemaError("Duplicate nationality trend cell: %r" % (key,))
+        seen.add(key)
+        signature = (
+            entity_id,
+            row.get("published_label"),
+            row.get("display_label"),
+            row.get("source_order"),
+            row.get("is_japanese_reference"),
+        )
+        entity_signatures.add(signature)
+        is_japanese = row.get("is_japanese_reference") is True
+        if is_japanese:
+            japanese_slice_counts[(year, metric)] += 1
+            if (
+                row.get("derivation_method") != "residual_subtraction"
+                or "japanese_numerator_derived_by_residual_subtraction"
+                not in row.get("mismatch_flags", [])
+                or row.get("denominator_reference_date") != "%d-10-01" % year
+                or len(row.get("numerator_source_ids", [])) != 2
+            ):
+                raise SchemaError(
+                    "Nationality trend Japanese residual semantics differ at row %d"
+                    % index
+                )
+        elif (
+            "all_foreign_vs_resident_population_mismatch"
+            not in row.get("mismatch_flags", [])
+            or row.get("denominator_reference_date") != "%d-12-31" % year
+            or len(row.get("numerator_source_ids", [])) != 1
+        ):
+            raise SchemaError(
+                "Nationality trend foreign scope semantics differ at row %d" % index
+            )
+        numerator = row.get("numerator_value")
+        if isinstance(numerator, bool) or not isinstance(numerator, int) or numerator < 0:
+            raise SchemaError("Nationality trend numerator differs at row %d" % index)
+        status = row.get("calculation_status")
+        denominator = row.get("denominator_value")
+        quotient = row.get("quotient")
+        display_value = row.get("display_value")
+        if status == "refused":
+            if (
+                denominator is not None
+                or quotient is not None
+                or display_value is not None
+                or not isinstance(row.get("refusal_reason"), str)
+            ):
+                raise SchemaError("Nationality trend refusal differs at row %d" % index)
+        elif status == "calculated":
+            if (
+                isinstance(denominator, bool)
+                or not isinstance(denominator, int)
+                or denominator <= 0
+                or isinstance(quotient, bool)
+                or not isinstance(quotient, (int, float))
+                or isinstance(display_value, bool)
+                or not isinstance(display_value, (int, float))
+                or not math.isclose(
+                    quotient, numerator / denominator, rel_tol=1e-12, abs_tol=1e-12
+                )
+                or not math.isclose(
+                    display_value, quotient * 1000, rel_tol=1e-12, abs_tol=1e-12
+                )
+                or row.get("refusal_reason") is not None
+            ):
+                raise SchemaError("Nationality trend arithmetic differs at row %d" % index)
+        else:
+            raise SchemaError("Nationality trend status differs at row %d" % index)
+    entity_ids = {signature[0] for signature in entity_signatures}
+    if len(entity_ids) != entity_count or len(entity_signatures) != entity_count:
+        raise SchemaError("Nationality trend entity definitions are inconsistent")
+    expected = {
+        (year, metric, entity_id)
+        for year in years
+        for metric in metrics
+        for entity_id in entity_ids
+    }
+    if seen != expected or any(
+        japanese_slice_counts[(year, metric)] != 1
+        for year in years
+        for metric in metrics
+    ):
+        raise SchemaError("Nationality trend year/metric/entity grid is incomplete")
+
+
 def _public_sources(
     bundles: Sequence[_DatasetBundle],
 ) -> Mapping[str, Mapping[str, object]]:
@@ -1559,6 +1699,7 @@ def _publication_policy() -> Mapping[str, object]:
         "composition_view": "offense_composition",
         "clearance_share_view": "national_criminal_code_clearance_foreign_share",
         "clearance_population_view": CLEARANCE_POPULATION_TREND_ID,
+        "nationality_trend_view": NATIONALITY_TREND_ID,
         "same_year_gap_view": SAME_YEAR_GAP_CONTEXT_ID,
         "same_year_gap_is_unresolved_cohort": False,
         "derived_value_label_ja": "公表統計由来の参考比率",
@@ -1578,6 +1719,7 @@ def generate_compact_export(
     clearance_population_latest_path: Path,
     output_root: Path,
     generated_at: str,
+    nationality_trend_latest_path: Optional[Path] = None,
 ) -> CompactExportReport:
     """Build one immutable compact export bundle for the dashboard layer."""
 
@@ -1635,9 +1777,22 @@ def generate_compact_export(
         records_hash_key="clearance_population_records_sha256",
         summary_record_count_key="record_count",
     )
+    nationality_trend_bundle = None
+    if nationality_trend_latest_path is not None:
+        nationality_trend_bundle = _load_dataset_bundle(
+            name="nationality_trend",
+            latest_path=nationality_trend_latest_path,
+            schema_key="nationality_trend_schema_version",
+            expected_schema_version=1,
+            records_filename="nationality_trend_records.jsonl",
+            records_hash_key="nationality_trend_records_sha256",
+            summary_record_count_key="record_count",
+        )
     _validate_offense_composition_bundle(offense_bundle)
     _validate_clearance_share_bundle(clearance_share_bundle)
     _validate_clearance_population_bundle(clearance_population_bundle)
+    if nationality_trend_bundle is not None:
+        _validate_nationality_trend_bundle(nationality_trend_bundle)
     _validate_clearance_population_share_consistency(
         clearance_population_bundle,
         clearance_share_bundle,
@@ -1684,6 +1839,16 @@ def generate_compact_export(
         id_field="trend_id",
         definition_fields=_CLEARANCE_POPULATION_DEFINITION_FIELDS,
         label="clearance population trend",
+    )
+    nationality_trend_definitions = (
+        _collect_definitions(
+            nationality_trend_bundle.records,
+            id_field="trend_id",
+            definition_fields=_NATIONALITY_TREND_DEFINITION_FIELDS,
+            label="nationality trend",
+        )
+        if nationality_trend_bundle is not None
+        else {}
     )
     raw_offense_category_definitions = _collect_definitions(
         offense_bundle.records,
@@ -1752,16 +1917,26 @@ def generate_compact_export(
         id_field="trend_id",
         definition_fields=_CLEARANCE_POPULATION_DEFINITION_FIELDS,
     )
-    public_sources = _public_sources(
-        (
-            indicator_bundle,
-            all_resident_bundle,
-            comparison_bundle,
-            offense_bundle,
-            clearance_share_bundle,
-            clearance_population_bundle,
+    compact_nationality_trend_rows = (
+        _compact_rows(
+            nationality_trend_bundle.records,
+            id_field="trend_id",
+            definition_fields=_NATIONALITY_TREND_DEFINITION_FIELDS,
         )
+        if nationality_trend_bundle is not None
+        else []
     )
+    public_bundles = [
+        indicator_bundle,
+        all_resident_bundle,
+        comparison_bundle,
+        offense_bundle,
+        clearance_share_bundle,
+        clearance_population_bundle,
+    ]
+    if nationality_trend_bundle is not None:
+        public_bundles.append(nationality_trend_bundle)
+    public_sources = _public_sources(public_bundles)
     _validate_record_source_links(
         indicator_bundle.records,
         public_sources,
@@ -1799,6 +1974,14 @@ def generate_compact_export(
         scalar_fields=("denominator_source_id",),
         array_fields=("numerator_source_ids",),
     )
+    if nationality_trend_bundle is not None:
+        _validate_record_source_links(
+            nationality_trend_bundle.records,
+            public_sources,
+            label="nationality_trend",
+            scalar_fields=("denominator_source_id",),
+            array_fields=("numerator_source_ids",),
+        )
     record_counts = {
         "nationality_indicators": len(compact_indicator_rows),
         "all_resident_context": len(compact_context_rows),
@@ -1807,6 +1990,8 @@ def generate_compact_export(
         "clearance_share_trends": len(compact_clearance_share_rows),
         "clearance_population_trends": len(compact_clearance_population_rows),
     }
+    if nationality_trend_bundle is not None:
+        record_counts["nationality_trends"] = len(compact_nationality_trend_rows)
     source_runs = {
         "nationality_indicators": {
             "latest_path": indicator_bundle.latest_path.name,
@@ -1888,6 +2073,23 @@ def generate_compact_export(
             "status_counts": _status_counts(clearance_population_bundle.records),
         },
     }
+    if nationality_trend_bundle is not None:
+        source_runs["nationality_trend"] = {
+            "latest_path": nationality_trend_bundle.latest_path.name,
+            "latest_sha256": nationality_trend_bundle.latest_sha256,
+            "latest_manifest": dict(nationality_trend_bundle.latest_manifest),
+            "summary_path": "%s/summary.json"
+            % nationality_trend_bundle.run_dir.name,
+            "summary_sha256": nationality_trend_bundle.summary_sha256,
+            "records_path": "%s/%s"
+            % (
+                nationality_trend_bundle.run_dir.name,
+                nationality_trend_bundle.records_path.name,
+            ),
+            "records_sha256": nationality_trend_bundle.records_sha256,
+            "record_count": len(nationality_trend_bundle.records),
+            "status_counts": _status_counts(nationality_trend_bundle.records),
+        }
     payload = {
         "compact_export_schema_version": COMPACT_EXPORT_SCHEMA_VERSION,
         "generated_at": generated_at,
@@ -1902,6 +2104,7 @@ def generate_compact_export(
             "offense_category_ids": offense_category_definitions,
             "clearance_share_ids": clearance_share_definitions,
             "clearance_population_ids": clearance_population_definitions,
+            "nationality_trend_ids": nationality_trend_definitions,
         },
         "records": {
             "nationality_indicators": compact_indicator_rows,
@@ -1910,6 +2113,7 @@ def generate_compact_export(
             "offense_composition": compact_offense_rows,
             "clearance_share_trends": compact_clearance_share_rows,
             "clearance_population_trends": compact_clearance_population_rows,
+            "nationality_trends": compact_nationality_trend_rows,
         },
     }
 
@@ -1944,6 +2148,7 @@ def generate_compact_export(
                     "clearance_population_ids": len(
                         clearance_population_definitions
                     ),
+                    "nationality_trend_ids": len(nationality_trend_definitions),
                 },
                 "source_count": len(public_sources),
                 "dashboard_export_sha256": sha256_file(export_path),

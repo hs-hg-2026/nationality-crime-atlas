@@ -27,6 +27,11 @@ def _argument_parser() -> argparse.ArgumentParser:
         default=Path("data/processed/_nationality_comparison/latest.json"),
     )
     parser.add_argument(
+        "--nationality-trend-latest",
+        type=Path,
+        default=Path("data/processed/_nationality_trend/latest.json"),
+    )
+    parser.add_argument(
         "--offense-composition-latest",
         type=Path,
         default=Path("data/processed/_offense_composition/latest.json"),
@@ -59,6 +64,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         indicator_latest_path=arguments.indicator_latest,
         all_resident_latest_path=arguments.all_resident_latest,
         nationality_comparison_latest_path=arguments.nationality_comparison_latest,
+        nationality_trend_latest_path=arguments.nationality_trend_latest,
         offense_composition_latest_path=arguments.offense_composition_latest,
         clearance_share_latest_path=arguments.clearance_share_latest,
         clearance_population_latest_path=arguments.clearance_population_latest,
