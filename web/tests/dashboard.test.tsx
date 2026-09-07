@@ -374,6 +374,21 @@ describe('CrimeAtlasDashboard', () => {
     expect(
       within(heatmap).getByRole('row', { name: /ベトナム/ }),
     ).toHaveTextContent(/6\.89.*8\.82.*7\.51.*7\.51.*9\.72/);
+    expect(
+      within(heatmap).getByRole('row', {
+        name: /その他（アジア州の国）/,
+      }),
+    ).toBeVisible();
+    expect(
+      within(heatmap).getByRole('row', {
+        name: /その他（ヨーロッパ州の国）/,
+      }),
+    ).toBeVisible();
+    expect(
+      within(heatmap).getByRole('row', {
+        name: /その他（南北アメリカ州の国）/,
+      }),
+    ).toBeVisible();
 
     await user.click(within(section).getByRole('button', { name: '検挙人員' }));
     expect(
