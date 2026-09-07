@@ -1749,6 +1749,7 @@ def test_compact_export_cli_writes_timestamped_bundle(tmp_path, capsys):
     indicator_latest_path = _indicator_fixture(tmp_path)
     all_resident_latest_path = _all_resident_fixture(tmp_path)
     comparison_latest_path = _comparison_fixture(tmp_path)
+    nationality_trend_latest_path = _nationality_trend_fixture(tmp_path)
     offense_latest_path = _offense_composition_fixture(tmp_path)
     clearance_share_latest_path = _clearance_share_fixture(tmp_path)
     clearance_population_latest_path = _clearance_population_fixture(tmp_path)
@@ -1761,6 +1762,8 @@ def test_compact_export_cli_writes_timestamped_bundle(tmp_path, capsys):
             str(all_resident_latest_path),
             "--nationality-comparison-latest",
             str(comparison_latest_path),
+            "--nationality-trend-latest",
+            str(nationality_trend_latest_path),
             "--offense-composition-latest",
             str(offense_latest_path),
             "--clearance-share-latest",
@@ -1783,6 +1786,7 @@ def test_compact_export_cli_writes_timestamped_bundle(tmp_path, capsys):
         "offense_composition": 12,
         "clearance_share_trends": 6,
         "clearance_population_trends": 40,
+        "nationality_trends": 8,
     }
     assert payload["output_dir"].endswith("20260901_180000_compact_export")
 
