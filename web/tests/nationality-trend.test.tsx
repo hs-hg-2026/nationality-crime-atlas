@@ -4,6 +4,7 @@ import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
+  euclideanProfileDistance,
   NationalityTrend,
   orderRowsByHierarchicalClustering,
   type NationalityTrendProps,
@@ -124,6 +125,11 @@ const props: NationalityTrendProps = {
 };
 
 describe('NationalityTrend', () => {
+  it('uses Euclidean distance rather than root-mean-square distance', () => {
+    expect(euclideanProfileDistance([0, 0], [3, 4])).toBe(5);
+    expect(euclideanProfileDistance([0, null, 0], [3, 999, 4])).toBe(5);
+  });
+
   it('orders calculable rows by hierarchical clustering and leaves unavailable rows last', () => {
     const row = (
       entityId: string,
