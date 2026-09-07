@@ -154,6 +154,7 @@ describe('NationalityTrend', () => {
         row('falling', [3, 2, 1]),
         row('rising-b', [1.1, 2.1, 3.2]),
         row('unavailable', [null, null, null]),
+        row('one-point', [null, 2, null]),
       ],
       [2020, 2021, 2022],
     );
@@ -162,6 +163,7 @@ describe('NationalityTrend', () => {
       'rising-a',
       'rising-b',
       'falling',
+      'one-point',
       'unavailable',
     ]);
   });
@@ -330,6 +332,14 @@ describe('NationalityTrend', () => {
 
     expect(
       screen.getByText(/犯罪統計と人口統計の国籍区分が一致しない/),
+    ).toBeVisible();
+    expect(
+      screen.getByText('各区分を選ぶと、注意点と未算出理由を確認できます。'),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('cell', {
+        name: /ベトナム、2021年: 未算出。理由：犯罪統計と人口統計の国籍区分が一致しない/,
+      }),
     ).toBeVisible();
   });
 
