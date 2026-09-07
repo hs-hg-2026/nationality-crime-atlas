@@ -432,3 +432,23 @@
 - **どう判断したか／なぜ**: 選択中の分子に含まれる両groupの最大値を次の整数へ切り上げ、両panelの上限とする。検挙件数は0.0–7.0、検挙人員は0.0–5.0で、どちらも1.0間隔とした。日本人等の変化は圧縮されるが、両groupの高さを同一尺度で直接比較できることを優先した。
 - **検証結果**: 共通axisがない状態で3件のREDを確認後、実装してGREEN化した。全119 frontend test、statement coverage 88.25%、branch coverage 84.32%、typecheck、lint、format、公開data検証、production buildをPASS。1440pxと390pxの実画面で共通scaleとresponsive表示を確認した。
 - **関連パス**: `web/lib/dashboard.ts`, `web/components/crime-atlas-dashboard.tsx`, `web/tests/dashboard-model.test.ts`, `web/tests/dashboard.test.tsx`
+
+## 2026-09-07 日本を含む26区分の2020–2024年時系列を追加
+- **何が**: S08／S15／S17–S19のreview済みeditionを年ごとにpinし、日本を含む26区分 × 5年 × 検挙件数／検挙人員の260行を生成した。公開画面には全区分のheatmap、選択した1区分のline chart、年別の分子・分母・参考比率表を追加した。
+- **どう判断したか／なぜ**: 26本のlineを重ねると各系列と欠測が読めなくなるため、全体比較はheatmap、正確な推移確認は1区分ずつのlineと表に分けた。日本はS15全国総数−S08外国人全体の算術残差、外国籍等はS08とS19の公表区分対応を使う。対応できない3つの`その他`と`国籍不明`は0や推計にせず、各年・各metricで計40行を`未算出`として保持した。
+- **検証結果**: backend、compact export、publication gate、frontend model／component／統合表示をTDDで実装した。Python 180 test（coverage 82.77%）、frontend 124 test（statement 88.12%、branch 84.17%）、typecheck、lint、format、公開data hash検証、production buildをPASSした。buildはsandbox内のlocalhost bind制限で`EPERM`となり、同一commandをsandbox外で再実行してstatic route 1件のpre-render完了を確認した。
+- **関連パス**: `config/nationality_trend_contract.json`, `src/nationality_crime_atlas/nationality_trend.py`, `data/processed/_nationality_trend/20260907_173000_nationality_trend/`, `output/compact_export/20260907_173100_compact_export/`, `web/components/nationality-trend.tsx`, `web/public/data/dashboard_export.json`
+
+## 2026-09-08 国籍等別時系列の比較軸・色・階層クラスタリングを修正
+- **何が**: userの実画面feedbackを受け、単色heatmapを低値の青→高値の橙の2色scaleに変更し、最小・中間・最大値、未算出、色に良否の意味がないことを常設表示した。行は区分内で標準化した2020–2024年の変化パターンに対するユークリッド距離・平均連結法の階層クラスタリング順とし、全期間未算出の4区分を末尾に残した。3つの`その他`は`その他（アジア州の国）`等の公表地域付き表示に改めた。
+- **どう判断したか／なぜ**: 26本の折れ線を重ねず、日本の算術残差参考値を常時表示する橙の破線、選択した国籍等を青の実線として2系列だけ比較する。Y軸は選択区分ごとに変えず、選択中metricの全26区分・全5年の最大値を整数へ切り上げ、0始まりの共通scaleとした。current dataは検挙件数・検挙人員とも最大値の切り上げが11で、目盛りは0, 2, 4, 6, 8, 10とした。clusterは値の大小ではなく変化パターンの探索順であり、年列は時系列順を維持する。
+- **追加の監査修正**: `日本人口`を分母の実態どおり`日本人人口`へ修正した。選択した2区分のwarningと未算出理由を画面に表示し、過去年S08／S15出典カードを日本語化した。日本の選択肢は比較selectorから除外し、日本を渡された場合も最初の比較対象へ安全にfallbackする。
+- **検証結果**: 再生成したnationality trendは260行（220 calculated／40 refused）、compact exportはschema v9、SHA-256 `4219edb5c7ff75e52bae97452f4991f6e5852dd746cfca1d3dc9c4d62bd37f65`。Python 180 test（coverage 82.77%）、Web 130 test（statement 88.08%、branch 84.12%）、typecheck、lint、format、data hash verification、production buildをPASSした。Chromeの1440px／390pxで2色legend、cluster順、橙破線の日本、青実線のベトナム、0–11共通Y軸、詳細表、注意欄、page横overflowなしを目視確認した。sandbox内buildはlocalhost bind制限で`EPERM`となり、同一commandを許可済み環境で再実行してstatic route 1件のpre-render完了を確認した。
+- **関連パス**: `config/nationality_trend_contract.json`, `data/processed/_nationality_trend/20260908_061000_nationality_trend/`, `output/compact_export/20260908_061100_compact_export/`, `web/components/nationality-trend.tsx`, `web/public/data/dashboard_export.json`, `README.md`, `README.ja.md`, `docs/brief.md`, `docs/workflow.md`
+- **次**: current changesをcommit後、userの明示があればpush／releaseし、GitHub Pages上で同じhashとresponsive表示を再確認する。機能面の次はstructured Issue template、根拠付き用語集、地域・犯罪種類別の過去年panel。
+
+## 2026-09-08 階層クラスタリング実装の独立監査を反映
+- **何が**: freshなTerra agentのread-only監査で、画面表記は`ユークリッド距離`だが実装が平方差平均の平方根（RMS distance）になっている不一致を検出した。current 5年完全系列では定数倍なので行順は変わらないが、部分欠測を将来追加するとcluster結果へ影響し得る。
+- **どう判断したか／なぜ**: 距離を定義どおり平方差和の平方根へ修正し、`[0,0]`と`[3,4]`が5になる回帰testを追加した。1点だけ値がある行は変化パターンをclusterできないため、cluster済み行の後・全期間未算出行の前へ分離した。heatmapには「区分を選ぶと注意点と未算出理由を確認できる」と常設し、未算出cellの読み上げ名とhoverにも平易な理由を含めた。
+- **検証結果**: reviewerの重要度中1件をclosed。軽微2件も将来の部分欠測と説明の発見性を改善した。frontend 131 test、typecheck、lint、format、data hash verification、production buildをPASS。再build後のChrome 1440px／390px確認でもbody幅はviewport幅と一致し、page横overflowは0だった。
+- **関連パス**: `web/components/nationality-trend.tsx`, `web/tests/nationality-trend.test.tsx`, `web/app/globals.css`
