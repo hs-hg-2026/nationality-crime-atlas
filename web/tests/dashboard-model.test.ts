@@ -5,6 +5,7 @@ import {
   buildClearancePopulationTrendViewModel,
   buildClearanceShareTrendViewModel,
   buildNationalityComparisonViewModel,
+  buildNationalityTrendViewModel,
   buildOffenseCompositionViewModel,
   buildSelectableNationalityViewModel,
   buildNationalityViewModel,
@@ -915,6 +916,117 @@ describe('selectable all-nationality comparison model', () => {
       year: 2024,
     });
     expect(criminalCode.scopeLabel).not.toBe(total.scopeLabel);
+  });
+});
+
+describe('nationality time-series model', () => {
+  it('builds a complete five-year grid for cases and persons without turning refusals into zero', () => {
+    const payload = JSON.parse(JSON.stringify(dashboardFixture));
+    payload.compact_export_schema_version = 9;
+    payload.definitions.nationality_trend_ids = {
+      nationality_criminal_code_clearance_reference_ratio_trend: {
+        nationality_trend_schema_version: 1,
+        label_ja: '日本を含む国籍等別の刑法犯検挙参考比率の推移',
+        label_en:
+          'Criminal-code clearance reference-ratio trend by nationality including Japan',
+        display_multiplier: 1000,
+        display_unit_label_ja: '人口1,000人当たり',
+        display_unit_label_en: 'per 1,000 persons',
+        interpretation_policy:
+          'observed_time_series_without_intrinsic_group_inference',
+        ui_caveat: '公表統計由来の参考比率である。',
+      },
+    };
+    payload.records.nationality_trends = [
+      ...Array.from({ length: 5 }, (_, index) => 2020 + index),
+    ].flatMap((year, index) =>
+      ['cleared_cases', 'cleared_persons'].flatMap((metric) =>
+        [
+          {
+            entity_id: 'jp-nationality:japanese',
+            published_label: '日本',
+            display_label: '日本（残差による参考値）',
+            source_order: 0,
+            is_japanese_reference: true,
+            calculation_status: 'calculated',
+            refusal_reason: null,
+            numerator_value: metric === 'cleared_cases' ? 200 + index : 150 + index,
+            denominator_value: 100_000,
+            display_value:
+              ((metric === 'cleared_cases' ? 200 + index : 150 + index) /
+                100_000) *
+              1000,
+            numerator_source_ids: ['S08', 'S15'],
+            denominator_source_id: 'S17',
+            denominator_reference_date: `${year}-10-01`,
+            mismatch_flags: [
+              'japanese_numerator_derived_by_residual_subtraction',
+            ],
+            small_number_warning_flags: [],
+          },
+          {
+            entity_id: 'isa-nationality:vn',
+            published_label: 'ベトナム',
+            display_label: 'ベトナム',
+            source_order: 30,
+            is_japanese_reference: false,
+            calculation_status: year === 2022 ? 'refused' : 'calculated',
+            refusal_reason:
+              year === 2022 ? 'missing_denominator_component' : null,
+            numerator_value: 70 - index * 10,
+            denominator_value: year === 2022 ? null : 10_000,
+            display_value: year === 2022 ? null : 7 - index,
+            numerator_source_ids: ['S08'],
+            denominator_source_id: 'S19_2024',
+            denominator_reference_date: `${year}-12-31`,
+            mismatch_flags: [
+              'all_foreign_vs_resident_population_mismatch',
+            ],
+            small_number_warning_flags: [],
+          },
+        ].map((row) => ({
+          ...row,
+          trend_id:
+            'nationality_criminal_code_clearance_reference_ratio_trend',
+          metric,
+          metric_label_ja:
+            metric === 'cleared_cases' ? '検挙件数' : '検挙人員',
+          year,
+        })),
+      ),
+    );
+
+    const dashboard = parseDashboardData(payload);
+    const cases = buildNationalityTrendViewModel(dashboard, 'cases');
+    const persons = buildNationalityTrendViewModel(dashboard, 'persons');
+
+    expect(cases.years).toEqual([2020, 2021, 2022, 2023, 2024]);
+    expect(cases.rows.map((row) => row.label)).toEqual([
+      '日本',
+      'ベトナム',
+    ]);
+    expect(cases.rows[0].japaneseReference).toBe(true);
+    expect(cases.rows[1].values[0]).toMatchObject({
+      year: 2020,
+      value: 7,
+      displayValue: '7.00',
+      numerator: 70,
+      denominator: 10_000,
+    });
+    expect(cases.rows[1].values[2]).toMatchObject({
+      year: 2022,
+      value: null,
+      displayValue: null,
+      calculationStatus: 'refused',
+      refusalCode: 'missing_denominator_component',
+    });
+    expect(persons.rows[0].values[0].value).toBe(1.5);
+    expect(cases.sources.map((source) => source.id)).toEqual([
+      'S08',
+      'S15',
+      'S17',
+      'S19_2024',
+    ]);
   });
 });
 
