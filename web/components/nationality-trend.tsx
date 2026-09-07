@@ -85,7 +85,7 @@ function standardizedProfile(row: NationalityTrendRow, years: number[]) {
   });
 }
 
-function profileDistance(
+export function euclideanProfileDistance(
   left: Array<number | null>,
   right: Array<number | null>,
 ) {
@@ -94,10 +94,7 @@ function profileDistance(
     return value === null || other === null ? [] : [(value - other) ** 2];
   });
   if (squaredDifferences.length === 0) return Number.POSITIVE_INFINITY;
-  return Math.sqrt(
-    squaredDifferences.reduce((sum, value) => sum + value, 0) /
-      squaredDifferences.length,
-  );
+  return Math.sqrt(squaredDifferences.reduce((sum, value) => sum + value, 0));
 }
 
 /**
@@ -112,8 +109,15 @@ export function orderRowsByHierarchicalClustering(
     row,
     index,
     profile: standardizedProfile(row, years),
+    finiteValueCount: years.filter((year) => {
+      const value = valueForYear(row, year)?.value;
+      return value !== null && value !== undefined && Number.isFinite(value);
+    }).length,
   }));
-  const unavailable = indexedRows.filter((item) => item.profile === null);
+  const insufficient = indexedRows.filter(
+    (item) => item.profile === null && item.finiteValueCount > 0,
+  );
+  const unavailable = indexedRows.filter((item) => item.finiteValueCount === 0);
   let clusters = indexedRows
     .filter(
       (item): item is typeof item & { profile: Array<number | null> } =>
@@ -127,7 +131,7 @@ export function orderRowsByHierarchicalClustering(
   ) => {
     const distances = left.members.flatMap((leftMember) =>
       right.members.map((rightMember) =>
-        profileDistance(leftMember.profile, rightMember.profile),
+        euclideanProfileDistance(leftMember.profile, rightMember.profile),
       ),
     );
     return distances.reduce((sum, value) => sum + value, 0) / distances.length;
@@ -176,6 +180,7 @@ export function orderRowsByHierarchicalClustering(
 
   return [
     ...(clusters[0]?.members.map((member) => member.row) ?? []),
+    ...insufficient.map((item) => item.row),
     ...unavailable.map((item) => item.row),
   ];
 }
@@ -382,6 +387,9 @@ export function NationalityTrend({
       <p className="nationality-trend-cluster-note">
         行は、各区分内で標準化した5年間の変化パターンを、平均連結法・ユークリッド距離による階層クラスタリングで並べています。未算出だけの区分は末尾、年は時系列順です。
       </p>
+      <p className="nationality-trend-cell-note">
+        各区分を選ぶと、注意点と未算出理由を確認できます。
+      </p>
 
       <div className="nationality-trend-heatmap-wrap">
         <table
@@ -414,6 +422,12 @@ export function NationalityTrend({
                   const value = valueForYear(row, year);
                   const unavailable = !value || value.displayValue === null;
                   const warningCodes = value?.warningCodes.join(' ') ?? '';
+                  const refusalExplanation = value?.refusalCode
+                    ? (refusalLabels?.[value.refusalCode] ?? value.refusalCode)
+                    : null;
+                  const warningExplanation = value?.warningCodes
+                    .map((code) => warningLabels?.[code] ?? code)
+                    .join('／');
                   return (
                     <td
                       key={year}
@@ -425,6 +439,11 @@ export function NationalityTrend({
                       }
                       data-refusal-code={value?.refusalCode ?? undefined}
                       data-warning-codes={warningCodes || undefined}
+                      title={
+                        refusalExplanation
+                          ? `未算出理由：${refusalExplanation}`
+                          : warningExplanation || undefined
+                      }
                       style={{
                         backgroundColor: heatColor(
                           value?.value ?? null,
@@ -439,7 +458,11 @@ export function NationalityTrend({
                       }}
                       aria-label={
                         unavailable
-                          ? `${displayRowLabel(row)}、${year}年: 未算出`
+                          ? `${displayRowLabel(row)}、${year}年: 未算出${
+                              refusalExplanation
+                                ? `。理由：${refusalExplanation}`
+                                : ''
+                            }`
                           : `${displayRowLabel(row)}、${year}年: ${value.displayValue}/1,000人`
                       }
                     >

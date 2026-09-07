@@ -199,6 +199,13 @@
     line-height: 1.6;
   }
 
+  .nationality-trend-cell-note {
+    margin-top: -1rem;
+    color: var(--muted-foreground);
+    font-size: 0.7rem;
+    line-height: 1.6;
+  }
+
   .nationality-trend-heatmap-wrap {
     overflow-x: auto;
     border: 1px solid var(--border);
