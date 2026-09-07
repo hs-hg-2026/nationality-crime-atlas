@@ -166,7 +166,7 @@ describe('NationalityTrend', () => {
       .mockImplementation(() => undefined);
     const container = document.createElement('div');
     container.innerHTML = renderToString(<NationalityTrend {...props} />);
-    document.body.append(container);
+    document.body.appendChild(container);
 
     const root = hydrateRoot(container, <NationalityTrend {...props} />);
     await act(async () => undefined);

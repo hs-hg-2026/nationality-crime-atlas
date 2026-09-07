@@ -317,9 +317,7 @@ export function NationalityTrend({
                   r="4"
                   className="nationality-trend-point"
                 >
-                  <title>
-                    {item.year}年: {item.displayValue}/1,000人
-                  </title>
+                  <title>{`${item.year}年: ${item.displayValue}/1,000人`}</title>
                 </circle>
               ),
             )}
