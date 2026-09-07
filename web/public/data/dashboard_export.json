@@ -303,7 +303,7 @@
         "label_en": "Criminal-code clearance reference-ratio trend by nationality including Japan",
         "label_ja": "日本を含む国籍等別の刑法犯検挙参考比率の推移",
         "nationality_trend_schema_version": 1,
-        "ui_caveat": "1年間の刑法犯検挙件数または検挙人員を、10月1日の日本人口または12月31日の在留外国人数で単純に割った公表統計由来の参考比率である。日本の分子は全人員・全件数から全外国人値を差し引いた残差である。外国人の犯罪統計と在留外国人人口は対象範囲が一致しない。犯罪を行う確率や公的な犯罪率、集団の本質を示さない。"
+        "ui_caveat": "1年間の刑法犯検挙件数または検挙人員を、10月1日の日本人人口または12月31日の在留外国人数で単純に割った公表統計由来の参考比率である。日本の分子は全人員・全件数から全外国人値を差し引いた残差である。外国人の犯罪統計と在留外国人人口は対象範囲が一致しない。犯罪を行う確率や公的な犯罪率、集団の本質を示さない。"
       }
     },
     "offense_category_ids": {
@@ -437,7 +437,7 @@
       }
     }
   },
-  "generated_at": "2026-09-07T17:31:00+09:00",
+  "generated_at": "2026-09-08T06:11:00+09:00",
   "publication_policy": {
     "clearance_population_view": "national_clearance_population_reference_ratio",
     "clearance_share_view": "national_criminal_code_clearance_foreign_share",
@@ -52581,24 +52581,24 @@
     },
     "nationality_trend": {
       "latest_manifest": {
-        "generated_at": "2026-09-07T17:30:00+09:00",
-        "nationality_trend_records_csv_sha256": "a9eb7d66a5492296bd18a9d6753a5f7506885b116c81cd6d4a723f20979a261b",
-        "nationality_trend_records_sha256": "21775f4cf1e896a3fbe2de4167eb406847449edee53bae2c495ad69d4647b32e",
+        "generated_at": "2026-09-08T06:10:00+09:00",
+        "nationality_trend_records_csv_sha256": "b727bda24804405647c07df2699811ce8ddf3dcd72cf9021875632148c24fcd3",
+        "nationality_trend_records_sha256": "e878680ffe3782777e23ecbc5e4d9d9551ab45e36e0b4dcee07fd6c26b78ebd2",
         "nationality_trend_schema_version": 1,
-        "run_relpath": "20260907_173000_nationality_trend",
-        "summary_sha256": "c89688b278de2367242292e802cd83249960429fc29e47186d69a0a966409ef2"
+        "run_relpath": "20260908_061000_nationality_trend",
+        "summary_sha256": "9bf0c5fe304ce9e2d24e4006ad1ac6edf46dc924cc12e91502bcf7377df9a5f6"
       },
       "latest_path": "latest.json",
-      "latest_sha256": "6858c613e670848a68c77394cb0e1a56a8bad301a10d69b44414d0729cd145ab",
+      "latest_sha256": "c81589171fe9308f46ea3cbbab58323b1a861130574b08bc68f93865455712ac",
       "record_count": 260,
-      "records_path": "20260907_173000_nationality_trend/nationality_trend_records.jsonl",
-      "records_sha256": "21775f4cf1e896a3fbe2de4167eb406847449edee53bae2c495ad69d4647b32e",
+      "records_path": "20260908_061000_nationality_trend/nationality_trend_records.jsonl",
+      "records_sha256": "e878680ffe3782777e23ecbc5e4d9d9551ab45e36e0b4dcee07fd6c26b78ebd2",
       "status_counts": {
         "calculated": 220,
         "refused": 40
       },
-      "summary_path": "20260907_173000_nationality_trend/summary.json",
-      "summary_sha256": "c89688b278de2367242292e802cd83249960429fc29e47186d69a0a966409ef2"
+      "summary_path": "20260908_061000_nationality_trend/summary.json",
+      "summary_sha256": "9bf0c5fe304ce9e2d24e4006ad1ac6edf46dc924cc12e91502bcf7377df9a5f6"
     },
     "offense_composition": {
       "latest_manifest": {

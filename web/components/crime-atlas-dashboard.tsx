@@ -178,6 +178,24 @@ function sourceDisplayFor(source: RegionalViewModel['sources'][number]) {
       period: `${annualJapanesePopulation[1]}年10月1日時点`,
     };
   }
+
+  const annualNationalityCrime = /^S08_(\d{4})$/.exec(source.id);
+  if (annualNationalityCrime) {
+    return {
+      dataset: '外国人の国籍等別・検挙件数と検挙人員',
+      publisher: '警察庁',
+      period: `${annualNationalityCrime[1]}年（国籍等別内訳）`,
+    };
+  }
+
+  const annualAllPersonCrime = /^S15_(\d{4})$/.exec(source.id);
+  if (annualAllPersonCrime) {
+    return {
+      dataset: '都道府県等別の刑法犯認知件数・検挙件数・検挙人員',
+      publisher: '警察庁',
+      period: `${annualAllPersonCrime[1]}年（全国総数を含む）`,
+    };
+  }
   if (source.id === 'S18') {
     return {
       dataset: '都道府県別の総人口と日本人人口（国勢調査間補間補正）',
@@ -231,6 +249,8 @@ const interpretationLabels: Record<string, string> = {
     '検挙件数には前年以前に認知された事件が含まれることがある',
   cleared_person_records_not_unique_risk_population:
     '検挙人員は、犯罪をする可能性を表す個人単位の追跡値ではない',
+  clearance_records_not_unique_risk_population:
+    '検挙件数・人員は、犯罪を行う確率を表す個人単位の追跡値ではない',
   criminal_code_scope_only: '刑法犯だけを対象としている',
   denominator_reference_dates_differ_across_rows:
     '人口の基準日が行によって異なる',
@@ -1304,7 +1324,7 @@ export function CrimeAtlasDashboard({
   const [nationalityTrendMetric, setNationalityTrendMetric] =
     useState<NationalityTrendMetric>('cases');
   const [nationalityTrendEntityId, setNationalityTrendEntityId] = useState(
-    'jp-nationality:japanese',
+    'isa-nationality:01_037',
   );
   const [offenseMetric, setOffenseMetric] =
     useState<OffenseCompositionMetric>('cleared_persons');
@@ -1986,6 +2006,8 @@ export function CrimeAtlasDashboard({
             rows={nationalityTrendView.rows}
             selectedEntityId={nationalityTrendEntityId}
             caveat={nationalityTrendView.uiCaveat}
+            warningLabels={interpretationLabels}
+            refusalLabels={refusalLabels}
             onMetricChange={setNationalityTrendMetric}
             onEntityChange={setNationalityTrendEntityId}
           />

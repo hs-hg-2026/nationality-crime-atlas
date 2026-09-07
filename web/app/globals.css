@@ -140,6 +140,65 @@
     line-height: 1.7;
   }
 
+  .nationality-trend-heatmap-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.8rem;
+    color: var(--muted-foreground);
+    font-size: 0.7rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nationality-trend-heatmap-legend > div {
+    display: grid;
+    grid-template-columns: auto minmax(150px, 260px) auto;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .nationality-trend-heatmap-legend > div > i {
+    width: clamp(150px, 24vw, 260px);
+    height: 0.75rem;
+    border: 1px solid color-mix(in oklch, var(--border), transparent 20%);
+    border-radius: 999px;
+  }
+
+  .nationality-trend-heatmap-midpoint {
+    padding-left: 0.2rem;
+  }
+
+  .nationality-trend-heatmap-unavailable {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .nationality-trend-heatmap-unavailable i {
+    width: 1.2rem;
+    height: 0.75rem;
+    border: 1px solid var(--border);
+    background: repeating-linear-gradient(
+      135deg,
+      var(--muted) 0,
+      var(--muted) 3px,
+      var(--card) 3px,
+      var(--card) 6px
+    );
+  }
+
+  .nationality-trend-heatmap-legend p {
+    flex-basis: 100%;
+    line-height: 1.55;
+  }
+
+  .nationality-trend-cluster-note {
+    margin-top: -0.7rem;
+    color: var(--muted-foreground);
+    font-size: 0.7rem;
+    line-height: 1.6;
+  }
+
   .nationality-trend-heatmap-wrap {
     overflow-x: auto;
     border: 1px solid var(--border);
@@ -245,6 +304,46 @@
     background: var(--card);
   }
 
+  .nationality-trend-plot-panel {
+    min-width: 0;
+  }
+
+  .nationality-trend-line-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .nationality-trend-line-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .nationality-trend-line-legend span::before {
+    width: 1.4rem;
+    height: 3px;
+    border-radius: 999px;
+    background: var(--chart-1);
+    content: '';
+  }
+
+  .nationality-trend-line-legend-reference::before {
+    height: 0 !important;
+    border-top: 3px dashed var(--chart-5);
+    background: transparent !important;
+  }
+
+  .nationality-trend-axis-unit {
+    margin: -0.15rem 0 0.45rem;
+    color: var(--muted-foreground);
+    font-size: 0.68rem;
+    font-variant-numeric: tabular-nums;
+  }
+
   .nationality-trend-plot {
     display: block;
     width: 100%;
@@ -254,6 +353,11 @@
 
   .nationality-trend-axis {
     stroke: color-mix(in oklch, var(--muted-foreground), transparent 62%);
+    stroke-width: 1;
+  }
+
+  .nationality-trend-grid-line {
+    stroke: color-mix(in oklch, var(--muted-foreground), transparent 82%);
     stroke-width: 1;
   }
 
@@ -270,10 +374,20 @@
     stroke-linejoin: round;
   }
 
+  .nationality-trend-line-reference {
+    stroke: var(--chart-5);
+    stroke-dasharray: 8 5;
+  }
+
   .nationality-trend-point {
     fill: var(--card);
     stroke: var(--chart-1);
     stroke-width: 3;
+  }
+
+  .nationality-trend-point-reference {
+    fill: var(--chart-5);
+    stroke: var(--card);
   }
 
   .nationality-trend-detail-table-wrap {
@@ -313,6 +427,53 @@
     text-align: left;
   }
 
+  .nationality-trend-detail-table tr[data-japanese-reference='true'] {
+    background: color-mix(in oklch, var(--chart-4), transparent 94%);
+  }
+
+  .nationality-trend-selected-warnings {
+    grid-column: 2;
+    padding: 0.8rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) * 0.9);
+    background: var(--card);
+  }
+
+  .nationality-trend-selected-warnings strong {
+    font-size: 0.78rem;
+  }
+
+  .nationality-trend-selected-warnings > div {
+    margin-top: 0.7rem;
+  }
+
+  .nationality-trend-selected-warnings h4 {
+    font-size: 0.72rem;
+    font-weight: 760;
+  }
+
+  .nationality-trend-selected-warnings ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.55rem;
+  }
+
+  .nationality-trend-selected-warnings li {
+    padding: 0.28rem 0.5rem;
+    border-radius: 999px;
+    color: var(--muted-foreground);
+    background: var(--muted);
+    font-size: 0.68rem;
+    line-height: 1.45;
+  }
+
+  .nationality-trend-selected-warnings p {
+    margin-top: 0.4rem;
+    color: var(--muted-foreground);
+    font-size: 0.72rem;
+  }
+
   @media (max-width: 700px) {
     .nationality-trend-heading,
     .nationality-trend-detail {
@@ -325,6 +486,14 @@
     }
 
     .nationality-trend-detail-table-wrap {
+      grid-column: 1;
+    }
+
+    .nationality-trend-plot-panel {
+      grid-column: 1;
+    }
+
+    .nationality-trend-selected-warnings {
       grid-column: 1;
     }
   }

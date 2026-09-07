@@ -246,31 +246,30 @@ describe('NationalityTrend', () => {
     });
     expect(chart).toHaveAttribute('data-series-count', '2');
     expect(chart.querySelectorAll('[data-series-id]')).toHaveLength(2);
-    expect(
-      chart.querySelector('[data-series-id="japan"]'),
-    ).toBeInTheDocument();
+    expect(chart.querySelector('[data-series-id="japan"]')).toBeInTheDocument();
     expect(
       chart.querySelector('[data-series-id="vietnam"]'),
     ).toBeInTheDocument();
-    expect(
-      screen.getByLabelText('折れ線の凡例'),
-    ).toHaveTextContent('日本（参考値）');
     expect(screen.getByLabelText('折れ線の凡例')).toHaveTextContent(
-      'ベトナム',
+      '日本（参考値）',
     );
+    expect(screen.getByLabelText('折れ線の凡例')).toHaveTextContent('ベトナム');
     expect(
       screen.getByRole('combobox', { name: '日本と比較する国籍等' }),
     ).not.toHaveTextContent('日本（参考値）');
     expect(chart.querySelectorAll('path.nationality-trend-line')).toHaveLength(
       3,
     );
-    expect(
-      chart.querySelector('[data-series-id="japan"] path'),
-    ).toHaveClass('nationality-trend-line-reference');
-    expect(
-      chart.querySelector('[data-series-id="vietnam"] path'),
-    ).toHaveClass('nationality-trend-line-selected');
+    expect(chart.querySelector('[data-series-id="japan"] path')).toHaveClass(
+      'nationality-trend-line-reference',
+    );
+    expect(chart.querySelector('[data-series-id="vietnam"] path')).toHaveClass(
+      'nationality-trend-line-selected',
+    );
     expect(chart).toHaveAttribute('data-y-axis-maximum', '11');
+    expect(
+      screen.getByText('Y軸：人口1,000人当たり（全3区分共通、上限11）'),
+    ).toBeVisible();
     for (const tick of ['0', '2', '4', '6', '8', '10']) {
       expect(within(chart).getByText(tick)).toBeVisible();
     }
@@ -318,13 +317,14 @@ describe('NationalityTrend', () => {
       <NationalityTrend
         {...props}
         refusalLabels={{
-          crosswalk_not_exact:
-            '犯罪統計と人口統計の国籍区分が一致しない',
+          crosswalk_not_exact: '犯罪統計と人口統計の国籍区分が一致しない',
         }}
       />,
     );
 
-    expect(screen.getByText(/犯罪統計と人口統計の国籍区分が一致しない/)).toBeVisible();
+    expect(
+      screen.getByText(/犯罪統計と人口統計の国籍区分が一致しない/),
+    ).toBeVisible();
   });
 
   it('server-renders SVG titles without hydration warnings', async () => {

@@ -2525,7 +2525,7 @@ export function buildNationalityTrendViewModel(
       }
       return {
         entityId,
-        label: first.published_label,
+        label: first.display_label,
         japaneseReference: first.is_japanese_reference,
         sourceOrder: first.source_order,
         values: entityRows.map((row): NationalityTrendValueModel => {

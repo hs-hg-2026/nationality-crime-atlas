@@ -1,9 +1,9 @@
 {
   "publication_manifest_schema_version": 1,
   "compact_export_schema_version": 9,
-  "source_run_relpath": "20260907_173100_compact_export",
-  "generated_at": "2026-09-07T17:31:00+09:00",
-  "dashboard_export_sha256": "0f28913c4a67f0062a7eb95f7327100e9a121d4ebbabfc258b406e58fb7736ef",
+  "source_run_relpath": "20260908_061100_compact_export",
+  "generated_at": "2026-09-08T06:11:00+09:00",
+  "dashboard_export_sha256": "4219edb5c7ff75e52bae97452f4991f6e5852dd746cfca1d3dc9c4d62bd37f65",
   "record_counts": {
     "all_resident_context": 248,
     "nationality_comparison": 26,
@@ -24,7 +24,7 @@
     "nationality_trend_ids": 1
   },
   "source_count": 29,
-  "source_pointer_sha256": "d24eb9546074d914adb28fd38caf235358b6666b5c97c1a01df26fba808ee6c7",
-  "source_summary_sha256": "88b414f72bd98300fef681b560e038eda76c6210f745470043b175f76b3abd65",
-  "source_run_generated_at": "2026-09-07T17:31:00+09:00"
+  "source_pointer_sha256": "bb3dd0de640ddb75981de719b15fb7a5537eea7bd90f2afc4838af3525a38f7a",
+  "source_summary_sha256": "71657ea9f9db0cc160676996a7975f9292392a40c2b4bc3ac1927489f62c4505",
+  "source_run_generated_at": "2026-09-08T06:11:00+09:00"
 }
