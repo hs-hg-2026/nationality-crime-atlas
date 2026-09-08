@@ -200,6 +200,7 @@ M1の要点:
 - [ ] 可視化要望／不具合報告のGitHub Issue定型を追加する。
 - [ ] サイト内の定義が必要な用語から、公式定義・平易な説明・引用元・適用範囲を持つ用語集へ移動できるようにする。最初の対象は「来日外国人」とする。
 - [x] reviewed release commitをpushし、GitHub Pagesのdeployed URLとlive data hashを実地確認し、v0.2.0を公開する。
+- [x] schema v9と国籍等別5年時系列のreviewed release commitをpushし、GitHub PagesのHTTP 200とlive data byte一致を確認してv0.3.0を公開する。
 
 Local MVP実装・検証結果:
 
@@ -212,7 +213,7 @@ Local MVP実装・検証結果:
 - composition view: 日本を含む全26 categoryと6犯罪類型をheatmap／100%積み上げで表示し、検挙人員／検挙件数と公表順／階層cluster順を切り替える。cellは構成比と実数を併記し、total 0は`構成比算出不能`とする。
 - time-series view: 2015–2024年の全国検挙構成比60行を、検挙件数／検挙人員を切り替えるline chartと全件表で表示する。外国人全体／来日外国人／両者の算術差分を別系列とし、日本人等を含む全国総数を分母にする。別sectionでは人口当たり参考比率40行を日本人等／外国人全体の2 panelに分け、分子、参照人口、人口1,000人当たりの値を表示する。さらに2020–2024年の国籍等別参考比率260行を、階層クラスタリング順の2色heatmap、日本の橙破線と選択区分の青実線を重ねた比較chart、両系列の年次実数表で示す。比較chartのY軸は全26区分共通で0始まりとする。いずれも人口当たりの犯罪発生確率ではなく、scope不一致と算術残差を常設表示する。
 - verification: frontend 131 test、statement coverage 88.08%、branch coverage 84.12%、typecheck／lint／format／data hash verification／production buildをpass。Pythonは180 test、skip 0、coverage 82.77%。
-- publication: GitHub Pagesの公開版は前回のschema v8。今回のschema v9／UI変更はlocalで検証中で、まだpush／deployしていない。
+- publication: GitHub Pagesでv0.3.0／schema v9を公開済み。Actions run 34170172329はbuild／deployとも成功し、公開画面はHTTP 200、live dashboard bundleはrepository内の公開dataとbyte-identical、SHA-256 `4219edb5c7ff75e52bae97452f4991f6e5852dd746cfca1d3dc9c4d62bd37f65`。
 
 ### M5. 過去年整備・定期更新・監視 — **進行中**
 
@@ -254,7 +255,7 @@ Local MVP実装・検証結果:
 - 2026-09-06: userの指摘を受け、外国人全体−来日外国人を第三系列として追加した。警察庁定義を確認すると差分は定着居住者だけでなく在日米軍関係者・在留資格不明者も含み得るため、「在日外国人」「普段から住む外国人」とは表示せず、算術差分・direct非公表と明示した。
 - 2026-09-06: 人口増減と人口当たり参考比率を分けて確認するため、2015–2024年の日本人等／外国人全体 × 検挙件数／検挙人員40行を追加した。日本人等の分子は全国総数−外国人全体の算術残差、外国人分子と在留外国人数はscope不一致とし、2015年は分子を保持して分母未登録の2行をrefuseした。schema v8のpublication semantic gateと、desktop／mobileの別panel表示まで検証した。
 - 2026-09-07〜08: R02–R06のS08、S15と各年のS17–S19をpinし、日本を含む26区分 × 2020–2024年 × 検挙件数／検挙人員の260行を追加した。220行を算出し、3つの`その他`と`国籍不明`は各年・各metricとも人口対応を作らず40行をrefuseした。全件heatmapは2色scaleと数値凡例を備え、5年変化パターンの階層クラスタリング順とした。日本を橙破線で固定し、選択区分を青実線で比較するchartと両系列の分子・分母・参考比率表をschema v9のlocal dashboardへ接続した。
-- 現段階の結論: 全住民regional context、日本を欠落させない選択式全国籍比較、全件order plot、犯罪類型構成、未解決率とは呼ばない同年差、2015–2024年の3-scope全国検挙構成比と2-group人口当たり参考比率、2020–2024年の26区分国籍等別参考比率、dashboard-ready compact export v9、responsive visualization、GitHub Pages workflow、GitHub Issues入口まで成立した。公開中のschema v8は2026年9月6日にActions成功とlive data hash一致を確認済みで、schema v9はlocal検証中で未pushである。次はIssue定型、根拠付き用語集、その後は2020–2024年の地域別・犯罪種類別の詳細panelである。
+- 現段階の結論: 全住民regional context、日本を欠落させない選択式全国籍比較、全件order plot、犯罪類型構成、未解決率とは呼ばない同年差、2015–2024年の3-scope全国検挙構成比と2-group人口当たり参考比率、2020–2024年の26区分国籍等別参考比率、dashboard-ready compact export v9、responsive visualization、GitHub Pages workflow、GitHub Issues入口まで成立した。schema v9はv0.3.0として2026年9月8日に公開し、Actions成功、HTTP 200、live data byte一致を確認済みである。次はIssue定型、根拠付き用語集、その後は2020–2024年の地域別・犯罪種類別の詳細panelである。
 
 ## 想定される成果 (Outcome)
 

@@ -458,3 +458,9 @@
 - **どう判断したか／なぜ**: 後方互換性を壊さず、新しいdata productと主要な可視化を追加したminor releaseであるため、versionを0.3.0とする。cluster順は変化パターン探索用で、危険度や順位ではないという責任範囲もrelease notesへ固定する。
 - **検証状態**: release準備前にPython 180 test、Web 131 test、typecheck、lint、format、公開data hash verification、production build、1440px／390pxの実画面、独立reviewをPASS済み。release commitでもfrontend quality gateを再実行する。
 - **関連パス**: `docs/20260908_082601_v0.3.0_release_notes.md`, `web/package.json`, `web/package-lock.json`
+
+## 2026-09-08 v0.3.0を公開
+- **何が**: release準備commit `d510fd4`をmainへpushし、同commitを指すlightweight tagとGitHub Release `v0.3.0 — 国籍等別の5年時系列比較`を公開した。
+- **どう判断したか／なぜ**: local検証だけで公開済みとせず、GitHub Actionsのproduction gate、Pages応答、公開dataのbyte identityまでをrelease完了条件とした。
+- **検証結果**: Actions run 34170172329はbuild 1分34秒、deploy 8秒で成功。公開画面はHTTP 200。取得したlive bundleはschema v9、29 sources、国籍等別時系列260行で、checked-in fileとbyte-identical、SHA-256 `4219edb5c7ff75e52bae97452f4991f6e5852dd746cfca1d3dc9c4d62bd37f65`。Releaseはdraft／prereleaseではなく、tag targetは`d510fd45bcbdac83f2c82eb28d3670c0b3e7b8fc`。依存GitHub ActionにはNode.js 20 deprecation warningが出たが、Node.js 24へ強制実行されて全jobは成功した。
+- **関連パス**: `docs/20260908_082601_v0.3.0_release_notes.md`, `README.md`, `README.ja.md`, `docs/brief.md`, `docs/workflow.md`; release: `https://github.com/hs-hg-2026/nationality-crime-atlas/releases/tag/v0.3.0`; run: `https://github.com/hs-hg-2026/nationality-crime-atlas/actions/runs/34170172329`
