@@ -482,3 +482,9 @@
 - **どう判断したか／なぜ**: CI runnerのjsdom初回renderがlocalより遅い実行環境差と判断し、Vitest全体の`testTimeout`を30秒へ明示した。テストを無制限にはせず、hung testの検出は維持する。
 - **検証状態**: 修正後のlocal test、typecheck、lint、format、data hashを再実行してから再pushし、GitHub Actionsを再確認する。release tagはworkflow成功確認後に作成する。
 - **関連パス**: `web/vitest.config.ts`, `docs/20260913_170139_v0.3.1_release_notes.md`
+
+## 2026-09-13 v0.3.1を公開
+- **何が**: `642af84`をmainへpushし、GitHub Actions run `34746991096`のbuild／deploy成功後、annotated tagとrelease `v0.3.1`を公開した。画面名、検索向けmetadata、sitemap、OGPを公開環境へ反映した。
+- **どう判断したか／なぜ**: release完了はtag作成だけでなく、Actions成功、公開HTMLのtitle／H1／description／robots／canonical／OGP、sitemap、dashboard data hash、OGP画像のbyte identityを確認できた時点とした。
+- **検証結果**: 公開URLはHTTP 200。live dashboard data SHA-256は`4219edb5c7ff75e52bae97452f4991f6e5852dd746cfca1d3dc9c4d62bd37f65`、repository内fileとbyte-identical。live OGP SHA-256は`beed30afe03f22912bdbd993a631a35e4ef7213a09432f005b242eec15df76b1`、1200 × 630でrepository内assetとbyte-identical。前回runの5秒test timeoutは修正後に解消した。
+- **関連パス**: `docs/20260913_170139_v0.3.1_release_notes.md`, `README.md`, `README.ja.md`, `docs/brief.md`, `docs/workflow.md`, release: `https://github.com/hs-hg-2026/nationality-crime-atlas/releases/tag/v0.3.1`, run: `https://github.com/hs-hg-2026/nationality-crime-atlas/actions/runs/34746991096`
