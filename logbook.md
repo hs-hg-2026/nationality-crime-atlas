@@ -476,3 +476,9 @@
 - **どう判断したか／なぜ**: data productの後方互換性を維持した表示・発見性の改善なのでpatch releaseとする。検索engineへの反映はrelease完了とは分け、push後はActions、Pages応答、公開HTML／sitemap／OGP／data byte identityを実地確認する。
 - **検証状態**: release準備前にWeb 136 test、statement coverage 88.08%、branch coverage 84.12%、typecheck、lint、format、公開data hash verification、GitHub Pages条件のproduction build、33-file artifact gate、OGP寸法・byte identity、個人識別子検査をPASS済み。
 - **関連パス**: `docs/20260913_170139_v0.3.1_release_notes.md`, `web/package.json`, `web/package-lock.json`, `web/app/layout.tsx`, `web/public/sitemap.xml`, `web/public/og.png`
+
+## 2026-09-13 push後のCI timeoutを修正
+- **何が**: v0.3.1準備commitをpushしたところ、GitHub Actionsのfrontend testで`tests/dashboard.test.tsx:20`が既定5秒timeoutとなりbuild jobが失敗した。ローカル136 testは成功しており、機能assertionの不一致ではなかった。
+- **どう判断したか／なぜ**: CI runnerのjsdom初回renderがlocalより遅い実行環境差と判断し、Vitest全体の`testTimeout`を30秒へ明示した。テストを無制限にはせず、hung testの検出は維持する。
+- **検証状態**: 修正後のlocal test、typecheck、lint、format、data hashを再実行してから再pushし、GitHub Actionsを再確認する。release tagはworkflow成功確認後に作成する。
+- **関連パス**: `web/vitest.config.ts`, `docs/20260913_170139_v0.3.1_release_notes.md`
