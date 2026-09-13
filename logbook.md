@@ -470,3 +470,9 @@
 - **どう判断したか／なぜ**: 完全一致検索とsite指定検索で公開画面を確認できず、一般検索では警察庁・e-Stat等が中心だった。新名称は`日本`と`犯罪統計`を残しつつ、地域地図だけでなく国籍等別、犯罪種別、時系列、出典・定義差まで扱う多面的な内容を`アトラス`で表す。国籍や外国人を名称の中心に置かない。Googleの`WebSite` site-name structured dataはdomain／subdomain rootのみ対応し、current GitHub Pagesのsubdirectoryには非対応なので追加しない。
 - **検証結果**: 旧H1とSEO gate未実装に対する7件のREDを確認し、実装後はfocused 29 test、full frontend 136 test、statement coverage 88.08%、branch coverage 84.12%、typecheck、lint、format、data hash verificationをPASS。GitHub Pages条件のproduction buildと33-file artifact gateもPASSし、HTMLのtitle／description／robots／canonical／OGPとsitemapを実出力で確認した。OGPはbuilt-in image generationで主見出しだけを置換し、1200 × 630、正確な文字、既存構図・配色・副題維持を目視確認した。SHA-256は`beed30afe03f22912bdbd993a631a35e4ef7213a09432f005b242eec15df76b1`。local変更であり未push／未deploy。
 - **関連パス**: `web/app/layout.tsx`, `web/components/crime-atlas-dashboard.tsx`, `web/public/sitemap.xml`, `web/public/og.png`, `web/scripts/verify-pages-artifact.mjs`, `web/tests/pages-artifact.test.ts`, `web/tests/dashboard.test.tsx`, `README.md`, `README.ja.md`, `docs/brief.md`, `docs/workflow.md`
+
+## 2026-09-13 v0.3.1のrelease boundaryを確定
+- **何が**: 「日本の犯罪統計アトラス」への公開名称変更、検索・SNS共有用metadata、sitemap、OGP、Pages artifact gateをv0.3.1の範囲とした。犯罪統計data、算出方法、schema v9は変更しない。
+- **どう判断したか／なぜ**: data productの後方互換性を維持した表示・発見性の改善なのでpatch releaseとする。検索engineへの反映はrelease完了とは分け、push後はActions、Pages応答、公開HTML／sitemap／OGP／data byte identityを実地確認する。
+- **検証状態**: release準備前にWeb 136 test、statement coverage 88.08%、branch coverage 84.12%、typecheck、lint、format、公開data hash verification、GitHub Pages条件のproduction build、33-file artifact gate、OGP寸法・byte identity、個人識別子検査をPASS済み。
+- **関連パス**: `docs/20260913_170139_v0.3.1_release_notes.md`, `web/package.json`, `web/package-lock.json`, `web/app/layout.tsx`, `web/public/sitemap.xml`, `web/public/og.png`
