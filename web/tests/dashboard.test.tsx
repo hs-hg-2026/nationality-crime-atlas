@@ -21,7 +21,7 @@ describe('CrimeAtlasDashboard', () => {
     render(<CrimeAtlasDashboard dashboard={dashboard} />);
 
     expect(
-      screen.getByRole('heading', { name: '全国犯罪統計地図' }),
+      screen.getByRole('heading', { name: '日本の犯罪統計アトラス' }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: 'このサイトについて' }),
@@ -115,7 +115,7 @@ describe('CrimeAtlasDashboard', () => {
       '埼玉県',
     );
     expect(
-      screen.getByRole('heading', { name: '全国犯罪統計地図' }),
+      screen.getByRole('heading', { name: '日本の犯罪統計アトラス' }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('heading', {

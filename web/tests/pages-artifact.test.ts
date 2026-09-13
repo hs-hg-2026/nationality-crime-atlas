@@ -16,6 +16,16 @@ const temporaryDirectories: string[] = [];
 const webRoot = process.cwd();
 const prepareScriptPath = join(webRoot, 'scripts/prepare-pages-artifact.mjs');
 const verifierPath = join(webRoot, 'scripts/verify-pages-artifact.mjs');
+const siteUrl = 'https://hs-hg-2026.github.io/nationality-crime-atlas/';
+const siteName = '日本の犯罪統計アトラス';
+const pageTitle =
+  '日本の犯罪統計アトラス｜公表犯罪統計と人口統計を可視化';
+const description =
+  '警察庁などが公表した日本の犯罪統計と人口統計を、地域・国籍等・犯罪種別・時系列で、出典・定義の違い・未算出理由とともに比較する可視化サイト。';
+
+function validIndexHtml(): string {
+  return `<html lang="ja"><head><title>${pageTitle}</title><meta name="description" content="${description}"><meta name="robots" content="index, follow"><link rel="canonical" href="${siteUrl}"><meta property="og:site_name" content="${siteName}"><meta property="og:title" content="${pageTitle}"><meta property="og:description" content="${description}"><meta property="og:url" content="${siteUrl}"><meta property="og:image" content="${siteUrl}og.png"></head><body><h1>${siteName}</h1><script src="/nationality-crime-atlas/_next/static/app.js"></script></body></html>`;
+}
 
 afterEach(() => {
   for (const directory of temporaryDirectories.splice(0)) {
@@ -32,6 +42,10 @@ function makeArtifact(indexHtml: string): string {
   writeFileSync(join(directory, 'index.html'), indexHtml);
   writeFileSync(join(directory, 'og.png'), 'test-image');
   writeFileSync(join(directory, 'favicon.svg'), '<svg></svg>');
+  writeFileSync(
+    join(directory, 'sitemap.xml'),
+    `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${siteUrl}</loc></url></urlset>`,
+  );
   writeFileSync(join(directory, '_next/static/app.js'), 'export {};');
 
   writeFileSync(
@@ -55,7 +69,7 @@ function verify(directory: string) {
       '--base-path',
       '/nationality-crime-atlas',
       '--site-url',
-      'https://hs-hg-2026.github.io/nationality-crime-atlas',
+      siteUrl,
     ],
     { cwd: webRoot, encoding: 'utf8' },
   );
@@ -63,9 +77,7 @@ function verify(directory: string) {
 
 describe('GitHub Pages artifact contract', () => {
   it('accepts a complete artifact whose URLs use the project base path', () => {
-    const directory = makeArtifact(
-      '<html><head><meta property="og:image" content="https://hs-hg-2026.github.io/nationality-crime-atlas/og.png"></head><body><script src="/nationality-crime-atlas/_next/static/app.js"></script></body></html>',
-    );
+    const directory = makeArtifact(validIndexHtml());
 
     const result = verify(directory);
 
@@ -75,7 +87,9 @@ describe('GitHub Pages artifact contract', () => {
 
   it('rejects root-relative framework URLs for a project-site deployment', () => {
     const directory = makeArtifact(
-      '<html><head><meta property="og:image" content="/og.png"></head><body><script src="/_next/static/app.js"></script></body></html>',
+      validIndexHtml()
+        .replace(`${siteUrl}og.png`, '/og.png')
+        .replace('/nationality-crime-atlas/_next/', '/_next/'),
     );
 
     const result = verify(directory);
@@ -85,9 +99,7 @@ describe('GitHub Pages artifact contract', () => {
   });
 
   it('rejects an artifact whose publication bundle no longer matches its manifest', () => {
-    const directory = makeArtifact(
-      '<html><head><meta property="og:image" content="https://hs-hg-2026.github.io/nationality-crime-atlas/og.png"></head><body><script src="/nationality-crime-atlas/_next/static/app.js"></script></body></html>',
-    );
+    const directory = makeArtifact(validIndexHtml());
     writeFileSync(
       join(directory, 'data/dashboard_export.json'),
       Buffer.concat([
@@ -103,9 +115,7 @@ describe('GitHub Pages artifact contract', () => {
   });
 
   it('rejects a private filesystem path embedded in compiled text', () => {
-    const directory = makeArtifact(
-      '<html><head><meta property="og:image" content="https://hs-hg-2026.github.io/nationality-crime-atlas/og.png"></head><body><script src="/nationality-crime-atlas/_next/static/app.js"></script></body></html>',
-    );
+    const directory = makeArtifact(validIndexHtml());
     writeFileSync(
       join(directory, '_next/static/app.js'),
       'const buildPath = "/private/var/folders/example/project";',
@@ -118,9 +128,7 @@ describe('GitHub Pages artifact contract', () => {
   });
 
   it('accepts escaped Unicode-regex fragments in compiled text', () => {
-    const directory = makeArtifact(
-      '<html><head><meta property="og:image" content="https://hs-hg-2026.github.io/nationality-crime-atlas/og.png"></head><body><script src="/nationality-crime-atlas/_next/static/app.js"></script></body></html>',
-    );
+    const directory = makeArtifact(validIndexHtml());
     writeFileSync(
       join(directory, '_next/static/app.js'),
       'const pattern = "[\\\\u0000-\\\\u001F \\\\u200B\\\\uFEFF]*";',
@@ -132,9 +140,7 @@ describe('GitHub Pages artifact contract', () => {
   });
 
   it('still rejects a complete UNC filesystem path', () => {
-    const directory = makeArtifact(
-      '<html><head><meta property="og:image" content="https://hs-hg-2026.github.io/nationality-crime-atlas/og.png"></head><body><script src="/nationality-crime-atlas/_next/static/app.js"></script></body></html>',
-    );
+    const directory = makeArtifact(validIndexHtml());
     const compiledText = String.raw`const buildPath = "\\builder\private-build\artifact";`;
     writeFileSync(join(directory, '_next/static/app.js'), compiledText);
 
@@ -144,10 +150,67 @@ describe('GitHub Pages artifact contract', () => {
     expect(result.stderr).toMatch(/private local path/i);
   });
 
-  it('promotes vinext prefixed assets to the Pages artifact root', () => {
+  it('rejects an artifact without the canonical sitemap', () => {
+    const directory = makeArtifact(validIndexHtml());
+    rmSync(join(directory, 'sitemap.xml'));
+
+    const result = verify(directory);
+
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toMatch(/sitemap\.xml/i);
+  });
+
+  it('rejects an artifact whose canonical URL is missing', () => {
     const directory = makeArtifact(
-      '<html><head><meta property="og:image" content="https://hs-hg-2026.github.io/nationality-crime-atlas/og.png"></head><body><script src="/nationality-crime-atlas/_next/static/app.js"></script></body></html>',
+      validIndexHtml().replace(
+        `<link rel="canonical" href="${siteUrl}">`,
+        '',
+      ),
     );
+
+    const result = verify(directory);
+
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toMatch(/canonical/i);
+  });
+
+  it('rejects an artifact that retains the old generic site name', () => {
+    const directory = makeArtifact(
+      validIndexHtml().replaceAll(siteName, '全国犯罪統計地図'),
+    );
+
+    const result = verify(directory);
+
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toMatch(/site name|title/i);
+  });
+
+  it('rejects an artifact that asks crawlers not to index the page', () => {
+    const directory = makeArtifact(
+      validIndexHtml().replace('content="index, follow"', 'content="noindex"'),
+    );
+
+    const result = verify(directory);
+
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toMatch(/robots|index/i);
+  });
+
+  it('rejects a sitemap that names a different canonical page', () => {
+    const directory = makeArtifact(validIndexHtml());
+    writeFileSync(
+      join(directory, 'sitemap.xml'),
+      '<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://example.test/</loc></url></urlset>',
+    );
+
+    const result = verify(directory);
+
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toMatch(/sitemap|canonical/i);
+  });
+
+  it('promotes vinext prefixed assets to the Pages artifact root', () => {
+    const directory = makeArtifact(validIndexHtml());
     const prefixedDirectory = join(directory, 'nationality-crime-atlas');
     mkdirSync(prefixedDirectory);
     renameSync(join(directory, '_next'), join(prefixedDirectory, '_next'));
@@ -170,9 +233,7 @@ describe('GitHub Pages artifact contract', () => {
   });
 
   it('refuses to overwrite a colliding root asset tree', () => {
-    const directory = makeArtifact(
-      '<html><head><meta property="og:image" content="https://hs-hg-2026.github.io/nationality-crime-atlas/og.png"></head><body><script src="/nationality-crime-atlas/_next/static/app.js"></script></body></html>',
-    );
+    const directory = makeArtifact(validIndexHtml());
     const nestedAssets = join(
       directory,
       'nationality-crime-atlas/_next/static',
