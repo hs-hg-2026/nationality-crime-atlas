@@ -21,6 +21,7 @@ const requiredFiles = [
   'data/dashboard_export.manifest.json',
   'og.png',
   'favicon.svg',
+  'sitemap.xml',
 ];
 const textExtensions = new Set([
   '.css',
@@ -80,6 +81,85 @@ function originRelativeUrls(html) {
   );
 }
 
+const expectedSiteName = '日本の犯罪統計アトラス';
+const expectedPageTitle =
+  '日本の犯罪統計アトラス｜公表犯罪統計と人口統計を可視化';
+const expectedDescription =
+  '警察庁などが公表した日本の犯罪統計と人口統計を、地域・国籍等・犯罪種別・時系列で、出典・定義の違い・未算出理由とともに比較する可視化サイト。';
+
+function elementAttributes(html, elementName) {
+  const expression = new RegExp(`<${elementName}\\b[^>]*>`, 'giu');
+  return [...html.matchAll(expression)].map((elementMatch) =>
+    Object.fromEntries(
+      [...elementMatch[0].matchAll(/\b([A-Za-z:-]+)=["']([^"']*)["']/gu)].map(
+        (attributeMatch) => [attributeMatch[1].toLowerCase(), attributeMatch[2]],
+      ),
+    ),
+  );
+}
+
+function requireMetaContent(html, attributeName, attributeValue, content) {
+  const match = elementAttributes(html, 'meta').find(
+    (attributes) =>
+      attributes[attributeName] === attributeValue &&
+      attributes.content === content,
+  );
+  if (!match) {
+    throw new Error(
+      `Artifact HTML is missing ${attributeName}="${attributeValue}" metadata.`,
+    );
+  }
+}
+
+function assertSearchMetadata(html, siteUrl) {
+  const canonicalUrl = `${siteUrl || 'https://hs-hg-2026.github.io/nationality-crime-atlas'}/`;
+  const titleMatch = html.match(/<title>([^<]*)<\/title>/iu);
+  if (titleMatch?.[1] !== expectedPageTitle) {
+    throw new Error(`Artifact HTML title does not match the reviewed page title.`);
+  }
+  if (!html.includes(`<h1>${expectedSiteName}</h1>`)) {
+    throw new Error('Artifact HTML site name does not match the reviewed H1.');
+  }
+  requireMetaContent(html, 'name', 'description', expectedDescription);
+  requireMetaContent(html, 'property', 'og:site_name', expectedSiteName);
+  requireMetaContent(html, 'property', 'og:title', expectedPageTitle);
+  requireMetaContent(html, 'property', 'og:description', expectedDescription);
+  requireMetaContent(html, 'property', 'og:url', canonicalUrl);
+
+  const robots = elementAttributes(html, 'meta').find(
+    (attributes) => attributes.name === 'robots',
+  );
+  const robotsDirectives = new Set(
+    (robots?.content ?? '')
+      .toLowerCase()
+      .split(',')
+      .map((directive) => directive.trim()),
+  );
+  if (!robotsDirectives.has('index') || !robotsDirectives.has('follow')) {
+    throw new Error('Artifact HTML robots metadata must allow index and follow.');
+  }
+
+  const canonical = elementAttributes(html, 'link').find(
+    (attributes) => attributes.rel === 'canonical',
+  );
+  if (canonical?.href !== canonicalUrl) {
+    throw new Error(`Artifact HTML canonical URL must be ${canonicalUrl}.`);
+  }
+}
+
+function assertSitemap(root, siteUrl) {
+  const canonicalUrl = `${siteUrl || 'https://hs-hg-2026.github.io/nationality-crime-atlas'}/`;
+  const sitemap = readFileSync(join(root, 'sitemap.xml'), 'utf8');
+  const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/gu)].map(
+    (match) => match[1],
+  );
+  if (locations.length !== 1 || locations[0] !== canonicalUrl) {
+    throw new Error(
+      `Artifact sitemap canonical URL must be exactly ${canonicalUrl}.`,
+    );
+  }
+}
+
 function assertBasePathUrls(html, basePath, siteUrl) {
   const urls = originRelativeUrls(html);
   if (basePath) {
@@ -115,6 +195,8 @@ export function verifyPagesArtifact(root, basePathValue, siteUrlValue = '') {
   assertRequiredFiles(resolvedRoot, files);
   const html = readFileSync(join(resolvedRoot, 'index.html'), 'utf8');
   assertBasePathUrls(html, basePath, siteUrl);
+  assertSearchMetadata(html, siteUrl);
+  assertSitemap(resolvedRoot, siteUrl);
   for (const path of files) {
     if (
       textExtensions.has(extname(path).toLowerCase()) ||

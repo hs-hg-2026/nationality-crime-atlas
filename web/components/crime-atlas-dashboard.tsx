@@ -1386,7 +1386,7 @@ export function CrimeAtlasDashboard({
           </div>
           <div>
             <p>公表統計を、出典と注意点とともに</p>
-            <h1>全国犯罪統計地図</h1>
+            <h1>日本の犯罪統計アトラス</h1>
           </div>
         </div>
         <nav className="atlas-nav" aria-label="ページ内メニュー">
