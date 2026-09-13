@@ -18,8 +18,7 @@ const prepareScriptPath = join(webRoot, 'scripts/prepare-pages-artifact.mjs');
 const verifierPath = join(webRoot, 'scripts/verify-pages-artifact.mjs');
 const siteUrl = 'https://hs-hg-2026.github.io/nationality-crime-atlas/';
 const siteName = '日本の犯罪統計アトラス';
-const pageTitle =
-  '日本の犯罪統計アトラス｜公表犯罪統計と人口統計を可視化';
+const pageTitle = '日本の犯罪統計アトラス｜公表犯罪統計と人口統計を可視化';
 const description =
   '警察庁などが公表した日本の犯罪統計と人口統計を、地域・国籍等・犯罪種別・時系列で、出典・定義の違い・未算出理由とともに比較する可視化サイト。';
 
@@ -162,10 +161,7 @@ describe('GitHub Pages artifact contract', () => {
 
   it('rejects an artifact whose canonical URL is missing', () => {
     const directory = makeArtifact(
-      validIndexHtml().replace(
-        `<link rel="canonical" href="${siteUrl}">`,
-        '',
-      ),
+      validIndexHtml().replace(`<link rel="canonical" href="${siteUrl}">`, ''),
     );
 
     const result = verify(directory);

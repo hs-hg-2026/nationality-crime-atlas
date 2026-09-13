@@ -197,6 +197,7 @@ M1の要点:
 - [x] 2015–2024年について、日本人等の算術残差／日本人人口と、外国人全体／在留外国人数を別panelで表示し、検挙件数／検挙人員、参照人口、人口1,000人当たり参考比率を同じ年軸で確認できるようにする。2015年の外国人分母未登録は0補完せず、分子を残して未算出とする。
 - [x] 2020–2024年について、日本を含む26区分 × 検挙件数／検挙人員の人口1,000人当たり参考比率を、数値凡例付きの青→橙2色heatmapで全件表示する。行は区分内で標準化した5年変化パターンの平均連結・階層クラスタリング順とし、全期間未算出は末尾に残す。日本の残差参考値と選択1区分を、全26区分の最大値を切り上げた0始まりの共通Y軸上で比較し、両者の分子・分母・参考比率を年次表に残す。未算出は0補完しない。
 - [x] 公開サイト下部からGitHub Issuesへ移る導線と、公開投稿・個人情報に関する注意を追加する。
+- [x] 画面名を「日本の犯罪統計アトラス」に統一し、検索結果用title・description、canonical、index/follow、OGP、sitemapとPages artifact gateをlocal実装する。
 - [ ] 可視化要望／不具合報告のGitHub Issue定型を追加する。
 - [ ] サイト内の定義が必要な用語から、公式定義・平易な説明・引用元・適用範囲を持つ用語集へ移動できるようにする。最初の対象は「来日外国人」とする。
 - [x] reviewed release commitをpushし、GitHub Pagesのdeployed URLとlive data hashを実地確認し、v0.2.0を公開する。
@@ -212,8 +213,8 @@ Local MVP実装・検証結果:
 - secondary view: 日本を含む刑法犯検挙人員／検挙件数比較と8つの公表外国人perspectiveをselectorで切り替える。compatibleな日本人分子がないviewでも日本rowをexplicit refusalとして残す。全categoryの参考比率を降順の横棒plotで表示し、日本を別色、算出不能を末尾に置く。全件表にはraw分子・分母・参考比率、source、残差、warning、refusal／mismatchを併記する。個別国籍 × 都道府県は推計しない。
 - composition view: 日本を含む全26 categoryと6犯罪類型をheatmap／100%積み上げで表示し、検挙人員／検挙件数と公表順／階層cluster順を切り替える。cellは構成比と実数を併記し、total 0は`構成比算出不能`とする。
 - time-series view: 2015–2024年の全国検挙構成比60行を、検挙件数／検挙人員を切り替えるline chartと全件表で表示する。外国人全体／来日外国人／両者の算術差分を別系列とし、日本人等を含む全国総数を分母にする。別sectionでは人口当たり参考比率40行を日本人等／外国人全体の2 panelに分け、分子、参照人口、人口1,000人当たりの値を表示する。さらに2020–2024年の国籍等別参考比率260行を、階層クラスタリング順の2色heatmap、日本の橙破線と選択区分の青実線を重ねた比較chart、両系列の年次実数表で示す。比較chartのY軸は全26区分共通で0始まりとする。いずれも人口当たりの犯罪発生確率ではなく、scope不一致と算術残差を常設表示する。
-- verification: frontend 131 test、statement coverage 88.08%、branch coverage 84.12%、typecheck／lint／format／data hash verification／production buildをpass。Pythonは180 test、skip 0、coverage 82.77%。
-- publication: GitHub Pagesでv0.3.0／schema v9を公開済み。Actions run 34170172329はbuild／deployとも成功し、公開画面はHTTP 200、live dashboard bundleはrepository内の公開dataとbyte-identical、SHA-256 `4219edb5c7ff75e52bae97452f4991f6e5852dd746cfca1d3dc9c4d62bd37f65`。
+- verification: frontend 136 test、statement coverage 88.08%、branch coverage 84.12%、typecheck／lint／format／data hash verification／production buildをpass。Pythonは180 test、skip 0、coverage 82.77%。
+- publication: GitHub Pagesでv0.3.0／schema v9を公開済み。Actions run 34170172329はbuild／deployとも成功し、公開画面はHTTP 200、live dashboard bundleはrepository内の公開dataとbyte-identical、SHA-256 `4219edb5c7ff75e52bae97452f4991f6e5852dd746cfca1d3dc9c4d62bd37f65`。新名称と検索向けmetadataはlocal検証済みで、未push／未deploy。
 
 ### M5. 過去年整備・定期更新・監視 — **進行中**
 

@@ -92,7 +92,10 @@ function elementAttributes(html, elementName) {
   return [...html.matchAll(expression)].map((elementMatch) =>
     Object.fromEntries(
       [...elementMatch[0].matchAll(/\b([A-Za-z:-]+)=["']([^"']*)["']/gu)].map(
-        (attributeMatch) => [attributeMatch[1].toLowerCase(), attributeMatch[2]],
+        (attributeMatch) => [
+          attributeMatch[1].toLowerCase(),
+          attributeMatch[2],
+        ],
       ),
     ),
   );
@@ -115,7 +118,9 @@ function assertSearchMetadata(html, siteUrl) {
   const canonicalUrl = `${siteUrl || 'https://hs-hg-2026.github.io/nationality-crime-atlas'}/`;
   const titleMatch = html.match(/<title>([^<]*)<\/title>/iu);
   if (titleMatch?.[1] !== expectedPageTitle) {
-    throw new Error(`Artifact HTML title does not match the reviewed page title.`);
+    throw new Error(
+      `Artifact HTML title does not match the reviewed page title.`,
+    );
   }
   if (!html.includes(`<h1>${expectedSiteName}</h1>`)) {
     throw new Error('Artifact HTML site name does not match the reviewed H1.');
@@ -136,7 +141,9 @@ function assertSearchMetadata(html, siteUrl) {
       .map((directive) => directive.trim()),
   );
   if (!robotsDirectives.has('index') || !robotsDirectives.has('follow')) {
-    throw new Error('Artifact HTML robots metadata must allow index and follow.');
+    throw new Error(
+      'Artifact HTML robots metadata must allow index and follow.',
+    );
   }
 
   const canonical = elementAttributes(html, 'link').find(
