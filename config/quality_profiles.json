@@ -1234,6 +1234,157 @@
           "expected_matches": 1
         }
       ]
+    },
+    "S20": {
+      "description": "NPA 2025 all-person prefecture criminal-code summary tables 1-5-1, 1-5-3, and 1-5-4",
+      "record_type": "overall_prefecture_crime",
+      "expected_artifact_sha256": "9d0f25831974f262711021879672646b2cb33418a8c2b03df4d810c2d6a40b07",
+      "expected_record_count": 48,
+      "expected_years": [2025],
+      "allowed_values": {
+        "population_scope": ["all_persons"],
+        "offense_scope": ["criminal_code_excluding_traffic_negligence"],
+        "geography_type": ["national", "prefecture"],
+        "geography_semantics": ["national_aggregate", "police_reporting_area_unresolved"]
+      },
+      "expected_distinct_counts": {"geography": 48, "geography_type": 2},
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"geography": "日本"},
+          "expect": {"recognized_cases": 774142, "cleared_cases": 301055, "cleared_persons": 200663},
+          "expected_matches": 1
+        },
+        {
+          "where": {"geography": "東京都"},
+          "expect": {"recognized_cases": 99349, "cleared_cases": 35097, "cleared_persons": 24587},
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S21": {
+      "description": "NPA 2025 national criminal-code clearance totals by population scope, table 3-3-1",
+      "record_type": "national_clearance_annual",
+      "expected_artifact_sha256": "853bf42f0467389afd4e4f532c09c3fb7bb1f7bf4a05a7dc9911f9b6b20d1b1b",
+      "expected_record_count": 3,
+      "expected_years": [2025],
+      "allowed_values": {
+        "population_scope": ["all_persons", "all_foreign", "visiting_foreign"],
+        "offense_scope": ["criminal_code_excluding_traffic_negligence"]
+      },
+      "expected_distinct_counts": {"population_scope": 3},
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"population_scope": "all_foreign"},
+          "expect": {"cleared_cases": 22917, "cleared_persons": 11354},
+          "expected_matches": 1
+        },
+        {
+          "where": {"population_scope": "visiting_foreign"},
+          "expect": {"cleared_cases": 17614, "cleared_persons": 7333},
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S22": {
+      "description": "NPA 2025 selected nationality criminal-code clearance metrics, table 3-3-3",
+      "record_type": "selected_nationality_clearance",
+      "expected_artifact_sha256": "853bf42f0467389afd4e4f532c09c3fb7bb1f7bf4a05a7dc9911f9b6b20d1b1b",
+      "expected_record_count": 50,
+      "expected_years": [2025],
+      "allowed_values": {
+        "population_scope": ["all_foreign", "visiting_foreign"],
+        "metric": ["cleared_cases", "cleared_persons"],
+        "selection_rule": ["at_least_300_cases_in_one_year_2016_2025", "at_least_150_persons_in_one_year_2016_2025"],
+        "category_definition": ["as_published", "excludes_taiwan_and_hong_kong_etc"]
+      },
+      "expected_distinct_counts": {"nationality": 15, "metric": 2, "population_scope": 2},
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"nationality": "中国", "metric": "cleared_cases", "population_scope": "all_foreign"},
+          "expect": {"value": 3321, "category_definition": "excludes_taiwan_and_hong_kong_etc"},
+          "expected_matches": 1
+        },
+        {
+          "where": {"nationality": "ベトナム", "metric": "cleared_persons", "population_scope": "visiting_foreign"},
+          "expect": {"value": 1913},
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S23": {
+      "description": "NPA 2025 visiting-foreigner criminal-code offense hierarchy, table 3-3-4",
+      "record_type": "nationality_offense_group",
+      "expected_artifact_sha256": "853bf42f0467389afd4e4f532c09c3fb7bb1f7bf4a05a7dc9911f9b6b20d1b1b",
+      "expected_record_count": 28,
+      "expected_years": [2025],
+      "allowed_values": {
+        "population_scope": ["visiting_foreign"],
+        "row_kind": ["national_total"],
+        "official_severity_role": ["official_high_severity_category", "not_a_project_severity_classification"]
+      },
+      "expected_distinct_counts": {"offense_id": 28, "offense_level": 4},
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"offense_id": "criminal_code"},
+          "expect": {"cleared_cases": 17614, "cleared_persons": 7333},
+          "expected_matches": 1
+        },
+        {
+          "where": {"offense_id": "heinous"},
+          "expect": {"cleared_cases": 295, "cleared_persons": 341},
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S24": {
+      "description": "2025 Population Census preliminary total population",
+      "record_type": "prefecture_population",
+      "expected_artifact_sha256": "ac68e74efb74e2cd4b9cce64c85fa3ece508ae018205c121af76a37b8373758b",
+      "expected_record_count": 48,
+      "expected_years": [2025],
+      "allowed_values": {
+        "population_scope": ["total_population"],
+        "geography_type": ["national", "prefecture"],
+        "geography_semantics": ["census_preliminary_population"],
+        "source_unit": ["persons"],
+        "rounding": ["none"]
+      },
+      "expected_distinct_counts": {"geography": 48, "geography_type": 2},
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"geography": "日本"},
+          "expect": {"population": 123049524},
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S25": {
+      "description": "2025 Population Census estimated foreign population reference table",
+      "record_type": "prefecture_population",
+      "expected_artifact_sha256": "192fadf6cfdfc2cb321b0e6a5b63e20971c3891a59a1c80e022890be480cec14",
+      "expected_record_count": 48,
+      "expected_years": [2025],
+      "allowed_values": {
+        "population_scope": ["foreign_population_estimate"],
+        "geography_type": ["national", "prefecture"],
+        "geography_semantics": ["census_reference_estimate"],
+        "source_unit": ["persons"],
+        "rounding": ["none"]
+      },
+      "expected_distinct_counts": {"geography": 48, "geography_type": 2},
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {"geography": "日本"},
+          "expect": {"population": 3213212},
+          "expected_matches": 1
+        }
+      ]
     }
   }
 }

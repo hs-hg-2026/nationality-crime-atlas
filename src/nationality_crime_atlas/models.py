@@ -66,6 +66,24 @@ class NationalityCrimeRecord:
 
 
 @dataclass(frozen=True)
+class SelectedNationalityClearanceRecord:
+    """One metric explicitly published for a selected nationality in the 2025 summary."""
+
+    year: int
+    population_scope: str
+    nationality: str
+    metric: str
+    value: int
+    selection_rule: str
+    category_definition: str
+    source_id: str
+    source_table: str
+    source_sheet: str
+    source_row: int
+    source_column: int
+
+
+@dataclass(frozen=True)
 class NationalClearanceAnnualRecord:
     """One published nationwide annual criminal-code clearance total."""
 

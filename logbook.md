@@ -488,3 +488,9 @@
 - **どう判断したか／なぜ**: release完了はtag作成だけでなく、Actions成功、公開HTMLのtitle／H1／description／robots／canonical／OGP、sitemap、dashboard data hash、OGP画像のbyte identityを確認できた時点とした。
 - **検証結果**: 公開URLはHTTP 200。live dashboard data SHA-256は`4219edb5c7ff75e52bae97452f4991f6e5852dd746cfca1d3dc9c4d62bd37f65`、repository内fileとbyte-identical。live OGP SHA-256は`beed30afe03f22912bdbd993a631a35e4ef7213a09432f005b242eec15df76b1`、1200 × 630でrepository内assetとbyte-identical。前回runの5秒test timeoutは修正後に解消した。
 - **関連パス**: `docs/20260913_170139_v0.3.1_release_notes.md`, `README.md`, `README.ja.md`, `docs/brief.md`, `docs/workflow.md`, release: `https://github.com/hs-hg-2026/nationality-crime-atlas/releases/tag/v0.3.1`, run: `https://github.com/hs-hg-2026/nationality-crime-atlas/actions/runs/34746991096`
+
+## 2026-09-24 2025年公開済みsourceを取得
+- **何が**: 警察庁の2025年刑法犯統計資料と、総務省統計局の2025年国勢調査速報・外国人口推計参考表をS20–S25として取得した。raw hashをpinし、225行をnormalizeした。
+- **どう判断したか／なぜ**: 2025年国籍等別表は掲載thresholdが件数と人員で異なり、中国の定義も旧表と異なる。そのため旧editionを上書きせず、未掲載を0にしないmetric-long sourceとして分離した。国勢調査も速報値・推計値を確定値と呼ばない。
+- **検証結果**: 6 sourceのofficial download、pinned SHA-256、quality anchor、catalog生成に成功。再取得はすべて`reused: true`。Python 186 test、coverage 82.63%をPASSした。公開dashboardへはまだ接続していない。
+- **関連パス**: `docs/20260924_083500_2025_public_source_acquisition.md`, `config/sources.json`, `config/quality_profiles.json`, `data/processed/_catalog/artifacts.jsonl`

@@ -43,8 +43,14 @@ def test_project_registry_declares_all_current_sources():
         "S19_2022",
         "S19_2023",
         "S19_2024",
-        "S19_2025",
-    }
+            "S19_2025",
+            "S20",
+            "S21",
+            "S22",
+            "S23",
+            "S24",
+            "S25",
+        }
     assert registry["S14"]["parser"] == "population-t1"
     assert registry["S14"]["series_id"] == "isa-resident-foreigner-population-t1"
     assert registry["S14"]["edition_id"] == "S14"

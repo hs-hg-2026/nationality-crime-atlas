@@ -116,6 +116,71 @@
         "Only the published total across residence statuses is normalized; raw region and nationality labels are retained.",
         "The official workbook changes from a wide visual layout to a flat machine-readable layout between 2021 and 2022."
       ]
+    },
+    "npa-2025-prefecture-crime-summary": {
+      "publisher": "National Police Agency of Japan",
+      "dataset": "2025 criminal-code statistics summary: all-person counts by prefecture",
+      "parser": "npa-2025-prefecture-summary",
+      "license_url": "https://www.npa.go.jp/rules/index.html",
+      "dimensions": ["year", "prefecture", "offense_scope"],
+      "definitions": [
+        "Joins the published tables 1-5-1, 1-5-3, and 1-5-4 for recognized cases, cleared cases, and cleared persons.",
+        "Prefecture labels are police-statistics geographies and are not offender residence."
+      ],
+      "notes": ["This is a changed source layout and does not overwrite detailed annual Table 3 editions."]
+    },
+    "npa-2025-foreign-clearance-totals": {
+      "publisher": "National Police Agency of Japan",
+      "dataset": "2025 criminal-code statistics summary: national clearance totals by foreigner scope",
+      "parser": "npa-2025-foreign-totals",
+      "license_url": "https://www.npa.go.jp/rules/index.html",
+      "dimensions": ["year", "population_scope", "offense_scope"],
+      "definitions": [
+        "Published national criminal-code totals for all persons, all foreign nationals, and visiting foreign nationals."
+      ],
+      "notes": ["These are criminal-code figures and must not be mixed with criminal-and-special-law totals."]
+    },
+    "npa-2025-selected-nationality-clearances": {
+      "publisher": "National Police Agency of Japan",
+      "dataset": "2025 criminal-code statistics summary: selected nationality clearance metrics",
+      "parser": "npa-2025-selected-nationalities",
+      "license_url": "https://www.npa.go.jp/rules/index.html",
+      "dimensions": ["year", "population_scope", "nationality_or_region", "metric"],
+      "definitions": [
+        "Cases and persons use separate publication thresholds, so each metric is normalized as a separate row.",
+        "The source states that the China category excludes Taiwan and Hong Kong etc."
+      ],
+      "notes": [
+        "Unpublished nationalities are absent, not zero.",
+        "This selected-category table is not a direct continuation of the 2020--2024 complete comparison view."
+      ]
+    },
+    "npa-2025-visiting-foreigner-offenses": {
+      "publisher": "National Police Agency of Japan",
+      "dataset": "2025 criminal-code statistics summary: visiting-foreigner offense and modus-operandi clearances",
+      "parser": "npa-2025-visiting-offenses",
+      "license_url": "https://www.npa.go.jp/rules/index.html",
+      "dimensions": ["year", "population_scope", "offense_hierarchy"],
+      "definitions": ["National visiting-foreigner criminal-code totals only."],
+      "notes": ["This does not provide all-foreigner nationality-by-offense cells."]
+    },
+    "census-2025-preliminary-population": {
+      "publisher": "Statistics Bureau of Japan",
+      "dataset": "2025 Population Census preliminary population tabulation",
+      "parser": "census-2025-preliminary-population",
+      "license_url": "https://www.stat.go.jp/info/riyou.html",
+      "dimensions": ["year", "reference_date", "prefecture"],
+      "definitions": ["Preliminary total population as of 2025-10-01, published in persons."],
+      "notes": ["Do not silently replace the forthcoming final basic tabulation with this preliminary edition."]
+    },
+    "census-2025-estimated-foreign-population": {
+      "publisher": "Statistics Bureau of Japan",
+      "dataset": "2025 Population Census reference table: estimated foreign population",
+      "parser": "census-2025-estimated-foreign-population",
+      "license_url": "https://www.stat.go.jp/info/riyou.html",
+      "dimensions": ["year", "reference_date", "prefecture"],
+      "definitions": ["Estimated foreign population reference values as of 2025-10-01, published in persons."],
+      "notes": ["The estimate label is preserved and this source is not treated as final census nationality data."]
     }
   },
   "editions": {
@@ -744,6 +809,102 @@
       "verified_at": "2026-09-05",
       "verification_level": "binary_and_primary",
       "expected_sha256": "cef9a02be7b4c289017e763579fdab4e347e9830aebaeee73be91743ef00d62c"
+    },
+    "S20": {
+      "series_id": "npa-2025-prefecture-crime-summary",
+      "source_table": "1-5-1|1-5-3|1-5-4",
+      "expected_format": "xlsx",
+      "filename": "r07_1.xlsx",
+      "landing_url": "https://www.npa.go.jp/toukei/seianki/R07/r07.zuhyosakuin.htm",
+      "download_url": "https://www.npa.go.jp/toukei/seianki/R07/r07_1.xlsx",
+      "period": "2025 annual all-person prefecture crime summary",
+      "coverage_periods": ["2025"],
+      "published_at": "2026-08-27",
+      "revision": "finalized_summary",
+      "stable_ids": {"npa_year": "R07", "npa_tables": ["1-5-1", "1-5-3", "1-5-4"]},
+      "verified_at": "2026-09-24",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "9d0f25831974f262711021879672646b2cb33418a8c2b03df4d810c2d6a40b07"
+    },
+    "S21": {
+      "series_id": "npa-2025-foreign-clearance-totals",
+      "source_table": "3-3-1",
+      "expected_format": "xlsx",
+      "filename": "r07_3.xlsx",
+      "landing_url": "https://www.npa.go.jp/toukei/seianki/R07/r07.zuhyosakuin.htm",
+      "download_url": "https://www.npa.go.jp/toukei/seianki/R07/r07_3.xlsx",
+      "period": "2025 annual national clearance totals",
+      "coverage_periods": ["2025"],
+      "published_at": "2026-08-27",
+      "revision": "finalized_summary",
+      "stable_ids": {"npa_year": "R07", "npa_table": "3-3-1"},
+      "verified_at": "2026-09-24",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "853bf42f0467389afd4e4f532c09c3fb7bb1f7bf4a05a7dc9911f9b6b20d1b1b"
+    },
+    "S22": {
+      "series_id": "npa-2025-selected-nationality-clearances",
+      "source_table": "3-3-3",
+      "expected_format": "xlsx",
+      "filename": "r07_3.xlsx",
+      "landing_url": "https://www.npa.go.jp/toukei/seianki/R07/r07.zuhyosakuin.htm",
+      "download_url": "https://www.npa.go.jp/toukei/seianki/R07/r07_3.xlsx",
+      "period": "2025 annual selected nationality clearance metrics",
+      "coverage_periods": ["2025"],
+      "published_at": "2026-08-27",
+      "revision": "finalized_summary",
+      "stable_ids": {"npa_year": "R07", "npa_table": "3-3-3"},
+      "verified_at": "2026-09-24",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "853bf42f0467389afd4e4f532c09c3fb7bb1f7bf4a05a7dc9911f9b6b20d1b1b"
+    },
+    "S23": {
+      "series_id": "npa-2025-visiting-foreigner-offenses",
+      "source_table": "3-3-4",
+      "expected_format": "xlsx",
+      "filename": "r07_3.xlsx",
+      "landing_url": "https://www.npa.go.jp/toukei/seianki/R07/r07.zuhyosakuin.htm",
+      "download_url": "https://www.npa.go.jp/toukei/seianki/R07/r07_3.xlsx",
+      "period": "2025 annual visiting-foreigner offense summary",
+      "coverage_periods": ["2025"],
+      "published_at": "2026-08-27",
+      "revision": "finalized_summary",
+      "stable_ids": {"npa_year": "R07", "npa_table": "3-3-4"},
+      "verified_at": "2026-09-24",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "853bf42f0467389afd4e4f532c09c3fb7bb1f7bf4a05a7dc9911f9b6b20d1b1b"
+    },
+    "S24": {
+      "series_id": "census-2025-preliminary-population",
+      "source_table": "1",
+      "expected_format": "xlsx",
+      "filename": "2025_census_preliminary_population.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?cycle=0&layout=datalist&page=1&tclass1=000001232201&tclass2=000001232202&tclass3val=0&toukei=00200521&tstat=000001230925",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?fileKind=0&statInfId=000040454825",
+      "period": "2025-10-01 preliminary census population",
+      "coverage_periods": ["2025-10-01"],
+      "published_at": "2026-05-29T08:30:00+09:00",
+      "revision": "preliminary_tabulation",
+      "stable_ids": {"e_stat_stat_inf_id": "000040454825", "census_table": "1"},
+      "verified_at": "2026-09-24",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "ac68e74efb74e2cd4b9cce64c85fa3ece508ae018205c121af76a37b8373758b"
+    },
+    "S25": {
+      "series_id": "census-2025-estimated-foreign-population",
+      "source_table": "reference_foreign_population",
+      "expected_format": "xlsx",
+      "filename": "2025_census_estimated_foreign_population.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?layout=datalist&lid=000001482832&page=1",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?fileKind=0&statInfId=000040454964",
+      "period": "2025-10-01 estimated foreign population reference table",
+      "coverage_periods": ["2025-10-01"],
+      "published_at": "2026-05-29",
+      "revision": "preliminary_reference_estimate",
+      "stable_ids": {"e_stat_stat_inf_id": "000040454964"},
+      "verified_at": "2026-09-24",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "192fadf6cfdfc2cb321b0e6a5b63e20971c3891a59a1c80e022890be480cec14"
     }
   }
 }

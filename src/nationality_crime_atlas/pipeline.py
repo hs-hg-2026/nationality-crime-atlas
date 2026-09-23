@@ -16,8 +16,18 @@ from .npa_all_residents import (
     parse_statistics_bureau_japanese_population,
 )
 from .npa_nationality import parse_npa_nationality_totals
+from .npa_2025_summary import (
+    parse_npa_2025_foreign_clearance_totals,
+    parse_npa_2025_prefecture_crime,
+    parse_npa_2025_selected_nationalities,
+    parse_npa_2025_visiting_offenses,
+)
 from .npa_prefecture import parse_npa_prefecture_table13
 from .population import parse_population_nationality_totals, parse_population_t1
+from .census_2025 import (
+    parse_census_estimated_foreign_population,
+    parse_census_preliminary_population,
+)
 from .provenance import sha256_file
 from .quality import validate_jsonl
 from .snapshot import RawSnapshot, snapshot_artifact
@@ -33,6 +43,12 @@ PARSER_CONTRACT_VERSIONS = {
     "npa-prefecture-population": 1,
     "statistics-bureau-japanese-population": 2,
     "statistics-bureau-intercensal-population": 1,
+    "npa-2025-prefecture-summary": 1,
+    "npa-2025-foreign-totals": 1,
+    "npa-2025-selected-nationalities": 1,
+    "npa-2025-visiting-offenses": 1,
+    "census-2025-preliminary-population": 1,
+    "census-2025-estimated-foreign-population": 1,
 }
 
 
@@ -96,6 +112,20 @@ def _records_for_source(
         )
     if parser == "statistics-bureau-intercensal-population":
         return parse_statistics_bureau_intercensal_population(
+            artifact, source_id=source_id
+        )
+    if parser == "npa-2025-prefecture-summary":
+        return parse_npa_2025_prefecture_crime(artifact, source_id=source_id)
+    if parser == "npa-2025-foreign-totals":
+        return parse_npa_2025_foreign_clearance_totals(artifact, source_id=source_id)
+    if parser == "npa-2025-selected-nationalities":
+        return parse_npa_2025_selected_nationalities(artifact, source_id=source_id)
+    if parser == "npa-2025-visiting-offenses":
+        return parse_npa_2025_visiting_offenses(artifact, source_id=source_id)
+    if parser == "census-2025-preliminary-population":
+        return parse_census_preliminary_population(artifact, source_id=source_id)
+    if parser == "census-2025-estimated-foreign-population":
+        return parse_census_estimated_foreign_population(
             artifact, source_id=source_id
         )
     raise SchemaError("Unsupported parser in source metadata: %r" % parser)
