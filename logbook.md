@@ -494,3 +494,11 @@
 - **どう判断したか／なぜ**: 2025年国籍等別表は掲載thresholdが件数と人員で異なり、中国の定義も旧表と異なる。そのため旧editionを上書きせず、未掲載を0にしないmetric-long sourceとして分離した。国勢調査も速報値・推計値を確定値と呼ばない。
 - **検証結果**: 6 sourceのofficial download、pinned SHA-256、quality anchor、catalog生成に成功。再取得はすべて`reused: true`。Python 186 test、coverage 82.63%をPASSした。公開dashboardへはまだ接続していない。
 - **関連パス**: `docs/20260924_083500_2025_public_source_acquisition.md`, `config/sources.json`, `config/quality_profiles.json`, `data/processed/_catalog/artifacts.jsonl`
+
+## 2026-10-05 2025年人口確定値を取得し、原数値と不詳補完値を分離
+- **何が**: 国勢調査人口等基本集計の9月29日公開を確認し、総人口表1-1、国籍表49-1、全国詳細表55、公式不詳補完表49-1をS26–S29として取得・正規化した。2,942行を追加し、出典登録・検証済み一覧は19系列44版となった。警察庁の年間詳細版は公式一覧で2024年までだった。
+- **どう判断したか／なぜ**: 原数値は総人口122,972,528、日本人117,405,318、外国人3,461,758、不詳2,105,452。不詳補完値は日本人119,131,935、外国人3,840,039、不詳554。同じ日付でも分母が異なるため別資料・別のvalue basisで保持する。総人口−外国人を直接公表された日本人人口と呼ばない。公開画面へ接続する際に分母と年の区切りを表示する。
+- **検証結果**: 元Excel4件のhash・正式取得・quality gateをPASS。地域内の人口4区分・外国人内訳、全国と47都道府県の合計、全国詳細表の地域階層を照合した。再取得4件とも再利用。Python 203件成功、coverage 82.92%。読み取りとpipelineの再現test17件が成功。実装commitは`1a49c0b`、REDは`475f044`。公開画面の2025年接続とpush/releaseは未実施。
+- **次の順番**: S21で全国検挙構成比を延長 → S20/S26で地域別2025年表示 → 分母を明示した人口当たり時系列 → 掲載対象限定の国籍別2025年表示 → 警察庁詳細版の確認。
+- **追加照合**: 2025年犯罪概要に再掲された2024年値のうち、S20の地域別3指標144値がS15と一致し、S21の全国3範囲×2指標6値がS15/S08/S09の刑法犯値と一致した。S20/S21/S19_2025の公式ファイルをrefreshし、前回hashとの一致も確認した。この一致だけで人口との対象範囲の一致を主張しない。
+- **関連パス**: `docs/20261005_215935_2025_final_population_update.md`, `src/nationality_crime_atlas/census_2025.py`, `tests/test_census_2025_final.py`, `config/sources.json`, `data/processed/_catalog/artifacts.jsonl`。README両言語とworkflowの旧版は`docs/20261005_215935_README.md`、`docs/20261005_215935_README.ja.md`、`docs/20261005_215935_workflow.md`に退避した。
