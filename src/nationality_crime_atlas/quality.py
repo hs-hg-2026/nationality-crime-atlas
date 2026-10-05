@@ -13,6 +13,17 @@ QUALITY_REPORT_SCHEMA_VERSION = 1
 MAX_REPORTED_ERRORS = 100
 
 RECORD_SPECS = {
+    "census_nationality_population": {
+        "fields": {
+            "year", "reference_date", "geography", "geography_code", "geography_type",
+            "nationality_code", "nationality", "category_level", "population", "source_value",
+            "source_unit", "rounding", "value_basis", "source_id", "source_table", "source_sheet",
+            "source_row", "source_column",
+        },
+        "key_fields": ("year", "reference_date", "geography_code", "nationality_code", "value_basis", "source_id"),
+        "metric_fields": ("population",),
+        "period_field": "year",
+    },
     "population": {
         "fields": {
             "period_end",

@@ -1,6 +1,297 @@
 {
   "schema_version": 1,
   "profiles": {
+    "S26": {
+      "description": "2025 final Census total population, Table 1-1 original",
+      "record_type": "prefecture_population",
+      "expected_artifact_sha256": "c1ff781e05af6fce6510ee9cfbeba856106c97ae780ca030a549466b0074d856",
+      "expected_record_count": 48,
+      "expected_years": [
+        2025
+      ],
+      "allowed_values": {
+        "population_scope": [
+          "total_population"
+        ],
+        "geography_type": [
+          "national",
+          "prefecture"
+        ],
+        "geography_semantics": [
+          "census_final_original_population"
+        ],
+        "source_unit": [
+          "persons"
+        ],
+        "rounding": [
+          "none"
+        ],
+        "reference_date": [
+          "2025-10-01"
+        ]
+      },
+      "expected_distinct_counts": {
+        "geography": 48,
+        "geography_type": 2
+      },
+      "expected_sums": {
+        "population": 245945056
+      },
+      "anchors": [
+        {
+          "where": {
+            "geography": "日本"
+          },
+          "expect": {
+            "population": 122972528
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "geography": "北海道"
+          },
+          "expect": {
+            "population": 4980272
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S27": {
+      "description": "2025 Census Table 49-1 nationality population original values",
+      "record_type": "census_nationality_population",
+      "expected_artifact_sha256": "87da0fb8898840e16d7f48820f7bb59eeb30abf8e7eddac93312443315d8b9b5",
+      "expected_record_count": 1344,
+      "expected_years": [
+        2025
+      ],
+      "allowed_values": {
+        "reference_date": [
+          "2025-10-01"
+        ],
+        "geography_type": [
+          "national",
+          "prefecture"
+        ],
+        "category_level": [
+          1,
+          2
+        ],
+        "value_basis": [
+          "original"
+        ],
+        "source_unit": [
+          "persons"
+        ],
+        "rounding": [
+          "none"
+        ]
+      },
+      "expected_distinct_counts": {
+        "geography": 48,
+        "nationality_code": 28
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "geography": "日本",
+            "nationality_code": "0"
+          },
+          "expect": {
+            "population": 122972528
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "geography": "日本",
+            "nationality_code": "1"
+          },
+          "expect": {
+            "population": 3461758
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "geography": "日本",
+            "nationality_code": "2"
+          },
+          "expect": {
+            "population": 117405318
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "geography": "日本",
+            "nationality_code": "3"
+          },
+          "expect": {
+            "population": 2105452
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S28": {
+      "description": "2025 Census Table 55 national detail original values",
+      "record_type": "census_nationality_population",
+      "expected_artifact_sha256": "ae02b5ba5a0a10240f7ef77b0ad3b40566526af8bd879c3fccb5fe4ffabde508",
+      "expected_record_count": 206,
+      "expected_years": [
+        2025
+      ],
+      "allowed_values": {
+        "reference_date": [
+          "2025-10-01"
+        ],
+        "geography_type": [
+          "national"
+        ],
+        "category_level": [
+          1,
+          2,
+          3
+        ],
+        "value_basis": [
+          "original"
+        ],
+        "source_unit": [
+          "persons"
+        ],
+        "rounding": [
+          "none"
+        ]
+      },
+      "expected_distinct_counts": {
+        "geography": 1,
+        "nationality_code": 206
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "geography": "日本",
+            "nationality_code": "0"
+          },
+          "expect": {
+            "population": 122972528
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "geography": "日本",
+            "nationality_code": "1"
+          },
+          "expect": {
+            "population": 3461758
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "geography": "日本",
+            "nationality_code": "2"
+          },
+          "expect": {
+            "population": 117405318
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "geography": "日本",
+            "nationality_code": "3"
+          },
+          "expect": {
+            "population": 2105452
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
+    "S29": {
+      "description": "2025 Census Table 49-1 nationality population official imputed reference",
+      "record_type": "census_nationality_population",
+      "expected_artifact_sha256": "13bf4bc6e919e4e7f85d6001c214bcaf0cddf6e9ec927325c8f33f152fe27d45",
+      "expected_record_count": 1344,
+      "expected_years": [
+        2025
+      ],
+      "allowed_values": {
+        "reference_date": [
+          "2025-10-01"
+        ],
+        "geography_type": [
+          "national",
+          "prefecture"
+        ],
+        "category_level": [
+          1,
+          2
+        ],
+        "value_basis": [
+          "official_imputed_reference"
+        ],
+        "source_unit": [
+          "persons"
+        ],
+        "rounding": [
+          "none"
+        ]
+      },
+      "expected_distinct_counts": {
+        "geography": 48,
+        "nationality_code": 28
+      },
+      "expected_sums": {},
+      "anchors": [
+        {
+          "where": {
+            "geography": "日本",
+            "nationality_code": "0"
+          },
+          "expect": {
+            "population": 122972528
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "geography": "日本",
+            "nationality_code": "1"
+          },
+          "expect": {
+            "population": 3840039
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "geography": "日本",
+            "nationality_code": "2"
+          },
+          "expect": {
+            "population": 119131935
+          },
+          "expected_matches": 1
+        },
+        {
+          "where": {
+            "geography": "日本",
+            "nationality_code": "3"
+          },
+          "expect": {
+            "population": 554
+          },
+          "expected_matches": 1
+        }
+      ]
+    },
     "S02": {
       "description": "NPA 2025 finalized Table 13 with 2024 comparison",
       "record_type": "prefecture_crime",

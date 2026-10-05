@@ -1,7 +1,31 @@
 """Normalized records emitted by the source parsers."""
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Union
+
+
+@dataclass(frozen=True)
+class CensusNationalityPopulationRecord:
+    """A census nationality category, retaining hierarchy and official value basis."""
+
+    year: int
+    reference_date: str
+    geography: str
+    geography_code: str
+    geography_type: str
+    nationality_code: str
+    nationality: str
+    category_level: int
+    population: int
+    source_value: Union[int, str]
+    source_unit: str
+    rounding: str
+    value_basis: str
+    source_id: str
+    source_table: str
+    source_sheet: str
+    source_row: int
+    source_column: int
 
 
 @dataclass(frozen=True)

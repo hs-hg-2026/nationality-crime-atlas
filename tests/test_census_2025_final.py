@@ -146,3 +146,36 @@ def test_detail_rejects_inconsistent_region_total(tmp_path):
     _change(path, "D14", 149)
     with pytest.raises(SchemaError, match="reconcile"):
         parse_census_final_detailed_nationalities(path, source_id="S28")
+
+
+@pytest.mark.parametrize("parser,source_id,record_type,count", [
+    ("census-2025-final-total-population", "S26", "prefecture_population", 2),
+    ("census-2025-final-nationality-population", "S27", "census_nationality_population", 12),
+    ("census-2025-final-detailed-nationalities", "S28", "census_nationality_population", 7),
+    ("census-2025-imputed-nationality-population", "S29", "census_nationality_population", 12),
+])
+def test_final_census_runs_through_quality_pipeline_and_reuses(tmp_path, parser, source_id, record_type, count):
+    import hashlib
+    import json
+    from nationality_crime_atlas.pipeline import run_offline_pipeline
+    from nationality_crime_atlas.registry import load_source_registry
+
+    source = load_source_registry("config/sources.json")[source_id]
+    assert source["parser"] == parser
+    if source_id == "S26":
+        path = _total_fixture(tmp_path / "fixture.xlsx")
+    elif source_id == "S28":
+        path = _detailed_fixture(tmp_path / "fixture.xlsx")
+    else:
+        path = _nationality_fixture(tmp_path / "fixture.xlsx", imputed=source_id == "S29")
+    # Pin only the synthetic fixture in this isolated pipeline; keep official pins intact.
+    source["expected_sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    profile = {"record_type": record_type, "expected_record_count": count, "expected_years": [2025]}
+    if source_id != "S26":
+        profile["allowed_values"] = {"value_basis": ["official_imputed_reference" if source_id == "S29" else "original"]}
+    options = dict(source_id=source_id, source_metadata=source, quality_profile=profile,
+                   retrieved_at="2026-10-05T21:00:00+09:00", raw_root=tmp_path / "raw",
+                   processed_root=tmp_path / "processed")
+    first = run_offline_pipeline(path, **options)
+    assert json.loads(first.quality_report_path.read_text())["passed"]
+    assert run_offline_pipeline(path, **options).reused

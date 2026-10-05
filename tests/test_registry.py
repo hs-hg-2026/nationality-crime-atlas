@@ -50,6 +50,10 @@ def test_project_registry_declares_all_current_sources():
             "S23",
             "S24",
             "S25",
+            "S26",
+            "S27",
+            "S28",
+            "S29",
         }
     assert registry["S14"]["parser"] == "population-t1"
     assert registry["S14"]["series_id"] == "isa-resident-foreigner-population-t1"

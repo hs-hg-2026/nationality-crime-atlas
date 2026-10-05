@@ -1,6 +1,86 @@
 {
   "schema_version": 2,
   "series": {
+    "census-2025-final-total-population": {
+      "publisher": "Statistics Bureau of Japan",
+      "dataset": "2025 Population Census final basic tabulation Table 1-1: total population",
+      "parser": "census-2025-final-total-population",
+      "license_url": "https://www.stat.go.jp/info/riyou.html",
+      "dimensions": [
+        "year",
+        "reference_date",
+        "geography",
+        "nationality_category",
+        "value_basis"
+      ],
+      "definitions": [
+        "Final original total population as of 2025-10-01. Includes Japanese, foreign and unspecified-nationality residents."
+      ],
+      "notes": [
+        "Current-boundary national and prefecture totals only; municipal and old-boundary rows are not normalized.",
+        "Official '-' denotes no applicable count; numeric zero retains the original symbol."
+      ]
+    },
+    "census-2025-final-nationality-population": {
+      "publisher": "Statistics Bureau of Japan",
+      "dataset": "2025 Population Census final basic tabulation Table 49-1: original nationality population",
+      "parser": "census-2025-final-nationality-population",
+      "license_url": "https://www.stat.go.jp/info/riyou.html",
+      "dimensions": [
+        "year",
+        "reference_date",
+        "geography",
+        "nationality_category",
+        "value_basis"
+      ],
+      "definitions": [
+        "Original nationality counts retain Japanese, foreign and Japanese/foreign-unspecified categories separately."
+      ],
+      "notes": [
+        "Retain source category codes, hierarchy and labels. National/prefecture population is not a prefecture crime numerator.",
+        "Official '-' denotes no applicable count; numeric zero retains the original symbol."
+      ]
+    },
+    "census-2025-final-detailed-nationalities": {
+      "publisher": "Statistics Bureau of Japan",
+      "dataset": "2025 Population Census final basic tabulation Table 55: detailed national nationality population",
+      "parser": "census-2025-final-detailed-nationalities",
+      "license_url": "https://www.stat.go.jp/info/riyou.html",
+      "dimensions": [
+        "year",
+        "reference_date",
+        "geography",
+        "nationality_category",
+        "value_basis"
+      ],
+      "definitions": [
+        "Original national detailed nationality counts with country, continent, stateless and unspecified categories."
+      ],
+      "notes": [
+        "Hierarchical totals overlap their children. Do not sum every row or assume labels match NPA/ISA.",
+        "Official '-' denotes no applicable count; numeric zero retains the original symbol."
+      ]
+    },
+    "census-2025-imputed-nationality-population": {
+      "publisher": "Statistics Bureau of Japan",
+      "dataset": "2025 Population Census Table 49-1: official imputed nationality reference",
+      "parser": "census-2025-imputed-nationality-population",
+      "license_url": "https://www.stat.go.jp/info/riyou.html",
+      "dimensions": [
+        "year",
+        "reference_date",
+        "geography",
+        "nationality_category",
+        "value_basis"
+      ],
+      "definitions": [
+        "Official reference values after imputation of unspecified information; not original observed nationality counts."
+      ],
+      "notes": [
+        "Keep this source separate from original Table 49-1 and the May preliminary foreign-population estimate.",
+        "Official '-' denotes no applicable count; numeric zero retains the original symbol."
+      ]
+    },
     "npa-prefecture-visiting-foreign-crime": {
       "publisher": "National Police Agency of Japan",
       "dataset": "Finalized crime statistics: visiting-foreigner cleared cases and persons by police statistical area",
@@ -184,6 +264,70 @@
     }
   },
   "editions": {
+    "S26": {
+      "series_id": "census-2025-final-total-population",
+      "source_table": "1-1",
+      "expected_format": "xlsx",
+      "filename": "2025_census_final_total_population.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000040506423",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040506423&fileKind=0",
+      "period": "2025-10-01 final census total population, original values",
+      "coverage_periods": ["2025-10-01"],
+      "published_at": "2026-09-29",
+      "revision": "final_basic_tabulation_original",
+      "stable_ids": {"e_stat_stat_inf_id": "000040506423", "census_table": "1-1"},
+      "verified_at": "2026-10-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "c1ff781e05af6fce6510ee9cfbeba856106c97ae780ca030a549466b0074d856"
+    },
+    "S27": {
+      "series_id": "census-2025-final-nationality-population",
+      "source_table": "49-1",
+      "expected_format": "xlsx",
+      "filename": "2025_census_final_nationality_population.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000040506619",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040506619&fileKind=0",
+      "period": "2025-10-01 final census nationality population, original values",
+      "coverage_periods": ["2025-10-01"],
+      "published_at": "2026-09-29",
+      "revision": "final_basic_tabulation_original",
+      "stable_ids": {"e_stat_stat_inf_id": "000040506619", "census_table": "49-1"},
+      "verified_at": "2026-10-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "87da0fb8898840e16d7f48820f7bb59eeb30abf8e7eddac93312443315d8b9b5"
+    },
+    "S28": {
+      "series_id": "census-2025-final-detailed-nationalities",
+      "source_table": "55",
+      "expected_format": "xlsx",
+      "filename": "2025_census_final_detailed_nationalities.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000040506633",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040506633&fileKind=0",
+      "period": "2025-10-01 final census detailed national nationality population, original values",
+      "coverage_periods": ["2025-10-01"],
+      "published_at": "2026-09-29",
+      "revision": "final_basic_tabulation_original",
+      "stable_ids": {"e_stat_stat_inf_id": "000040506633", "census_table": "55"},
+      "verified_at": "2026-10-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "ae02b5ba5a0a10240f7ef77b0ad3b40566526af8bd879c3fccb5fe4ffabde508"
+    },
+    "S29": {
+      "series_id": "census-2025-imputed-nationality-population",
+      "source_table": "49-1",
+      "expected_format": "xlsx",
+      "filename": "2025_census_imputed_nationality_population.xlsx",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000040506847",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040506847&fileKind=0",
+      "period": "2025-10-01 census nationality population, official imputed reference values",
+      "coverage_periods": ["2025-10-01"],
+      "published_at": "2026-09-29",
+      "revision": "official_imputed_reference",
+      "stable_ids": {"e_stat_stat_inf_id": "000040506847", "census_table": "49-1"},
+      "verified_at": "2026-10-05",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "13bf4bc6e919e4e7f85d6001c214bcaf0cddf6e9ec927325c8f33f152fe27d45"
+    },
     "S02": {
       "series_id": "npa-prefecture-visiting-foreign-crime",
       "source_table": "13",

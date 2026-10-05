@@ -25,6 +25,9 @@ from .npa_2025_summary import (
 from .npa_prefecture import parse_npa_prefecture_table13
 from .population import parse_population_nationality_totals, parse_population_t1
 from .census_2025 import (
+    parse_census_final_total_population,
+    parse_census_final_nationality_population,
+    parse_census_final_detailed_nationalities,
     parse_census_estimated_foreign_population,
     parse_census_preliminary_population,
 )
@@ -49,6 +52,10 @@ PARSER_CONTRACT_VERSIONS = {
     "npa-2025-visiting-offenses": 1,
     "census-2025-preliminary-population": 1,
     "census-2025-estimated-foreign-population": 1,
+    "census-2025-final-total-population": 1,
+    "census-2025-final-nationality-population": 1,
+    "census-2025-imputed-nationality-population": 1,
+    "census-2025-final-detailed-nationalities": 1,
 }
 
 
@@ -128,6 +135,14 @@ def _records_for_source(
         return parse_census_estimated_foreign_population(
             artifact, source_id=source_id
         )
+    if parser == "census-2025-final-total-population":
+        return parse_census_final_total_population(artifact, source_id=source_id)
+    if parser in {"census-2025-final-nationality-population", "census-2025-imputed-nationality-population"}:
+        return parse_census_final_nationality_population(
+            artifact, source_id=source_id, imputed=parser == "census-2025-imputed-nationality-population"
+        )
+    if parser == "census-2025-final-detailed-nationalities":
+        return parse_census_final_detailed_nationalities(artifact, source_id=source_id)
     raise SchemaError("Unsupported parser in source metadata: %r" % parser)
 
 
