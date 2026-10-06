@@ -16,7 +16,10 @@
     "S19_2021": "2a2253ef440d0444d1f901cadb7798fb334b44994745c9fcf2a282cdd01fc619",
     "S19_2022": "2acb2d84748d533ffc8b5bf37f99667ac06c924b9a0fdb2da82c38a970817e25",
     "S19_2023": "16f703a47b83448902c332b4a268dc4ade95acf0ec45facecb306d2abf8efcab",
-    "S19_2024": "d400d8e2b46d2e6384eb6787ad04568e8bfe2b7a5e89f2d2191d5d079c4f4306"
+    "S19_2024": "d400d8e2b46d2e6384eb6787ad04568e8bfe2b7a5e89f2d2191d5d079c4f4306",
+    "S19_2025": "cef9a02be7b4c289017e763579fdab4e347e9830aebaeee73be91743ef00d62c",
+    "S21": "853bf42f0467389afd4e4f532c09c3fb7bb1f7bf4a05a7dc9911f9b6b20d1b1b",
+    "S27": "87da0fb8898840e16d7f48820f7bb59eeb30abf8e7eddac93312443315d8b9b5"
   },
   "trend": {
     "trend_id": "national_clearance_population_reference_ratio",
@@ -32,10 +35,12 @@
       2021,
       2022,
       2023,
-      2024
+      2024,
+      2025
     ],
     "all_person_source_id": "S15",
     "all_foreign_source_id": "S08",
+    "annual_summary_sources": {"2025": "S21"},
     "japanese_population_sources": {
       "2015": "S18",
       "2016": "S18",
@@ -46,7 +51,8 @@
       "2021": "S17_2021",
       "2022": "S17_2022",
       "2023": "S17_2023",
-      "2024": "S17"
+      "2024": "S17",
+      "2025": "S27"
     },
     "resident_foreign_population_sources": {
       "2016": "S19_2016",
@@ -57,7 +63,8 @@
       "2021": "S19_2021",
       "2022": "S19_2022",
       "2023": "S19_2023",
-      "2024": "S19_2024"
+      "2024": "S19_2024",
+      "2025": "S19_2025"
     },
     "metrics": ["cleared_cases", "cleared_persons"],
     "display_multiplier": 1000,

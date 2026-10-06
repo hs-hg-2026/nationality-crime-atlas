@@ -27,6 +27,8 @@ from .npa_all_residents import (
 )
 from .npa_nationality import parse_npa_nationality_annual_clearances
 from .population import parse_population_nationality_totals
+from .census_2025 import parse_census_final_nationality_population
+from .npa_2025_summary import parse_npa_2025_foreign_clearance_totals
 from .provenance import sha256_file
 
 
@@ -58,6 +60,7 @@ class ClearancePopulationTrendContract:
     display_unit_label_ja: str
     interpretation_policy: str
     ui_caveat: str
+    annual_summary_sources: Mapping[int, str]
 
 
 @dataclass(frozen=True)
@@ -123,6 +126,7 @@ class _SourceInput:
 class _JapanesePopulationPoint:
     record: PrefecturePopulationRecord
     source_column: int
+    excluded_unknown_population: Optional[int] = None
 
 
 def _read_json_object(path: Path, label: str) -> Mapping[str, object]:
@@ -209,6 +213,9 @@ def _load_contract(
         item.get("resident_foreign_population_sources"),
         "resident_foreign_population_sources",
     )
+    annual_summary_sources = _year_source_mapping(item.get("annual_summary_sources", {}), "annual_summary_sources")
+    if any(year != 2025 or year not in years for year in annual_summary_sources):
+        raise SchemaError("Only reviewed 2025 annual summary years are supported")
     if set(japanese_sources) != set(years):
         raise SchemaError("Japanese population sources must cover every trend year")
     if not set(foreign_sources).issubset(years):
@@ -242,6 +249,7 @@ def _load_contract(
         all_foreign_source_id,
         *japanese_sources.values(),
         *foreign_sources.values(),
+        *annual_summary_sources.values(),
     }
     if set(pins) != required_sources:
         raise SchemaError("artifact_pins must exactly match trend sources")
@@ -262,6 +270,7 @@ def _load_contract(
             ),
             interpretation_policy=interpretation_policy,
             ui_caveat=_require_string(item.get("ui_caveat"), "ui_caveat"),
+            annual_summary_sources=annual_summary_sources,
         ),
         pins,
     )
@@ -410,6 +419,23 @@ def _japanese_population_points(
                 source_id=source_id,
             )
             source_columns = {}
+        elif source_table == "49-1":
+            census = parse_census_final_nationality_population(source.raw_path, source_id=source_id)
+            national_census = [row for row in census if row.geography_type == "national"]
+            japanese = [row for row in national_census if row.nationality_code == "2"]
+            unknown = [row for row in national_census if row.nationality_code == "3"]
+            if len(japanese) != 1 or len(unknown) != 1 or expected_years != [2025]:
+                raise SchemaError("Census Japanese population year/category grid differs")
+            row = japanese[0]
+            record = PrefecturePopulationRecord(
+                year=row.year, reference_date=row.reference_date, population_scope="japanese_population",
+                geography=row.geography, geography_type=row.geography_type, parent_region=None,
+                geography_semantics="census_final_original_population", population=row.population,
+                source_value=row.source_value, source_unit=row.source_unit, rounding=row.rounding,
+                source_id=row.source_id, source_table=row.source_table, source_sheet=row.source_sheet, source_row=row.source_row,
+            )
+            result[2025] = _JapanesePopulationPoint(record, row.source_column, unknown[0].population)
+            continue
         else:
             raise SchemaError(
                 "Unsupported Japanese population source table for %s" % source_id
@@ -482,7 +508,7 @@ def _clearance_component(
         "source_id": record.source_id,
         "source_table": record.source_table,
         "source_sheet": record.source_sheet,
-        "source_row": record.source_row,
+        "source_row": record.source_row + (3 if record.source_table == "3-3-1" and metric == "cleared_persons" else 0),
         "source_column": (
             record.source_cases_column
             if metric == "cleared_cases"
@@ -498,7 +524,7 @@ def _japanese_population_component(
     point: _JapanesePopulationPoint,
 ) -> Mapping[str, object]:
     record = point.record
-    return {
+    component = {
         "source_id": record.source_id,
         "source_table": record.source_table,
         "source_sheet": record.source_sheet,
@@ -510,6 +536,15 @@ def _japanese_population_component(
         "published_unit": record.source_unit,
         "role": "denominator",
     }
+    if point.excluded_unknown_population is not None:
+        component.update(value_basis="original", excluded_unknown_population=point.excluded_unknown_population)
+    return component
+
+
+def _clearance_formula_key(record: NationalClearanceAnnualRecord, metric: str) -> str:
+    if record.source_table == "3-3-1":
+        return "%s.%s.%s" % (record.source_id, record.population_scope, metric)
+    return "%s.%s" % (record.source_id, metric)
 
 
 def _foreign_population_component(
@@ -587,10 +622,10 @@ def _records(
                     display_value=japanese_quotient * contract.display_multiplier,
                     calculation_status="calculated",
                     refusal_reason=None,
-                    numerator_source_ids=(
+                    numerator_source_ids=tuple(dict.fromkeys((
                         all_person_record.source_id,
                         all_foreign_record.source_id,
-                    ),
+                    ))),
                     denominator_source_id=japanese_population_source,
                     population_reference_date=(
                         japanese_population_point.record.reference_date
@@ -601,12 +636,10 @@ def _records(
                         "arithmetic_residual_all_person_minus_all_foreign_division"
                     ),
                     derivation_formula=(
-                        "(%s.%s - %s.%s) / %s.population * %d"
+                        "(%s - %s) / %s.population * %d"
                         % (
-                            all_person_record.source_id,
-                            metric,
-                            all_foreign_record.source_id,
-                            metric,
+                            _clearance_formula_key(all_person_record, metric),
+                            _clearance_formula_key(all_foreign_record, metric),
                             japanese_population_source,
                             contract.display_multiplier,
                         )
@@ -629,7 +662,9 @@ def _records(
                             (
                                 *common_flags,
                                 "japanese_numerator_is_arithmetic_residual",
-                                "japanese_population_rounded_to_nearest_1000",
+                                *( ("japanese_population_rounded_to_nearest_1000",)
+                                   if japanese_population_point.record.rounding == "nearest_1000_persons"
+                                   else ("census_original_nationality_population", "census_nationality_unknown_excluded_from_japanese_denominator", "population_source_changed_to_census") ),
                                 "october_1_population_reference_date",
                             )
                         )
@@ -730,10 +765,9 @@ def _records(
                     denominator_rounding="as_published_persons",
                     derivation_method="direct_published_count_division",
                     derivation_formula=(
-                        "%s.%s / %s.population * %d"
+                        "%s / %s.population * %d"
                         % (
-                            all_foreign_record.source_id,
-                            metric,
+                            _clearance_formula_key(all_foreign_record, metric),
                             foreign_population.source_id,
                             contract.display_multiplier,
                         )
@@ -815,23 +849,34 @@ def generate_clearance_population_trend(
         )
         for source_id, artifact_pin in artifact_pins.items()
     }
-    all_person = _clearances_by_year(
+    historical_years = tuple(year for year in contract.years if year not in contract.annual_summary_sources)
+    all_person = dict(_clearances_by_year(
         parse_npa_all_person_annual_clearances(
             inputs[contract.all_person_source_id].raw_path,
             source_id=contract.all_person_source_id,
         ),
-        expected_years=contract.years,
+        expected_years=historical_years,
         source_id=contract.all_person_source_id,
-    )
-    all_foreign = _clearances_by_year(
+    ))
+    all_foreign = dict(_clearances_by_year(
         parse_npa_nationality_annual_clearances(
             inputs[contract.all_foreign_source_id].raw_path,
             table_id="130",
             source_id=contract.all_foreign_source_id,
         ),
-        expected_years=contract.years,
+        expected_years=historical_years,
         source_id=contract.all_foreign_source_id,
-    )
+    ))
+    for year, source_id in contract.annual_summary_sources.items():
+        source = inputs[source_id]
+        if source.catalog_row.get("source_table") != "3-3-1":
+            raise SchemaError("Annual summary catalog table differs")
+        parsed = parse_npa_2025_foreign_clearance_totals(source.raw_path, source_id=source_id)
+        scopes = {row.population_scope: row for row in parsed}
+        if len(parsed) != 3 or set(scopes) != {"all_persons", "all_foreign", "visiting_foreign"} or any(row.year != year for row in parsed):
+            raise SchemaError("Annual summary year/scope grid differs")
+        all_person[year] = scopes["all_persons"]
+        all_foreign[year] = scopes["all_foreign"]
     japanese_population = _japanese_population_points(
         inputs=inputs,
         source_by_year=contract.japanese_population_sources,
