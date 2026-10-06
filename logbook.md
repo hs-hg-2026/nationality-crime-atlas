@@ -509,3 +509,9 @@
 - **検証結果**: 公式原本6値・セルと一致、独立レビューで従来60行と他データ配列の不変を確認。Python213件、Web140件成功。出典・参照セル改変を拒否し、公開データhashとPages公開物検査を通過。最初のbuild失敗はsandboxの通信制限、Pages検査は本番URL設定の不足が原因で、適切な設定・許可付き再実行で解消した。
 - **現在地**: 2025年の地域別・人口当たり・国籍別時系列は未実装。次はS20/S26の地域別表示。今回push/releaseは行わない。
 - **関連パス**: `docs/20261006_222600_2025_clearance_share_update.md`, `config/clearance_share_trend_contract.json`, `web/public/data/dashboard_export.json`。README両言語とworkflow旧版は`docs/20261006_222600_README.md`、`docs/20261006_222600_README.ja.md`、`docs/20261006_222600_workflow.md`へ退避。RED `d80916f`、GREEN `8e6af40`。
+
+## 2026-10-06 v0.4.0の公開準備
+- **何が／判断**: ユーザーのpush・release依頼により、2025年の全国検挙構成比追加をminor release `v0.4.0`とする。地域別・人口当たり・国籍別の2025年化は含めず、release notesに明記した。
+- **根拠・検証**: Python213件、Web140件、型検査・lint・format・data hashが成功。依存関係は変更せずweb package/versionだけ更新。352 tracked filesに既知の個人名・個人用パス・主要secret patternの一致なし。未公開commitのidentityは公開用GitHub noreplyのみ。
+- **公開手順**: mainへ通常push → 対象commitのPages workflow成功 → 固定したcommitでv0.4.0を作成 → 公開HTML・配信JSON・hashを照合。公開結果は別途追記する。
+- **関連パス**: `docs/20261006_224000_v0.4.0_release_notes.md`。README両言語・workflowの旧版は同じtimestampのsnapshotへ保存した。
