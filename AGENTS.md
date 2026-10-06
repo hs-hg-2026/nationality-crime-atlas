@@ -16,6 +16,7 @@ Codex 用の作業指示（この repo 固有の *確定ルール* だけ）。�
 - acquire all-resident context inputs: `.venv/bin/nca-acquire --source-id S15`, `.venv/bin/nca-acquire --source-id S16`
 - recheck a registered remote edition: `.venv/bin/nca-acquire --source-id S08 --refresh`
 - regenerate canonical dimension audit: `.venv/bin/nca-map-dimensions`
+- regenerate reviewed 2025 regional mappings: `.venv/bin/nca-map-dimensions --source-id S14_2024_12 --source-id S20 --source-id S26 --output-root data/processed/_regional_mappings`
 - regenerate all-resident regional context: `.venv/bin/nca-build-all-resident-context`
 - regenerate nationality offense composition: `.venv/bin/nca-build-offense-composition`
 - regenerate nationality clearance reference-ratio trend: `.venv/bin/nca-build-nationality-trend`
@@ -47,6 +48,8 @@ Codex 用の作業指示（この repo 固有の *確定ルール* だけ）。�
 - source pairごとのproject-derived valueは`公表統計由来の参考比率`と呼び、official／正確な`犯罪率`と呼ばない。
 - primary regional baselineは日本国籍ではなく、日本に居住する全住民とする。nationality-specific viewはsecondaryに分離し、集団の本質・因果・個人riskを示すlabelとして扱わない。
 - S15表3とS16表144は全住民のdescriptive regional context用。S15の警察地理をoffender residenceへ読み替えず、S16の千人単位丸めを補正・隠蔽しない。
+- 2025地域表示はS20表1-5-1とS26表1-1の国勢調査原数値（人単位）を使う。regional CLIは`_regional_mappings/latest.json`を参照し、global mapping pointerや従来年のinput pinを上書きしない。
+- 2025人口当たり時系列はS21表3-3-1（件数N4/N5、人員N7/N8）とS27原数値／S19_2025を使う。S27の日本人・外国人の別の不詳は日本人人口分母から除外し、原数値・不詳除外・前年からの資料変更を常設表示する。S29補完値へ黙って置き換えない。
 - all-resident calculated rowでは`annual_flow_vs_point_in_time_population`と`numerator_residency_scope_not_established`を必須とし、calendar-year crime flowと10月1日時点population stock、未確立のnumerator residency scopeをUIで常設表示する。
 - `_all_resident_context`では全国＋47都道府県のみをcalculatedとし、警察region／subregion、日本国籍prefecture分子、個別nationality × prefecture分子はrefusalとして保持する。
 - public compact exportはschema v2以降を使い、全rowに`indicator_id`／`context_id`を残す。source fileは同じbytesからparseとhashを行い、summaryとrecordsを照合し、public source metadataをwhitelistしてlocal absolute pathを含めない。
