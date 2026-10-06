@@ -410,6 +410,26 @@ describe('all-nationality comparison model', () => {
 });
 
 describe('national clearance foreign-share trend model', () => {
+  it.each(['source', 'persons-row', 'column', 'year'])(
+    'rejects an unreviewed 2025 summary binding: %s',
+    (mutation) => {
+      const dashboard = structuredClone(parseDashboardData(dashboardFixture));
+      const row = dashboard.records.clearance_share_trends.find(
+        (item) =>
+          item.year === 2025 &&
+          item.metric === 'cleared_persons' &&
+          item.foreign_scope === 'all_foreign',
+      )!;
+      if (mutation === 'source') row.denominator_source_id = 'S15';
+      else if (mutation === 'year') row.year = 2026;
+      else if (mutation === 'persons-row')
+        row.source_components[0].source_row = 5;
+      else row.source_components[0].source_column = 13;
+      expect(() =>
+        buildClearanceShareTrendViewModel(dashboard, 'cleared_persons'),
+      ).toThrow();
+    },
+  );
   it('keeps eleven years of direct foreign scopes and their residual', () => {
     const dashboard = parseDashboardData(dashboardFixture);
     const view = buildClearanceShareTrendViewModel(dashboard, 'cleared_cases');

@@ -1362,6 +1362,43 @@ def _rewrite_clearance_share_records(latest_path: Path, mutation: str) -> None:
     _write_json(latest_path, latest)
 
 
+@pytest.mark.parametrize("mutation", [None, "old_source", "persons_row", "year", "label"])
+def test_compact_share_gate_binds_2025_to_summary_cells(tmp_path, mutation):
+    from types import SimpleNamespace
+    from nationality_crime_atlas.compact_export import _validate_clearance_share_bundle
+
+    pointer_path = _clearance_share_fixture(tmp_path)
+    pointer = json.loads(pointer_path.read_text())
+    records_path = pointer_path.parent / pointer["run_relpath"] / "clearance_share_records.jsonl"
+    rows = [json.loads(line) for line in records_path.read_text().splitlines()]
+    source_rows = {"S08": 5, "S09": 6, "S15": 4}
+    for row in rows:
+        row["year"] = 2025
+        row["derivation_formula"] = row["derivation_formula"].replace("S08", "S21").replace("S09", "S21").replace("S15", "S21")
+        row["numerator_source_id"] = row["denominator_source_id"] = "S21"
+        row["numerator_source_ids"] = ["S21"] * len(row["numerator_source_ids"])
+        for component in row["source_components"]:
+            component["source_row"] = source_rows[component["source_id"]] + (3 if row["metric"] == "cleared_persons" else 0)
+            component.update(source_id="S21", source_table="3-3-1", source_sheet="3-3-1", source_column=14)
+    if mutation == "old_source":
+        rows[0]["denominator_source_id"] = "S15"
+    elif mutation == "persons_row":
+        target = next(row for row in rows if row["metric"] == "cleared_persons")
+        target["source_components"][0]["source_row"] -= 3
+    elif mutation == "year":
+        for row in rows:
+            row["year"] = 2026
+    elif mutation == "label":
+        rows[-1]["foreign_scope_label_ja"] = "在留外国人"
+    year = rows[0]["year"]
+    bundle = SimpleNamespace(records=rows, summary={"years": [year], "year_count": 1})
+    if mutation is None:
+        _validate_clearance_share_bundle(bundle)
+    else:
+        with pytest.raises(SchemaError, match="clearance share semantic contract"):
+            _validate_clearance_share_bundle(bundle)
+
+
 def test_generate_compact_export_builds_public_dashboard_payload(tmp_path):
     from nationality_crime_atlas.compact_export import generate_compact_export
 
