@@ -1,21 +1,21 @@
 {
   "schema_version": 2,
   "processed_input_pins": {
-    "S15": "d112ce129e94d635da47aa0efe748d0bb91ae8b76fdf4ad1d5eb46f67bdcf8c6",
-    "S16": "9033b3f94523d9a6550c382bdc351ba802d8aff110fe1c0a8051d6844f8541ee"
+    "S20": "e91cf3e2db10f9c2c197bf9bc4375548e2b9921ea2f0ab01e6af484b63865591",
+    "S26": "eaa5387e24f9607aabfaefd1fc79dc824ea95ea288310bea624e1c6dad0d70a7"
   },
   "defaults": {
     "measure_kind": "public_data_derived_reference_ratio",
     "canonical_formula": "numerator_value / denominator_value",
-    "numerator_source_id": "S15",
-    "numerator_year": 2024,
+    "numerator_source_id": "S20",
+    "numerator_year": 2025,
     "numerator_period_type": "annual_flow",
     "numerator_population_scope": "all_persons",
     "numerator_residency_scope": "not_established",
     "numerator_offense_scope": "criminal_code_excluding_traffic_negligence",
-    "denominator_source_id": "S16",
+    "denominator_source_id": "S26",
     "denominator_metric": "total_population",
-    "denominator_reference_date": "2024-10-01",
+    "denominator_reference_date": "2025-10-01",
     "denominator_period_type": "point_in_time_stock",
     "denominator_population_scope": "total_population",
     "display_multiplier": 100000,
@@ -23,7 +23,7 @@
     "display_unit_label_ja": "人口10万人当たり",
     "display_unit_label_en": "per 100,000 residents",
     "crosswalk_policy": "exact",
-    "expected_published_row_count": 60,
+    "expected_published_row_count": 48,
     "expected_calculated_row_count": 48
   },
   "contracts": [
@@ -37,7 +37,7 @@
         "case_count_not_person_count",
         "criminal_code_scope_only",
         "numerator_residency_scope_not_established",
-        "total_population_rounded_to_nearest_1000"
+        "census_original_population"
       ],
       "ui_caveat": "警察統計上の年間刑法犯認知件数を10月1日時点の総人口で割った参考比率。分子は居住者だけに対応する統計とは確認できず、official crime rateや個人の発生確率ではない。"
     },
@@ -51,7 +51,7 @@
         "case_count_not_person_count",
         "criminal_code_scope_only",
         "numerator_residency_scope_not_established",
-        "total_population_rounded_to_nearest_1000"
+        "census_original_population"
       ],
       "ui_caveat": "警察統計上の年間刑法犯検挙件数を10月1日時点の総人口で割った参考比率。分子は居住者だけに対応する統計とは確認できず、official crime rateや個人の発生確率ではない。"
     },
@@ -65,7 +65,7 @@
         "cleared_person_records_not_unique_risk_population",
         "criminal_code_scope_only",
         "numerator_residency_scope_not_established",
-        "total_population_rounded_to_nearest_1000"
+        "census_original_population"
       ],
       "ui_caveat": "警察統計上の年間刑法犯検挙人員を10月1日時点の総人口で割った参考比率。分子は居住者だけに限定された統計とは確認できず、official crime rateや個人の発生確率ではない。"
     }

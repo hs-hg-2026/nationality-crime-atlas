@@ -714,6 +714,8 @@ def _load_population_rows(
                 )
             if row.get("source_id") != source_id:
                 raise SchemaError("Population source_id differs from catalog: %s" % path)
+            if row.get("population_scope") != "total_population":
+                raise SchemaError("Regional denominator must be total_population")
             observed_reference_date = _require_iso_date(
                 row.get("reference_date"), "reference_date"
             )
@@ -824,6 +826,7 @@ def _dynamic_mismatch_flags(
     row: Mapping[str, object],
     *,
     denial: bool,
+    denominator_semantics: Optional[str] = None,
 ) -> List[str]:
     flags = []
     geography_type = _require_string(row.get("geography_type"), "geography_type")
@@ -831,7 +834,9 @@ def _dynamic_mismatch_flags(
         flags.extend(
             [
                 "police_reporting_area_unresolved",
-                "police_reporting_area_vs_population_estimate_prefecture",
+                ("police_reporting_area_vs_census_prefecture"
+                 if denominator_semantics == "census_final_original_population"
+                 else "police_reporting_area_vs_population_estimate_prefecture"),
             ]
         )
     elif geography_type in {"police_region", "police_subregion"}:
@@ -921,7 +926,10 @@ def _build_context_records(
                 crosswalk_status=mapping.match_status,
                 targets_complete=mapping.targets_complete,
                 refusal_reason=refusal_reason,
-                mismatch_flags=base_flags + _dynamic_mismatch_flags(row, denial=False),
+                mismatch_flags=base_flags + _dynamic_mismatch_flags(
+                    row, denial=False,
+                    denominator_semantics=denominator.get("geography_semantics") if denominator else None,
+                ),
                 canonical_component_ids=mapping.canonical_ids,
                 canonical_component_labels=mapping.canonical_labels,
                 numerator_context={
@@ -936,11 +944,7 @@ def _build_context_records(
                     "population_scope": contract.denominator_population_scope,
                     "period_type": contract.denominator_period_type,
                     "reference_date": reference_date,
-                    "geography_semantics": (
-                        "national_aggregate"
-                        if geography_type == "national"
-                        else "population_estimate_prefecture"
-                    ),
+                    "geography_semantics": denominator.get("geography_semantics") if denominator else None,
                     "source_unit": denominator.get("source_unit") if denominator else None,
                     "rounding": denominator.get("rounding") if denominator else None,
                 },
