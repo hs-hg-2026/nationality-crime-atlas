@@ -2,6 +2,7 @@
 
 import csv
 import json
+import os
 import shutil
 import tempfile
 from collections import Counter, defaultdict
@@ -746,11 +747,18 @@ def generate_dimension_mapping_report(
     config_path: Path,
     output_root: Path,
     generated_at: str,
+    source_ids: Optional[Sequence[str]] = None,
 ) -> DimensionMappingReport:
     """Generate an immutable cross-source mapping audit from validated normalized data."""
 
     config = load_dimension_mapping_config(config_path)
     catalog = _read_catalog(catalog_path)
+    if source_ids is not None:
+        selected_ids = set(source_ids)
+        missing = selected_ids - {row["source_id"] for row in catalog}
+        if not selected_ids or missing:
+            raise SchemaError("Missing or empty requested source scope: %s" % sorted(missing))
+        catalog = [row for row in catalog if row["source_id"] in selected_ids]
     population, nationality, geography, input_count = _collect_dimensions(
         catalog, processed_root=processed_root
     )
@@ -827,6 +835,7 @@ def generate_dimension_mapping_report(
             "catalog_path": Path(catalog_path).as_posix(),
             "catalog_sha256": sha256_file(Path(catalog_path)),
             "source_ids": sorted(str(row.get("source_id")) for row in catalog),
+            "selected_source_ids": sorted(set(source_ids)) if source_ids is not None else None,
             "input_record_count": input_count,
             "mapping_record_count": len(mappings),
             "status_counts": status_payload,
@@ -846,18 +855,24 @@ def generate_dimension_mapping_report(
     final_csv = destination / "dimension_mappings.csv"
     final_summary = destination / "summary.json"
     latest_path = destination_root / "latest.json"
-    latest_temp = destination_root / ".latest.json.tmp"
-    _write_json(
-        latest_temp,
-        {
+    descriptor, temporary_name = tempfile.mkstemp(prefix=".latest.", suffix=".tmp", dir=destination_root)
+    latest_temp = Path(temporary_name)
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+            json.dump({
             "mapping_schema_version": MAPPING_SCHEMA_VERSION,
             "generated_at": generated_at,
             "run_relpath": destination.name,
             "summary_sha256": sha256_file(final_summary),
             "dimension_mappings_sha256": sha256_file(final_jsonl),
-        },
-    )
-    latest_temp.replace(latest_path)
+            }, handle, ensure_ascii=False, indent=2, sort_keys=True)
+            handle.write("\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        latest_temp.replace(latest_path)
+    finally:
+        if latest_temp.exists():
+            latest_temp.unlink()
     return DimensionMappingReport(
         output_dir=destination,
         jsonl_path=final_jsonl,

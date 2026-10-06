@@ -20,7 +20,7 @@ def _argument_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--mapping-latest",
         type=Path,
-        default=Path("data/processed/_mappings/latest.json"),
+        default=Path("data/processed/_regional_mappings/latest.json"),
     )
     parser.add_argument(
         "--contracts",

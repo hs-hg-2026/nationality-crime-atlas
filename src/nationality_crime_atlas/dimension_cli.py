@@ -28,6 +28,7 @@ def _argument_parser() -> argparse.ArgumentParser:
         default=Path("data/processed/_mappings"),
     )
     parser.add_argument("--generated-at")
+    parser.add_argument("--source-id", action="append", dest="source_ids")
     return parser
 
 
@@ -44,6 +45,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         config_path=arguments.config,
         output_root=arguments.output_root,
         generated_at=generated_at,
+        source_ids=arguments.source_ids,
     )
     print(
         json.dumps(

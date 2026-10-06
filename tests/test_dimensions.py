@@ -445,6 +445,7 @@ def test_project_mapping_config_is_valid():
     config = load_dimension_mapping_config(Path("config/dimension_mappings.json"))
 
     assert config["schema_version"] == 1
+    assert config["mapping_scope"].startswith("Label/category crosswalk only")
 
 
 def test_mapping_can_explicitly_scope_reviewed_sources(tmp_path):
@@ -467,7 +468,6 @@ def test_mapping_scope_rejects_missing_requested_source(tmp_path):
             output_root=tmp_path / "scoped", generated_at="2026-10-06T23:45:00+09:00",
             source_ids=["S14_2024_12", "UNREVIEWED"],
         )
-    assert config["mapping_scope"].startswith("Label/category crosswalk only")
 
 
 def test_project_mapping_rules_cover_all_reviewed_npa_nationality_editions():
