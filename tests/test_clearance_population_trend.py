@@ -322,3 +322,64 @@ def test_clearance_population_trend_stops_on_unreviewed_artifact_hash(
             output_root=tmp_path / "trend",
             generated_at="2026-09-06T10:10:00+09:00",
         )
+
+
+def _extend_2025_inputs(tmp_path, nationality_table130_file, all_person_offense_file, *, imputed=False):
+    from test_2025_sources import _npa_foreign_fixture
+    from test_census_2025_final import _nationality_fixture
+
+    catalog, raw_root, contract = _build_inputs(tmp_path, nationality_table130_file, all_person_offense_file)
+    summary = _npa_foreign_fixture(tmp_path / "summary-2025.xlsx")
+    census = _nationality_fixture(tmp_path / "census-2025.xlsx", imputed=imputed)
+    foreign = tmp_path / "foreign-2025.xlsx"
+    _write_foreign_population_fixture(foreign, year=2025, population=4_125_395)
+    data = json.loads(contract.read_text())
+    rows = [json.loads(line) for line in catalog.read_text().splitlines()]
+    for source_id, path, table in (("S21", summary, "3-3-1"), ("S27", census, "49-1"), ("S19_2025", foreign, "1")):
+        relative = Path("fixture") / source_id / path.name
+        destination = raw_root / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(path, destination)
+        digest = sha256_file(destination)
+        data["artifact_pins"][source_id] = digest
+        rows.append({**rows[0], "source_id": source_id, "source_table": table,
+                     "raw_relpath": relative.as_posix(), "sha256": digest})
+    catalog.write_text("".join(json.dumps(row) + "\n" for row in rows))
+    data["trend"]["years"].append(2025)
+    data["trend"]["annual_summary_sources"] = {"2025": "S21"}
+    data["trend"]["japanese_population_sources"]["2025"] = "S27"
+    data["trend"]["resident_foreign_population_sources"]["2025"] = "S19_2025"
+    _write_json(contract, data)
+    return catalog, raw_root, contract
+
+
+def test_2025_population_trend_keeps_scoped_summary_cells_and_original_census(tmp_path, nationality_table130_file, all_person_offense_file):
+    catalog, raw_root, contract = _extend_2025_inputs(tmp_path, nationality_table130_file, all_person_offense_file)
+    result = generate_clearance_population_trend(catalog_path=catalog, raw_root=raw_root,
+        contract_path=contract, output_root=tmp_path / "trend", generated_at="2026-10-06T23:45:00+09:00")
+    rows = [json.loads(line) for line in result.jsonl_path.read_text().splitlines()]
+    assert len(rows) == 12
+    japanese = next(row for row in rows if row["year"] == 2025 and row["population_group"] == "japanese_etc_residual" and row["metric"] == "cleared_persons")
+    assert japanese["numerator_value"] == 189_309
+    assert japanese["denominator_value"] == 790
+    assert japanese["denominator_rounding"] == "none"
+    assert japanese["numerator_source_ids"] == ["S21"]
+    assert japanese["derivation_formula"] == "(S21.all_persons.cleared_persons - S21.all_foreign.cleared_persons) / S27.population * 1000"
+    assert [component["source_row"] for component in japanese["source_components"]] == [7, 8, 11]
+    assert japanese["source_components"][2]["source_column"] == 9
+    assert japanese["source_components"][2]["excluded_unknown_population"] == 10
+    assert "japanese_population_rounded_to_nearest_1000" not in japanese["mismatch_flags"]
+    assert "census_original_nationality_population" in japanese["mismatch_flags"]
+    assert "population_source_changed_to_census" in japanese["mismatch_flags"]
+    foreign = next(row for row in rows if row["year"] == 2025 and row["population_group"] == "all_foreign" and row["metric"] == "cleared_cases")
+    assert foreign["numerator_value"] == 22_917
+    assert foreign["denominator_value"] == 4_125_395
+    assert foreign["derivation_formula"] == "S21.all_foreign.cleared_cases / S19_2025.population * 1000"
+    assert foreign["display_value"] == pytest.approx(22_917 / 4_125_395 * 1000)
+
+
+def test_2025_population_trend_refuses_imputed_census_as_original(tmp_path, nationality_table130_file, all_person_offense_file):
+    catalog, raw_root, contract = _extend_2025_inputs(tmp_path, nationality_table130_file, all_person_offense_file, imputed=True)
+    with pytest.raises(SchemaError, match="basis"):
+        generate_clearance_population_trend(catalog_path=catalog, raw_root=raw_root,
+            contract_path=contract, output_root=tmp_path / "trend", generated_at="2026-10-06T23:45:00+09:00")
