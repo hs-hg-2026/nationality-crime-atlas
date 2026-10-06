@@ -515,3 +515,10 @@
 - **根拠・検証**: Python213件、Web140件、型検査・lint・format・data hashが成功。依存関係は変更せずweb package/versionだけ更新。352 tracked filesに既知の個人名・個人用パス・主要secret patternの一致なし。未公開commitのidentityは公開用GitHub noreplyのみ。
 - **公開手順**: mainへ通常push → 対象commitのPages workflow成功 → 固定したcommitでv0.4.0を作成 → 公開HTML・配信JSON・hashを照合。公開結果は別途追記する。
 - **関連パス**: `docs/20261006_224000_v0.4.0_release_notes.md`。README両言語・workflowの旧版は同じtimestampのsnapshotへ保存した。
+
+## 2026-10-06 v0.4.0を公開し、Pages反映を確認
+- **何が**: mainを`b8a0c3f6ed811e6834164ec0c3402d07a45d1f23`へ通常pushし、同じcommitをtag対象として正式release `v0.4.0`を公開した。releaseはdraft／prereleaseではなく、2026-10-06T13:43:23Zに公開。
+- **どう判断したか／なぜ**: 公開完了はtag作成だけでなく、対象commitのActions build・Pages deploy成功、live HTMLと配信dataの照合が揃った時点とした。
+- **検証結果**: Actions `37472679676`のbuild／deploy成功。公開HTML・JSONともHTTP200、2015–2025年labelと2025年の出典切替注記を確認。配信JSONの2025年6行と全体SHA-256 `2beef7efe2b18429e853300cb87849c5cdfe73500287eb7f3f471e1db5c68d25`がローカルとbyte-identicalで、live manifestとも一致。
+- **残る範囲**: 2025年の地域別・人口当たり参考比率・国籍等別時系列はこのreleaseに含めない。次はS20/S26の地域別表示。
+- **関連パス**: `docs/20261006_224000_v0.4.0_release_notes.md`。release: `https://github.com/hs-hg-2026/nationality-crime-atlas/releases/tag/v0.4.0`、Actions: `https://github.com/hs-hg-2026/nationality-crime-atlas/actions/runs/37472679676`。
