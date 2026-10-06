@@ -477,6 +477,58 @@ def _fixture(tmp_path: Path):
     }
 
 
+def test_census_denominator_retains_observed_geography_and_exact_units(tmp_path):
+    inputs = _fixture(tmp_path)
+    catalog = [json.loads(line) for line in inputs["catalog_path"].read_text().splitlines()]
+    population_path = inputs["processed_root"] / catalog[1]["processed_relpath"] / "normalized.jsonl"
+    rows = [json.loads(line) for line in population_path.read_text().splitlines()]
+    for row in rows:
+        row.update(geography_semantics="census_final_original_population", source_unit="persons", rounding="none")
+    digest = _write_jsonl(population_path, rows)
+    _write_json(population_path.parent / "run.json", {"source_id": "S16", "normalized_sha256": digest, "quality_passed": True})
+    contract = json.loads(inputs["contracts_path"].read_text())
+    contract["processed_input_pins"]["S16"] = digest
+    for item in contract["contracts"]:
+        item["base_mismatch_flags"].remove("total_population_rounded_to_nearest_1000")
+        item["base_mismatch_flags"].append("census_original_population")
+    _write_json(inputs["contracts_path"], contract)
+    latest = json.loads(inputs["mapping_latest_path"].read_text())
+    run = inputs["mapping_latest_path"].parent / latest["run_relpath"]
+    mapping_path = run / "dimension_mappings.jsonl"
+    mapping_rows = [json.loads(line) for line in mapping_path.read_text().splitlines()]
+    for row in mapping_rows:
+        if row["source_id"] == "S16":
+            row["source_context"]["geography_semantics"] = "census_final_original_population"
+    mapping_hash = _write_jsonl(mapping_path, mapping_rows)
+    summary = json.loads((run / "summary.json").read_text())
+    summary["dimension_mappings_sha256"] = mapping_hash
+    _write_json(run / "summary.json", summary)
+    latest.update(summary_sha256=sha256_file(run / "summary.json"), dimension_mappings_sha256=mapping_hash)
+    _write_json(inputs["mapping_latest_path"], latest)
+    report = generate_all_resident_context_report(**inputs)
+    actual = [json.loads(line) for line in report.jsonl_path.read_text().splitlines()]
+    prefecture = next(row for row in actual if row["geography_id"] == "jp-prefecture:01" and row["context_id"] == "recognized")
+    assert prefecture["denominator_context"]["geography_semantics"] == "census_final_original_population"
+    assert prefecture["denominator_context"]["rounding"] == "none"
+    assert "police_reporting_area_vs_census_prefecture" in prefecture["mismatch_flags"]
+    assert "police_reporting_area_vs_population_estimate_prefecture" not in prefecture["mismatch_flags"]
+
+
+def test_context_rejects_non_total_population_denominator(tmp_path):
+    inputs = _fixture(tmp_path)
+    catalog = [json.loads(line) for line in inputs["catalog_path"].read_text().splitlines()]
+    path = inputs["processed_root"] / catalog[1]["processed_relpath"] / "normalized.jsonl"
+    rows = [json.loads(line) for line in path.read_text().splitlines()]
+    rows[0]["population_scope"] = "japanese_population"
+    digest = _write_jsonl(path, rows)
+    _write_json(path.parent / "run.json", {"source_id": "S16", "normalized_sha256": digest, "quality_passed": True})
+    contract = json.loads(inputs["contracts_path"].read_text())
+    contract["processed_input_pins"]["S16"] = digest
+    _write_json(inputs["contracts_path"], contract)
+    with pytest.raises(SchemaError, match="total_population"):
+        generate_all_resident_context_report(**inputs)
+
+
 PREFECTURE_NAMES = [
     "北海道",
     "青森県",
