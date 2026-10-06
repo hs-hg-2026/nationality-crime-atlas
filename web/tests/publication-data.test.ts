@@ -385,7 +385,7 @@ describe('dashboard publication bundle', () => {
         all_resident_context: 248,
         nationality_comparison: 26,
         nationality_indicators: 290,
-        clearance_share_trends: 60,
+        clearance_share_trends: 66,
         clearance_population_trends: 40,
         nationality_trends: 260,
       },
@@ -397,7 +397,7 @@ describe('dashboard publication bundle', () => {
         clearance_population_ids: 1,
         nationality_trend_ids: 1,
       },
-      source_count: 29,
+      source_count: 30,
       source_pointer_sha256: sha256(readFileSync(source.pointerPath)),
     });
 

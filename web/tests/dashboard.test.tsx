@@ -417,7 +417,7 @@ describe('CrimeAtlasDashboard', () => {
     expect(historicalSource).not.toHaveTextContent('National Police Agency');
   });
 
-  it('shows the ten-year clearance share and switches cases and persons', async () => {
+  it('shows the eleven-year clearance share and switches cases and persons', async () => {
     const user = userEvent.setup();
     render(<CrimeAtlasDashboard dashboard={dashboard} />);
 
@@ -428,7 +428,7 @@ describe('CrimeAtlasDashboard', () => {
       }),
     ).toBeVisible();
     expect(
-      within(section).getByText('2015–2024年', { selector: 'span' }),
+      within(section).getByText('2015–2025年', { selector: 'span' }),
     ).toBeVisible();
     expect(within(section).getByTestId('clearance-share-chart')).toBeVisible();
     expect(
@@ -437,7 +437,7 @@ describe('CrimeAtlasDashboard', () => {
     expect(
       within(section).getByTestId('clearance-share-table'),
     ).toHaveTextContent(
-      /2024.*287,273.*268,412.*93\.43%.*18,861.*6\.57%.*13,405.*4\.67%.*5,456.*1\.90%/,
+      /2025.*301,055.*278,138.*92\.39%.*22,917.*7\.61%.*17,614.*5\.85%.*5,303.*1\.76%/,
     );
     expect(
       within(section).getAllByText('外国人全体−来日外国人（差分）'),
@@ -453,7 +453,7 @@ describe('CrimeAtlasDashboard', () => {
     expect(
       within(section).getByTestId('clearance-share-table'),
     ).toHaveTextContent(
-      /2024.*191,826.*181,362.*94\.55%.*10,464.*5\.45%.*6,368.*3\.32%.*4,096.*2\.14%/,
+      /2025.*200,663.*189,309.*94\.34%.*11,354.*5\.66%.*7,333.*3\.65%.*4,021.*2\.00%/,
     );
   });
 

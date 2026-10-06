@@ -410,36 +410,37 @@ describe('all-nationality comparison model', () => {
 });
 
 describe('national clearance foreign-share trend model', () => {
-  it('keeps ten years of direct foreign scopes and their residual', () => {
+  it('keeps eleven years of direct foreign scopes and their residual', () => {
     const dashboard = parseDashboardData(dashboardFixture);
     const view = buildClearanceShareTrendViewModel(dashboard, 'cleared_cases');
 
-    expect(view.points).toHaveLength(10);
+    expect(view.points).toHaveLength(11);
     expect(view.years).toEqual([
-      2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024,
+      2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025,
     ]);
     const latest = view.points.at(-1);
     expect(latest).toMatchObject({
-      year: 2024,
-      allPersonsTotal: 287_273,
-      allForeignCount: 18_861,
-      visitingForeignCount: 13_405,
-      allForeignMinusVisitingCount: 5_456,
-      japaneseEtcResidualCount: 268_412,
+      year: 2025,
+      allPersonsTotal: 301_055,
+      allForeignCount: 22_917,
+      visitingForeignCount: 17_614,
+      allForeignMinusVisitingCount: 5_303,
+      japaneseEtcResidualCount: 278_138,
     });
-    expect(latest?.allForeignShare).toBeCloseTo(6.565531742);
-    expect(latest?.visitingForeignShare).toBeCloseTo(4.666293038);
+    expect(latest?.allForeignShare).toBeCloseTo((22_917 / 301_055) * 100);
+    expect(latest?.visitingForeignShare).toBeCloseTo((17_614 / 301_055) * 100);
     expect(latest?.allForeignMinusVisitingShare).toBeCloseTo(
-      ((18_861 - 13_405) / 287_273) * 100,
+      (5_303 / 301_055) * 100,
     );
     expect(latest?.japaneseEtcResidualShare).toBeCloseTo(
-      (268_412 / 287_273) * 100,
+      (278_138 / 301_055) * 100,
     );
     expect(view.metricLabel).toBe('検挙件数');
     expect(view.sources.map((source) => source.id)).toEqual([
       'S08',
       'S09',
       'S15',
+      'S21',
     ]);
     expect(view.uiCaveat).toMatch(/人口当たりの犯罪率/);
   });
@@ -451,23 +452,23 @@ describe('national clearance foreign-share trend model', () => {
       'cleared_persons',
     );
 
-    expect(view.points).toHaveLength(10);
+    expect(view.points).toHaveLength(11);
     const latest = view.points.at(-1);
     expect(latest).toMatchObject({
-      year: 2024,
-      allPersonsTotal: 191_826,
-      allForeignCount: 10_464,
-      visitingForeignCount: 6_368,
-      allForeignMinusVisitingCount: 4_096,
-      japaneseEtcResidualCount: 181_362,
+      year: 2025,
+      allPersonsTotal: 200_663,
+      allForeignCount: 11_354,
+      visitingForeignCount: 7_333,
+      allForeignMinusVisitingCount: 4_021,
+      japaneseEtcResidualCount: 189_309,
     });
-    expect(latest?.allForeignShare).toBeCloseTo(5.454943543);
-    expect(latest?.visitingForeignShare).toBeCloseTo(3.319675122);
+    expect(latest?.allForeignShare).toBeCloseTo((11_354 / 200_663) * 100);
+    expect(latest?.visitingForeignShare).toBeCloseTo((7_333 / 200_663) * 100);
     expect(latest?.allForeignMinusVisitingShare).toBeCloseTo(
-      ((10_464 - 6_368) / 191_826) * 100,
+      (4_021 / 200_663) * 100,
     );
     expect(latest?.japaneseEtcResidualShare).toBeCloseTo(
-      (181_362 / 191_826) * 100,
+      (189_309 / 200_663) * 100,
     );
     expect(view.metricLabel).toBe('検挙人員');
   });

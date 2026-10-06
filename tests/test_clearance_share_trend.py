@@ -12,6 +12,95 @@ from nationality_crime_atlas.errors import IntegrityError, SchemaError
 from nationality_crime_atlas.provenance import sha256_file
 
 
+def _append_2025_summary(catalog, raw_root, contract):
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "3-3-1"
+    sheet["B1"] = "図表：３－３－１（外国人の刑法犯検挙状況）"
+    sheet["D2"] = "年次"
+    sheet["N2"] = "R7"
+    for row, value in enumerate((301055, 22917, 17614, 200663, 11354, 7333), 4):
+        sheet.cell(row, 14, value)
+    relative = "fixture/S21/summary.xlsx"
+    path = raw_root / relative
+    path.parent.mkdir(parents=True)
+    workbook.save(path)
+    rows = [json.loads(line) for line in catalog.read_text().splitlines()]
+    metadata = dict(rows[0], source_id="S21", source_table="3-3-1",
+                    source_period="2025", raw_relpath=relative, sha256=sha256_file(path))
+    rows.append(metadata)
+    catalog.write_text("".join(json.dumps(row) + "\n" for row in rows))
+    data = json.loads(contract.read_text())
+    data["schema_version"] = 2
+    data["artifact_pins"]["S21"] = metadata["sha256"]
+    data["trend"]["years"].append(2025)
+    data["trend"]["annual_summary_sources"] = [
+        {"year": 2025, "source_id": "S21", "source_table": "3-3-1"}
+    ]
+    _write_json(contract, data)
+
+
+def test_2025_share_extension_preserves_history_and_exact_cell_provenance(
+    tmp_path, nationality_table130_file, all_person_offense_file,
+):
+    catalog, raw_root, contract = _build_inputs(
+        tmp_path, nationality_table130_file, all_person_offense_file,
+    )
+    before = generate_clearance_share_trend(
+        catalog_path=catalog, raw_root=raw_root, contract_path=contract,
+        output_root=tmp_path / "before", generated_at="2026-10-06T12:00:00+09:00",
+    )
+    _append_2025_summary(catalog, raw_root, contract)
+    report = generate_clearance_share_trend(
+        catalog_path=catalog, raw_root=raw_root, contract_path=contract,
+        output_root=tmp_path / "after", generated_at="2026-10-06T12:01:00+09:00",
+    )
+    lines = report.jsonl_path.read_text().splitlines()
+    assert lines[:12] == before.jsonl_path.read_text().splitlines()
+    assert report.record_count == 18
+    rows = [json.loads(line) for line in lines[12:]]
+    for row in rows:
+        assert row["year"] == 2025
+        assert row["denominator_source_id"] == "S21"
+        assert set(row["numerator_source_ids"]) == {"S21"}
+        assert all(component["source_column"] == 14 for component in row["source_components"])
+    persons = next(row for row in rows if row["metric"] == "cleared_persons"
+                   and row["foreign_scope"] == "all_foreign_minus_visiting_foreign")
+    assert persons["numerator_value"] == 4021
+    assert persons["denominator_value"] == 200663
+    assert [part["source_row"] for part in persons["source_components"]] == [8, 9, 7]
+    cases = next(row for row in rows if row["metric"] == "cleared_cases"
+                 and row["foreign_scope"] == "all_foreign")
+    assert cases["display_value"] == pytest.approx(22917 / 301055 * 100)
+    assert [part["source_row"] for part in cases["source_components"]] == [5, 4]
+
+
+@pytest.mark.parametrize("change", ["unreviewed_year", "missing_pin", "wrong_table", "duplicate_year"])
+def test_summary_extension_refuses_unreviewed_bindings(
+    tmp_path, nationality_table130_file, all_person_offense_file, change,
+):
+    catalog, raw_root, contract = _build_inputs(
+        tmp_path, nationality_table130_file, all_person_offense_file,
+    )
+    _append_2025_summary(catalog, raw_root, contract)
+    data = json.loads(contract.read_text())
+    if change == "unreviewed_year":
+        data["trend"]["annual_summary_sources"][0]["year"] = 2024
+    elif change == "missing_pin":
+        del data["artifact_pins"]["S21"]
+    elif change == "wrong_table":
+        data["trend"]["annual_summary_sources"][0]["source_table"] = "3-3-3"
+    else:
+        data["trend"]["annual_summary_sources"] *= 2
+    _write_json(contract, data)
+    with pytest.raises(SchemaError):
+        generate_clearance_share_trend(
+            catalog_path=catalog, raw_root=raw_root, contract_path=contract,
+            output_root=tmp_path / "refused", generated_at="2026-10-06T12:01:00+09:00",
+        )
+    assert not (tmp_path / "refused/latest.json").exists()
+
+
 def _write_visiting_foreign_fixture(path: Path, *, cases_2024: int = 40) -> None:
     workbook = Workbook()
     worksheet = workbook.active
