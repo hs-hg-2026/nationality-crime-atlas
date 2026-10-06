@@ -430,8 +430,14 @@ describe('CrimeAtlasDashboard', () => {
     expect(
       within(section).getByText('2015–2025年', { selector: 'span' }),
     ).toBeVisible();
-    expect(within(section).getByText('2025年の刑法犯検挙状況（全国総数・外国人区分、表3-3-1）')).toBeVisible();
-    expect(within(section).getByText(/2025年は刑法犯統計資料の表3-3-1を使用/)).toBeVisible();
+    expect(
+      within(section).getByText(
+        '2025年の刑法犯検挙状況（全国総数・外国人区分、表3-3-1）',
+      ),
+    ).toBeVisible();
+    expect(
+      within(section).getByText(/2025年は刑法犯統計資料の表3-3-1を使用/),
+    ).toBeVisible();
     expect(within(section).getByTestId('clearance-share-chart')).toBeVisible();
     expect(
       within(section).getByTestId('japanese-clearance-share-chart'),

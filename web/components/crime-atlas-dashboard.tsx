@@ -164,6 +164,11 @@ const sourceDisplay: Record<
     publisher: '総務省統計局',
     period: '2024年10月1日時点',
   },
+  S21: {
+    dataset: '2025年の刑法犯検挙状況（全国総数・外国人区分、表3-3-1）',
+    publisher: '警察庁',
+    period: '2025年（確定値）',
+  },
 };
 
 function sourceDisplayFor(source: RegionalViewModel['sources'][number]) {
@@ -581,6 +586,9 @@ function ClearanceShareTrend({
           {view.uiCaveat}
           <span className="method-contract">
             日本人等は全国総数から外国人全体を引いた残差で、日本人について直接公表された値ではありません。
+          </span>
+          <span className="method-contract">
+            2015〜2024年は「犯罪統計」の詳細表、2025年は刑法犯統計資料の表3-3-1を使用しています。年ごとの実数と出典は下の表・出典欄で確認できます。
           </span>
           <span className="method-contract">
             算式{' '}
