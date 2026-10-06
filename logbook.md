@@ -502,3 +502,10 @@
 - **次の順番**: S21で全国検挙構成比を延長 → S20/S26で地域別2025年表示 → 分母を明示した人口当たり時系列 → 掲載対象限定の国籍別2025年表示 → 警察庁詳細版の確認。
 - **追加照合**: 2025年犯罪概要に再掲された2024年値のうち、S20の地域別3指標144値がS15と一致し、S21の全国3範囲×2指標6値がS15/S08/S09の刑法犯値と一致した。S20/S21/S19_2025の公式ファイルをrefreshし、前回hashとの一致も確認した。この一致だけで人口との対象範囲の一致を主張しない。
 - **関連パス**: `docs/20261005_215935_2025_final_population_update.md`, `src/nationality_crime_atlas/census_2025.py`, `tests/test_census_2025_final.py`, `config/sources.json`, `data/processed/_catalog/artifacts.jsonl`。README両言語とworkflowの旧版は`docs/20261005_215935_README.md`、`docs/20261005_215935_README.ja.md`、`docs/20261005_215935_workflow.md`に退避した。
+
+## 2026-10-06 全国検挙構成比を2025年まで延長
+- **何が**: S21表3-3-1の全国総数・外国人全体・来日外国人を使い、検挙件数／人員の構成比を66行・11年へ延長した。出典名と年による表の切替を日本語で画面に示した。
+- **どう判断したか／なぜ**: 従来2015〜2024年のS08/S09/S15を新しいsourceで上書きせず、2025年だけ独立した契約・hash・参照セルへ固定した。同じsource IDでも件数と人員、対象範囲の行が異なるため、componentの役割・セルを検査する。
+- **検証結果**: 公式原本6値・セルと一致、独立レビューで従来60行と他データ配列の不変を確認。Python213件、Web140件成功。出典・参照セル改変を拒否し、公開データhashとPages公開物検査を通過。最初のbuild失敗はsandboxの通信制限、Pages検査は本番URL設定の不足が原因で、適切な設定・許可付き再実行で解消した。
+- **現在地**: 2025年の地域別・人口当たり・国籍別時系列は未実装。次はS20/S26の地域別表示。今回push/releaseは行わない。
+- **関連パス**: `docs/20261006_222600_2025_clearance_share_update.md`, `config/clearance_share_trend_contract.json`, `web/public/data/dashboard_export.json`。README両言語とworkflow旧版は`docs/20261006_222600_README.md`、`docs/20261006_222600_README.ja.md`、`docs/20261006_222600_workflow.md`へ退避。RED `d80916f`、GREEN `8e6af40`。
