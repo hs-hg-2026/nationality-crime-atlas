@@ -382,11 +382,11 @@ describe('dashboard publication bundle', () => {
       source_run_relpath: pointer.run_relpath,
       dashboard_export_sha256: pointer.dashboard_export_sha256,
       record_counts: {
-        all_resident_context: 248,
+        all_resident_context: 200,
         nationality_comparison: 26,
         nationality_indicators: 290,
         clearance_share_trends: 66,
-        clearance_population_trends: 40,
+        clearance_population_trends: 44,
         nationality_trends: 260,
       },
       definition_counts: {
@@ -397,7 +397,7 @@ describe('dashboard publication bundle', () => {
         clearance_population_ids: 1,
         nationality_trend_ids: 1,
       },
-      source_count: 30,
+      source_count: 33,
       source_pointer_sha256: sha256(readFileSync(source.pointerPath)),
     });
 

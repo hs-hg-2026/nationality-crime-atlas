@@ -1,16 +1,16 @@
 {
   "publication_manifest_schema_version": 1,
   "compact_export_schema_version": 9,
-  "source_run_relpath": "20261006_221955_compact_export",
-  "generated_at": "2026-10-06T22:19:55+09:00",
-  "dashboard_export_sha256": "2beef7efe2b18429e853300cb87849c5cdfe73500287eb7f3f471e1db5c68d25",
+  "source_run_relpath": "20261006_235016_compact_export",
+  "generated_at": "2026-10-06T23:50:16+09:00",
+  "dashboard_export_sha256": "491a1f28b0e8de1650ac813417c19ad60b4c8750c461bac079192f22e740f595",
   "record_counts": {
-    "all_resident_context": 248,
+    "all_resident_context": 200,
     "nationality_comparison": 26,
     "nationality_indicators": 290,
     "offense_composition": 156,
     "clearance_share_trends": 66,
-    "clearance_population_trends": 40,
+    "clearance_population_trends": 44,
     "nationality_trends": 260
   },
   "definition_counts": {
@@ -23,8 +23,8 @@
     "clearance_population_ids": 1,
     "nationality_trend_ids": 1
   },
-  "source_count": 30,
-  "source_pointer_sha256": "097376857d493b6435bfa04d78f151dc9632c3212ae58847b996e4d0aea0f58a",
-  "source_summary_sha256": "74053c291fd9f0fa2a9dee1c379d1715b302ac9ea49cc0badf2543358e729c58",
-  "source_run_generated_at": "2026-10-06T22:19:55+09:00"
+  "source_count": 33,
+  "source_pointer_sha256": "988288c91e96a49c486aa025482e05abbb466e9220077266b8146d7e46a4d032",
+  "source_summary_sha256": "4e5bb119748bef9c137f4a91de4f13a7b403129746b240fcdea2b406241b17e4",
+  "source_run_generated_at": "2026-10-06T23:50:16+09:00"
 }

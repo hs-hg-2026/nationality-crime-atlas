@@ -128,10 +128,10 @@ describe('CrimeAtlasDashboard', () => {
       ),
     ).toBeVisible();
     expect(
-      within(screen.getByTestId('tokyo-comparison')).getByText('668.30'),
+      within(screen.getByTestId('tokyo-comparison')).getByText('697.84'),
     ).toBeVisible();
     expect(
-      within(screen.getByTestId('saitama-comparison')).getByText('704.68'),
+      within(screen.getByTestId('saitama-comparison')).getByText('733.75'),
     ).toBeVisible();
     expect(
       screen.getByText(/公的機関が算出した正式な犯罪率ではありません/),
@@ -156,7 +156,7 @@ describe('CrimeAtlasDashboard', () => {
       screen.getByText(/地形・面積・距離を表すものではありません/),
     ).toBeVisible();
     expect(screen.getByTestId('map-selected-prefecture')).toHaveTextContent(
-      /東京都.*668.30.*人口.*14,178,000/,
+      /東京都.*697.84.*人口.*14,236,627/,
     );
     const hokkaido = screen
       .getByTestId('prefecture-map')
@@ -188,10 +188,10 @@ describe('CrimeAtlasDashboard', () => {
     await user.click(screen.getByRole('button', { name: '件数' }));
 
     expect(
-      within(screen.getByTestId('tokyo-comparison')).getByText('94,752'),
+      within(screen.getByTestId('tokyo-comparison')).getByText('99,349'),
     ).toBeVisible();
     expect(
-      within(screen.getByTestId('saitama-comparison')).getByText('51,667'),
+      within(screen.getByTestId('saitama-comparison')).getByText('53,471'),
     ).toBeVisible();
     expect(screen.getByRole('button', { name: '件数' })).toHaveAttribute(
       'aria-pressed',
@@ -200,7 +200,7 @@ describe('CrimeAtlasDashboard', () => {
 
     await user.click(screen.getByRole('button', { name: '人口当たり' }));
     expect(
-      within(screen.getByTestId('tokyo-comparison')).getByText('668.30'),
+      within(screen.getByTestId('tokyo-comparison')).getByText('697.84'),
     ).toBeVisible();
   });
 
@@ -217,7 +217,7 @@ describe('CrimeAtlasDashboard', () => {
       screen.getByRole('option', { name: '刑法犯検挙人員', selected: true }),
     ).toBeInTheDocument();
     for (const link of screen.getAllByRole('link', {
-      name: 'S15 公表ページ',
+      name: 'S20 公表ページ',
     })) {
       expect(link).toHaveAttribute(
         'href',
@@ -225,7 +225,7 @@ describe('CrimeAtlasDashboard', () => {
       );
     }
     expect(
-      screen.getByRole('link', { name: 'S16 公表ページ' }),
+      screen.getByRole('link', { name: 'S26 公表ページ' }),
     ).toHaveAttribute('href', expect.stringMatching(/^https:\/\//));
   });
 
@@ -244,10 +244,10 @@ describe('CrimeAtlasDashboard', () => {
       'true',
     );
     expect(screen.getByTestId('tokyo-comparison')).toHaveTextContent(
-      /23,731人.*人員 23,731/,
+      /24,587人.*人員 24,587/,
     );
     expect(screen.getByTestId('map-selected-prefecture')).toHaveTextContent(
-      /23,731\s*人.*人員.*23,731/,
+      /24,587\s*人.*人員.*24,587/,
     );
   });
 
@@ -275,29 +275,29 @@ describe('CrimeAtlasDashboard', () => {
       screen.getByText(/同じ事件を認知から検挙まで追跡した数字ではありません/),
     ).toBeVisible();
     expect(document.body).not.toHaveTextContent(/cohort|strict|clamp|同年flow/);
-    expect(screen.getByText(/61\.06/)).toBeVisible();
+    expect(screen.getByText(/61\.11/)).toBeVisible();
     expect(
-      within(screen.getByTestId('tokyo-comparison')).getByText('64.16'),
+      within(screen.getByTestId('tokyo-comparison')).getByText('64.67'),
     ).toBeVisible();
     expect(
-      within(screen.getByTestId('saitama-comparison')).getByText('67.70'),
+      within(screen.getByTestId('saitama-comparison')).getByText('67.87'),
     ).toBeVisible();
     expect(screen.getByTestId('map-selected-prefecture')).toHaveTextContent(
-      /同年差分件数.*60,791.*認知件数.*94,752.*同年差分率.*64\.16/,
+      /同年差分件数.*64,252.*認知件数.*99,349.*同年差分率.*64\.67/,
     );
 
     await user.click(screen.getByRole('button', { name: '同年差分件数' }));
     expect(
-      within(screen.getByTestId('tokyo-comparison')).getByText('60,791'),
+      within(screen.getByTestId('tokyo-comparison')).getByText('64,252'),
     ).toBeVisible();
     expect(
       screen.getByRole('button', { name: '同年差分件数' }),
     ).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByTestId('map-selected-prefecture')).toHaveTextContent(
-      /同年差分率.*64\.16 %/,
+      /同年差分率.*64\.67 %/,
     );
     expect(screen.getByTestId('map-selected-prefecture')).not.toHaveTextContent(
-      /同年差分率.*64\.16 件/,
+      /同年差分率.*64\.67 件/,
     );
   });
 
@@ -475,9 +475,11 @@ describe('CrimeAtlasDashboard', () => {
         name: '人口の変化と人口1,000人当たりの検挙',
       }),
     ).toBeVisible();
-    expect(within(section).getByText(/2025年は日本人人口の資料が変わります/)).toHaveTextContent(/不詳.*日本人人口.*含め.*前年/);
     expect(
-      within(section).getByText('2015–2024年', { selector: 'span' }),
+      within(section).getByText(/2025年は日本人人口の資料が変わります/),
+    ).toHaveTextContent(/不詳.*日本人人口.*含め.*前年/);
+    expect(
+      within(section).getByText('2015–2025年', { selector: 'span' }),
     ).toBeVisible();
     expect(
       within(section).getByTestId('japanese-clearance-population-panel'),
@@ -495,8 +497,14 @@ describe('CrimeAtlasDashboard', () => {
       within(section).getByTestId('japanese-clearance-population-table'),
     ).toHaveTextContent(/2024.*268,412.*120,296,000.*2\.23/);
     expect(
+      within(section).getByTestId('japanese-clearance-population-table'),
+    ).toHaveTextContent(/2025.*278,138.*117,405,318.*2\.37/);
+    expect(
       within(section).getByTestId('foreign-clearance-population-table'),
     ).toHaveTextContent(/2024.*18,861.*3,768,977.*5\.00/);
+    expect(
+      within(section).getByTestId('foreign-clearance-population-table'),
+    ).toHaveTextContent(/2025.*22,917.*4,125,395.*5\.56/);
     expect(
       within(section).getByTestId('foreign-clearance-population-table'),
     ).toHaveTextContent(/2015.*16,017.*分母未登録.*未算出/);
@@ -522,8 +530,14 @@ describe('CrimeAtlasDashboard', () => {
       within(section).getByTestId('japanese-clearance-population-table'),
     ).toHaveTextContent(/2024.*181,362.*120,296,000.*1\.51/);
     expect(
+      within(section).getByTestId('japanese-clearance-population-table'),
+    ).toHaveTextContent(/2025.*189,309.*117,405,318.*1\.61/);
+    expect(
       within(section).getByTestId('foreign-clearance-population-table'),
     ).toHaveTextContent(/2024.*10,464.*3,768,977.*2\.78/);
+    expect(
+      within(section).getByTestId('foreign-clearance-population-table'),
+    ).toHaveTextContent(/2025.*11,354.*4,125,395.*2\.75/);
   });
 
   it('uses one 1.0-spaced reference-ratio y-axis for both population groups', async () => {

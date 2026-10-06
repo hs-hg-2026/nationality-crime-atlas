@@ -169,6 +169,21 @@ const sourceDisplay: Record<
     publisher: '警察庁',
     period: '2025年（確定値）',
   },
+  S20: {
+    dataset: '都道府県別の刑法犯認知件数・検挙件数・検挙人員（表1-5-1）',
+    publisher: '警察庁',
+    period: '2025年（確定値）',
+  },
+  S26: {
+    dataset: '国勢調査：都道府県別の総人口（原数値、表1-1）',
+    publisher: '総務省統計局',
+    period: '2025年10月1日時点',
+  },
+  S27: {
+    dataset: '国勢調査：日本人・外国人の別と国籍別人口（原数値、表49-1）',
+    publisher: '総務省統計局',
+    period: '2025年10月1日時点',
+  },
 };
 
 function sourceDisplayFor(source: RegionalViewModel['sources'][number]) {
@@ -265,6 +280,14 @@ const interpretationLabels: Record<string, string> = {
     '選択中の条件に対応する日本の犯罪件数・人員がない',
   japanese_population_rounded_to_nearest_1000:
     '日本人人口は千人単位に丸められた公表値',
+  census_original_nationality_population:
+    '日本人人口は国勢調査の原数値（人単位）',
+  census_nationality_unknown_excluded_from_japanese_denominator:
+    '日本人・外国人の別が不詳の人口は日本人人口の分母に含めない',
+  population_source_changed_to_census:
+    '前年までの人口推計から国勢調査へ資料が変わる',
+  census_original_population:
+    '総人口は国勢調査の原数値（人単位、不詳の住民を含む）',
   japanese_values_derived_by_residual_subtraction:
     '日本の値は差し引きによる参考値',
   nationality_grouping_mismatch: '犯罪統計と人口統計の国籍区分が一致しない',
@@ -280,6 +303,8 @@ const interpretationLabels: Record<string, string> = {
     '警察統計の地域が発生地・居住地のどちらか確認できない',
   police_reporting_area_vs_population_estimate_prefecture:
     '警察統計の地域と人口推計の都道府県を組み合わせている',
+  police_reporting_area_vs_census_prefecture:
+    '警察統計の地域と国勢調査の都道府県を組み合わせている',
   police_reporting_area_vs_registered_residence:
     '警察統計の地域と在留外国人の届出住所は同じ定義ではない',
   primary_baseline_is_all_residents:
@@ -1116,6 +1141,16 @@ function ClearancePopulationTrend({
         <AlertDescription>{view.uiCaveat}</AlertDescription>
       </Alert>
 
+      {view.years.includes(2025) && (
+        <Alert className="clearance-population-alert">
+          <Info aria-hidden="true" />
+          <AlertTitle>2025年の人口資料について</AlertTitle>
+          <AlertDescription>
+            2025年は日本人人口の資料が変わります。前年までは人口推計（千人単位）、2025年は国勢調査の原数値（人単位）を使います。日本人・外国人の別が不詳の2,105,452人は、日本人人口の分母に含めません。不詳補完値は使っていないため、前年との差をそのまま人口や参考比率の変化と解釈しないでください。外国人全体の分母は、引き続き12月31日の在留外国人数です。
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="clearance-population-grid">
         <ClearancePopulationPanel
           panel={view.japanese}
@@ -1515,6 +1550,8 @@ export function CrimeAtlasDashboard({
             ) : (
               <>
                 公的機関が算出した正式な犯罪率ではありません。1年間の犯罪件数と、その年の10月1日時点の人口を組み合わせた参考値です。犯罪件数に数えられた人の居住地は確認できません。
+                {view.year === 2025 &&
+                  '2025年の総人口は国勢調査の原数値（人単位）です。日本人・外国人の別が不詳の住民も総人口に含みます。'}
               </>
             )}
             <span className="method-contract">
@@ -1730,7 +1767,7 @@ export function CrimeAtlasDashboard({
                 <CardTitle>この表示の出典</CardTitle>
                 <CardDescription>
                   {view.isSameYearGap
-                    ? '認知件数と検挙件数は同じS15へ辿れます。'
+                    ? '認知件数と検挙件数は同じ警察庁資料へ辿れます。'
                     : '分子と分母を別々に辿れます。'}
                 </CardDescription>
               </CardHeader>

@@ -1218,6 +1218,77 @@ def _japanese_population_coordinate(year: int) -> Tuple[object, ...]:
     return source_id, "2", "第2表", 12, 9
 
 
+def _validate_2025_clearance_population_row(row: Mapping[str, object]) -> None:
+    """Enforce the independently reviewed edition, coordinates, and original basis."""
+    japanese = row.get("population_group") == "japanese_etc_residual"
+    metric = row.get("metric")
+    cases = metric == "cleared_cases"
+    if (row.get("year") != 2025
+            or metric not in ("cleared_cases", "cleared_persons")
+            or row.get("population_group") not in CLEARANCE_POPULATION_GROUP_CONTRACTS):
+        _clearance_population_semantic_error("2025 dimensions differ")
+    contract = CLEARANCE_POPULATION_GROUP_CONTRACTS[row["population_group"]]
+    numerator = (278138 if cases else 189309) if japanese else (22917 if cases else 11354)
+    denominator = 117405318 if japanese else 4125395
+    source_id = "S27" if japanese else "S19_2025"
+    required = set(contract["required_flags"]) - {"japanese_population_rounded_to_nearest_1000"}
+    if japanese:
+        required.update(("census_original_nationality_population",
+                         "census_nationality_unknown_excluded_from_japanese_denominator",
+                         "population_source_changed_to_census"))
+    formula = ("(S21.all_persons.%s - S21.all_foreign.%s) / S27.population * 1000"
+               % (metric, metric)) if japanese else (
+                   "S21.all_foreign.%s / S19_2025.population * 1000" % metric)
+    flags = row.get("mismatch_flags")
+    if (row.get("calculation_status") != "calculated"
+            or row.get("refusal_reason") is not None
+            or type(row.get("numerator_value")) is not int
+            or type(row.get("denominator_value")) is not int
+            or row.get("numerator_value") != numerator
+            or row.get("denominator_value") != denominator
+            or row.get("numerator_source_ids") not in (["S21"], ("S21",))
+            or row.get("denominator_source_id") != source_id
+            or row.get("population_scope") != contract["population_scope"]
+            or row.get("population_reference_date") != ("2025-10-01" if japanese else "2025-12-31")
+            or row.get("denominator_rounding") != ("none" if japanese else "as_published_persons")
+            or row.get("derivation_method") != contract["derivation_method"]
+            or row.get("derivation_formula") != formula
+            or not isinstance(flags, (list, tuple))
+            or not all(isinstance(flag, str) for flag in flags)
+            or not required.issubset(flags)
+            or "japanese_population_rounded_to_nearest_1000" in flags
+            or row.get("display_multiplier") != 1000):
+        _clearance_population_semantic_error("2025 source binding differs")
+    for field, expected in (("quotient", numerator / denominator),
+                            ("display_value", numerator / denominator * 1000)):
+        value = row.get(field)
+        if (isinstance(value, bool) or not isinstance(value, (int, float))
+                or not math.isclose(value, expected, rel_tol=1e-12, abs_tol=1e-12)):
+            _clearance_population_semantic_error("2025 arithmetic differs")
+
+    def clearance(role, value, source_row):
+        return {"source_id": "S21", "role": role, "metric": metric, "value": value,
+                "source_table": "3-3-1", "source_sheet": "3-3-1",
+                "source_row": source_row, "source_column": 14}
+
+    population = {"source_id": source_id, "role": "denominator", "metric": "population",
+                  "value": denominator, "published_value": denominator, "published_unit": "persons",
+                  "source_table": "49-1" if japanese else "1",
+                  "source_sheet": "b49_01" if japanese else "25-12-01m",
+                  "source_row": 11 if japanese else 5, "source_column": 31 if japanese else 5}
+    if japanese:
+        population.update(value_basis="original", excluded_unknown_population=2105452)
+    expected = ([clearance("numerator_minuend", 301055 if cases else 200663, 4 if cases else 7),
+                 clearance("numerator_subtrahend", 22917 if cases else 11354, 5 if cases else 8),
+                 population] if japanese else [clearance("numerator", numerator, 5 if cases else 8), population])
+    components = row.get("source_components")
+    if (not isinstance(components, (list, tuple)) or len(components) != len(expected)
+            or any(not isinstance(actual, dict)
+                   or any(actual.get(key) != value for key, value in reference.items())
+                   for actual, reference in zip(components, expected))):
+        _clearance_population_semantic_error("2025 source coordinates differ")
+
+
 def _validate_clearance_population_bundle(bundle: _DatasetBundle) -> None:
     years = bundle.summary.get("years")
     year_count = bundle.summary.get("year_count")
@@ -1232,7 +1303,7 @@ def _validate_clearance_population_bundle(bundle: _DatasetBundle) -> None:
         )
     if year_count != len(years):
         raise SchemaError("clearance population summary year_count differs")
-    if years != list(CLEARANCE_POPULATION_YEARS):
+    if years not in (list(CLEARANCE_POPULATION_YEARS), list(CLEARANCE_POPULATION_YEARS) + [2025]):
         _clearance_population_semantic_error("year coverage differs")
     if bundle.summary.get("trend_id") != CLEARANCE_POPULATION_TREND_ID:
         _clearance_population_semantic_error("summary trend_id differs")
@@ -1271,6 +1342,10 @@ def _validate_clearance_population_bundle(bundle: _DatasetBundle) -> None:
             _clearance_population_semantic_error(
                 "group, label, or interpretation binding differs at row %d" % index
             )
+
+        if year == 2025:
+            _validate_2025_clearance_population_row(row)
+            continue
 
         numerator_source_ids = row.get("numerator_source_ids")
         if (

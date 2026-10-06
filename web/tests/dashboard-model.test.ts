@@ -26,13 +26,13 @@ describe('regional dashboard model', () => {
 
     expect(view.prefectures).toHaveLength(47);
     expect(view.national.name).toBe('日本');
-    expect(view.refusedCount).toBe(14);
+    expect(view.refusedCount).toBe(2);
     expect(view.prefectures[0].name).toBe('大阪府');
-    expect(view.prefectures[0].value).toBeCloseTo(929.5763389);
-    expect(view.tokyo.value).toBeCloseTo(668.3030047);
-    expect(view.saitama.value).toBeCloseTo(704.6781233);
-    expect(view.tokyo.rawCount).toBe(94_752);
-    expect(view.saitama.rawCount).toBe(51_667);
+    expect(view.prefectures[0].value).toBeCloseTo(960.2009838);
+    expect(view.tokyo.value).toBeCloseTo(697.840858);
+    expect(view.saitama.value).toBeCloseTo(733.7534692);
+    expect(view.tokyo.rawCount).toBe(99_349);
+    expect(view.saitama.rawCount).toBe(53_471);
     expect(view.warningCodes).toEqual(
       expect.arrayContaining([
         'annual_flow_vs_point_in_time_population',
@@ -51,8 +51,8 @@ describe('regional dashboard model', () => {
 
     expect(view.unitLabel).toBe('件');
     expect(view.prefectures[0].name).toBe('東京都');
-    expect(view.prefectures[0].value).toBe(94_752);
-    expect(view.tokyo.referenceRatio).toBeCloseTo(668.3030047);
+    expect(view.prefectures[0].value).toBe(99_349);
+    expect(view.tokyo.referenceRatio).toBeCloseTo(697.840858);
   });
 
   it('labels cleared-person observations as people in count mode', () => {
@@ -65,7 +65,7 @@ describe('regional dashboard model', () => {
 
     expect(view.unitLabel).toBe('人');
     expect(view.rawCountLabel).toBe('人員');
-    expect(view.tokyo.rawCount).toBe(23_731);
+    expect(view.tokyo.rawCount).toBe(24_587);
   });
 
   it('builds a signed same-year recognition-clearance gap without calling it unresolved', () => {
@@ -81,12 +81,12 @@ describe('regional dashboard model', () => {
     expect(view.rawCountLabel).toBe('同年差分件数');
     expect(view.denominatorLabel).toBe('認知件数');
     expect(view.ratioDetailLabel).toBe('同年差分率');
-    expect(view.national.value).toBeCloseTo(61.0571807);
-    expect(view.national.rawCount).toBe(450_406);
-    expect(view.national.denominatorValue).toBe(737_679);
-    expect(view.tokyo.value).toBeCloseTo(64.1580125);
-    expect(view.saitama.value).toBeCloseTo(67.6950471);
-    expect(view.sources.map((source) => source.id)).toEqual(['S15']);
+    expect(view.national.value).toBeCloseTo(61.1111398);
+    expect(view.national.rawCount).toBe(473_087);
+    expect(view.national.denominatorValue).toBe(774_142);
+    expect(view.tokyo.value).toBeCloseTo(64.6730214);
+    expect(view.saitama.value).toBeCloseTo(67.8741748);
+    expect(view.sources.map((source) => source.id)).toEqual(['S20']);
     expect(view.uiCaveat).toMatch(/未解決件数／未解決率ではない/);
   });
 
@@ -115,7 +115,7 @@ describe('regional dashboard model', () => {
       'ratio',
     );
 
-    expect(view.sources.map((source) => source.id)).toEqual(['S15', 'S16']);
+    expect(view.sources.map((source) => source.id)).toEqual(['S20', 'S26']);
     expect(view.sources.every((source) => source.publisher.length > 0)).toBe(
       true,
     );
@@ -574,29 +574,29 @@ describe('clearance population reference trend model', () => {
     );
 
     expect(view.years).toEqual([
-      2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024,
+      2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025,
     ]);
-    expect(view.japanese.points).toHaveLength(10);
-    expect(view.foreign.points).toHaveLength(10);
+    expect(view.japanese.points).toHaveLength(11);
+    expect(view.foreign.points).toHaveLength(11);
     expect(view.japanese.points.at(-1)).toMatchObject({
-      year: 2024,
-      numeratorValue: 268_412,
-      populationValue: 120_296_000,
+      year: 2025,
+      numeratorValue: 278_138,
+      populationValue: 117_405_318,
       calculationStatus: 'calculated',
-      populationReferenceDate: '2024-10-01',
+      populationReferenceDate: '2025-10-01',
     });
     expect(view.japanese.points.at(-1)?.referenceRatio).toBeCloseTo(
-      (268_412 / 120_296_000) * 1000,
+      (278_138 / 117_405_318) * 1000,
     );
     expect(view.foreign.points.at(-1)).toMatchObject({
-      year: 2024,
-      numeratorValue: 18_861,
-      populationValue: 3_768_977,
+      year: 2025,
+      numeratorValue: 22_917,
+      populationValue: 4_125_395,
       calculationStatus: 'calculated',
-      populationReferenceDate: '2024-12-31',
+      populationReferenceDate: '2025-12-31',
     });
     expect(view.foreign.points.at(-1)?.referenceRatio).toBeCloseTo(
-      (18_861 / 3_768_977) * 1000,
+      (22_917 / 4_125_395) * 1000,
     );
     expect(view.foreign.points[0]).toMatchObject({
       year: 2015,
@@ -614,7 +614,7 @@ describe('clearance population reference trend model', () => {
     });
     expect(view.metricLabel).toBe('検挙件数');
     expect(view.uiCaveat).toMatch(/犯罪を行う確率や公的な犯罪率を示さない/);
-    expect(view.sources).toHaveLength(16);
+    expect(view.sources).toHaveLength(19);
     expect(view.sources.map((source) => source.id)).toEqual(
       expect.arrayContaining(['S08', 'S15', 'S17', 'S18', 'S19_2024']),
     );
@@ -634,12 +634,12 @@ describe('clearance population reference trend model', () => {
     expect(persons.metricLabel).toBe('検挙人員');
     expect(persons.unitLabel).toBe('人');
     expect(persons.japanese.points.at(-1)).toMatchObject({
-      numeratorValue: 181_362,
-      populationValue: 120_296_000,
+      numeratorValue: 189_309,
+      populationValue: 117_405_318,
     });
     expect(persons.foreign.points.at(-1)).toMatchObject({
-      numeratorValue: 10_464,
-      populationValue: 3_768_977,
+      numeratorValue: 11_354,
+      populationValue: 4_125_395,
     });
     expect(
       persons.japanese.points.map((point) => point.populationValue),

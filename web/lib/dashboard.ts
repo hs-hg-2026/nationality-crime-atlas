@@ -1,3 +1,5 @@
+import { validate2025ClearancePopulationRow } from './clearance-population-2025.mjs';
+
 export const SAME_YEAR_GAP_CONTEXT_ID =
   'all_resident_same_year_recognition_clearance_gap' as const;
 
@@ -2098,6 +2100,19 @@ function requireClearancePopulationRow(
   row: ClearancePopulationRow,
   definition: ClearancePopulationDefinition,
 ): void {
+  if (row.year === 2025) {
+    const contract = CLEARANCE_POPULATION_GROUP_CONTRACTS[row.population_group];
+    if (
+      !contract ||
+      row.population_group_label_ja !== contract.label ||
+      row.metric_label_ja !==
+        (row.metric === 'cleared_cases' ? '検挙件数' : '検挙人員')
+    ) {
+      clearancePopulationSemanticError('2025 label binding differs');
+    }
+    validate2025ClearancePopulationRow(row);
+    return;
+  }
   const groupContract =
     CLEARANCE_POPULATION_GROUP_CONTRACTS[row.population_group];
   const rowLabel = `${row.metric}/${row.population_group}/${row.year}`;
@@ -2305,7 +2320,10 @@ function requireCompleteClearancePopulationGrid(
   definition: ClearancePopulationDefinition,
 ): void {
   const expected = new Set<string>();
-  for (const year of CLEARANCE_POPULATION_YEARS) {
+  const years = rows.some((row) => row.year === 2025)
+    ? [...CLEARANCE_POPULATION_YEARS, 2025]
+    : CLEARANCE_POPULATION_YEARS;
+  for (const year of years) {
     for (const metric of ['cleared_cases', 'cleared_persons'] as const) {
       for (const populationGroup of Object.keys(
         CLEARANCE_POPULATION_GROUP_CONTRACTS,
@@ -2385,9 +2403,12 @@ export function buildClearancePopulationTrendViewModel(
   }
 
   const years = [...rowsByYear.keys()].sort((left, right) => left - right);
+  const expectedYears = years.includes(2025)
+    ? [...CLEARANCE_POPULATION_YEARS, 2025]
+    : CLEARANCE_POPULATION_YEARS;
   if (
-    years.length !== CLEARANCE_POPULATION_YEARS.length ||
-    years.some((year, index) => year !== CLEARANCE_POPULATION_YEARS[index])
+    years.length !== expectedYears.length ||
+    years.some((year, index) => year !== expectedYears[index])
   ) {
     clearancePopulationSemanticError('year coverage differs');
   }

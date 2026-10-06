@@ -1,3 +1,4 @@
+import { validate2025ClearancePopulationRow } from '../lib/clearance-population-2025.mjs';
 import { createHash, randomUUID } from 'node:crypto';
 import {
   mkdirSync,
@@ -368,6 +369,7 @@ function validateClearancePopulationRecords(payload, definitions, sources) {
       );
     }
     if (
+      record.year !== 2025 &&
       !arraysEqual(
         record.numerator_source_ids,
         groupContract.numeratorSourceIds,
@@ -390,9 +392,10 @@ function validateClearancePopulationRecords(payload, definitions, sources) {
     }
     if (
       !Array.isArray(record.mismatch_flags) ||
-      !groupContract.requiredFlags.every((flag) =>
-        record.mismatch_flags.includes(flag),
-      )
+      (record.year !== 2025 &&
+        !groupContract.requiredFlags.every((flag) =>
+          record.mismatch_flags.includes(flag),
+        ))
     ) {
       clearancePopulationSemanticError(
         `required mismatch flags are absent at ${label}`,
@@ -414,6 +417,11 @@ function validateClearancePopulationRecords(payload, definitions, sources) {
     const metricYearRows = rowsByMetricYear.get(metricYearKey) ?? [];
     metricYearRows.push(record);
     rowsByMetricYear.set(metricYearKey, metricYearRows);
+
+    if (record.year === 2025) {
+      validate2025ClearancePopulationRow(record);
+      return;
+    }
 
     const foreignClearanceComponent = [
       'S08',
@@ -593,7 +601,12 @@ function validateClearancePopulationRecords(payload, definitions, sources) {
   );
   const expectedKeys = new Set(
     ['cleared_cases', 'cleared_persons'].flatMap((metric) =>
-      CLEARANCE_POPULATION_YEARS.flatMap((year) =>
+      (payload.records.clearance_population_trends.some(
+        (row) => row.year === 2025,
+      )
+        ? [...CLEARANCE_POPULATION_YEARS, 2025]
+        : CLEARANCE_POPULATION_YEARS
+      ).flatMap((year) =>
         Object.keys(CLEARANCE_POPULATION_GROUP_CONTRACTS).map(
           (group) => `${metric}:${year}:${group}`,
         ),
