@@ -475,6 +475,7 @@ describe('CrimeAtlasDashboard', () => {
         name: '人口の変化と人口1,000人当たりの検挙',
       }),
     ).toBeVisible();
+    expect(within(section).getByText(/2025年は日本人人口の資料が変わります/)).toHaveTextContent(/不詳.*日本人人口.*含め.*前年/);
     expect(
       within(section).getByText('2015–2024年', { selector: 'span' }),
     ).toBeVisible();
