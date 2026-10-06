@@ -878,6 +878,14 @@ def _validate_clearance_share_components(
     row: Mapping[str, object],
     expected: Sequence[Tuple[object, ...]],
 ) -> None:
+    if row.get("year") == 2025:
+        # The reviewed summary edition puts scopes in rows and the year in N.
+        rows = {"S08": 5, "S09": 6, "S15": 4}
+        expected = [
+            ("S21", role, metric, value, "3-3-1", "3-3-1",
+             rows[source_id] + (3 if metric == "cleared_persons" else 0), 14)
+            for source_id, role, metric, value, *_ in expected
+        ]
     components = row.get("source_components")
     if not isinstance(components, (list, tuple)) or any(
         not isinstance(component, dict) for component in components
@@ -926,7 +934,14 @@ def _validate_clearance_share_bundle(bundle: _DatasetBundle) -> None:
         seen.add(key)
         if year not in years or scope not in expected_scopes or metric not in expected_metrics:
             raise SchemaError("Unsupported clearance share dimensions at row %d" % index)
-        scope_contract = CLEARANCE_SHARE_SCOPE_CONTRACTS[scope]
+        scope_contract = dict(CLEARANCE_SHARE_SCOPE_CONTRACTS[scope])
+        denominator_source_id = "S15"
+        if year == 2025:
+            denominator_source_id = "S21"
+            scope_contract["numerator_source_id"] = "S21"
+            scope_contract["numerator_source_ids"] = tuple(
+                "S21" for _ in scope_contract["numerator_source_ids"]
+            )
         if (
             row.get("trend_id") != CLEARANCE_SHARE_TREND_ID
             or row.get("label_ja") != CLEARANCE_SHARE_LABEL_JA
@@ -936,7 +951,7 @@ def _validate_clearance_share_bundle(bundle: _DatasetBundle) -> None:
             or row.get("foreign_scope_label_ja") != scope_contract["label_ja"]
             or row.get("numerator_source_id")
             != scope_contract["numerator_source_id"]
-            or row.get("denominator_source_id") != "S15"
+            or row.get("denominator_source_id") != denominator_source_id
             or row.get("derivation_method")
             != scope_contract["derivation_method"]
             or row.get("metric_label_ja")
@@ -1003,10 +1018,13 @@ def _validate_clearance_share_bundle(bundle: _DatasetBundle) -> None:
         ):
             raise SchemaError("Clearance share arithmetic differs at row %d" % index)
         expected_formula = (
-            "(S08.%s - S09.%s) / S15.%s" % (metric, metric, metric)
+            "(%s.%s - %s.%s) / %s.%s" % (
+                scope_contract["numerator_source_ids"][0], metric,
+                scope_contract["numerator_source_ids"][1], metric,
+                denominator_source_id, metric)
             if scope == "all_foreign_minus_visiting_foreign"
-            else "%s.%s / S15.%s"
-            % (scope_contract["numerator_source_id"], metric, metric)
+            else "%s.%s / %s.%s"
+            % (scope_contract["numerator_source_id"], metric, denominator_source_id, metric)
         )
         if row.get("derivation_formula") != expected_formula:
             _clearance_share_semantic_error(

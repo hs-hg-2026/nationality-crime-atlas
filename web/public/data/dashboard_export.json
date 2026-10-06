@@ -437,7 +437,7 @@
       }
     }
   },
-  "generated_at": "2026-09-08T06:11:00+09:00",
+  "generated_at": "2026-10-06T22:19:55+09:00",
   "publication_policy": {
     "clearance_population_view": "national_clearance_population_reference_ratio",
     "clearance_share_view": "national_criminal_code_clearance_foreign_share",
@@ -18504,6 +18504,320 @@
         ],
         "trend_id": "national_criminal_code_clearance_foreign_share",
         "year": 2024
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S21",
+        "denominator_value": 301055,
+        "derivation_formula": "S21.cleared_cases / S21.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 7.612230323362841,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S21",
+        "numerator_source_ids": [
+          "S21"
+        ],
+        "numerator_value": 22917,
+        "quotient": 0.07612230323362841,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 5,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 22917
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 4,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 301055
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2025
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S21",
+        "denominator_value": 200663,
+        "derivation_formula": "S21.cleared_persons / S21.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.658242924704604,
+        "foreign_scope": "all_foreign",
+        "foreign_scope_label_ja": "外国人全体",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "all_foreign_scope_not_resident_foreigner_population",
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S21",
+        "numerator_source_ids": [
+          "S21"
+        ],
+        "numerator_value": 11354,
+        "quotient": 0.05658242924704604,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 8,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 11354
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 7,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 200663
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2025
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S21",
+        "denominator_value": 301055,
+        "derivation_formula": "S21.cleared_cases / S21.cleared_cases",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 5.850758167112321,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S21",
+        "numerator_source_ids": [
+          "S21"
+        ],
+        "numerator_value": 17614,
+        "quotient": 0.058507581671123216,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 6,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 17614
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 4,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 301055
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2025
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S21",
+        "denominator_value": 200663,
+        "derivation_formula": "S21.cleared_persons / S21.cleared_persons",
+        "derivation_method": "direct_published_counts_division",
+        "display_value": 3.6543857113668192,
+        "foreign_scope": "visiting_foreign",
+        "foreign_scope_label_ja": "来日外国人",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "denominator_includes_japanese_and_others",
+          "share_of_clearance_counts_not_population_rate",
+          "visiting_foreign_includes_nonresidents"
+        ],
+        "numerator_source_id": "S21",
+        "numerator_source_ids": [
+          "S21"
+        ],
+        "numerator_value": 7333,
+        "quotient": 0.03654385711366819,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 9,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 7333
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 7,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 200663
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2025
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S21",
+        "denominator_value": 301055,
+        "derivation_formula": "(S21.cleared_cases - S21.cleared_cases) / S21.cleared_cases",
+        "derivation_method": "arithmetic_residual_all_foreign_minus_visiting_foreign",
+        "display_value": 1.7614721562505191,
+        "foreign_scope": "all_foreign_minus_visiting_foreign",
+        "foreign_scope_label_ja": "外国人全体−来日外国人（差分）",
+        "metric": "cleared_cases",
+        "metric_label_ja": "検挙件数",
+        "mismatch_flags": [
+          "arithmetic_residual_not_directly_published",
+          "denominator_includes_japanese_and_others",
+          "residual_includes_settled_residents_us_forces_and_unknown_status",
+          "residual_not_equivalent_to_usual_residents",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S21",
+        "numerator_source_ids": [
+          "S21",
+          "S21"
+        ],
+        "numerator_value": 5303,
+        "quotient": 0.01761472156250519,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_minuend",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 5,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 22917
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "numerator_subtrahend",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 6,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 17614
+          },
+          {
+            "metric": "cleared_cases",
+            "role": "denominator",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 4,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 301055
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2025
+      },
+      {
+        "calculation_status": "calculated",
+        "denominator_source_id": "S21",
+        "denominator_value": 200663,
+        "derivation_formula": "(S21.cleared_persons - S21.cleared_persons) / S21.cleared_persons",
+        "derivation_method": "arithmetic_residual_all_foreign_minus_visiting_foreign",
+        "display_value": 2.003857213337785,
+        "foreign_scope": "all_foreign_minus_visiting_foreign",
+        "foreign_scope_label_ja": "外国人全体−来日外国人（差分）",
+        "metric": "cleared_persons",
+        "metric_label_ja": "検挙人員",
+        "mismatch_flags": [
+          "arithmetic_residual_not_directly_published",
+          "denominator_includes_japanese_and_others",
+          "residual_includes_settled_residents_us_forces_and_unknown_status",
+          "residual_not_equivalent_to_usual_residents",
+          "share_of_clearance_counts_not_population_rate"
+        ],
+        "numerator_source_id": "S21",
+        "numerator_source_ids": [
+          "S21",
+          "S21"
+        ],
+        "numerator_value": 4021,
+        "quotient": 0.02003857213337785,
+        "refusal_reason": null,
+        "source_components": [
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_minuend",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 8,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 11354
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "numerator_subtrahend",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 9,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 7333
+          },
+          {
+            "metric": "cleared_persons",
+            "role": "denominator",
+            "source_column": 14,
+            "source_id": "S21",
+            "source_row": 7,
+            "source_sheet": "3-3-1",
+            "source_table": "3-3-1",
+            "value": 200663
+          }
+        ],
+        "trend_id": "national_criminal_code_clearance_foreign_share",
+        "year": 2025
       }
     ],
     "nationality_comparison": [
@@ -52518,24 +52832,24 @@
     },
     "clearance_share_trend": {
       "latest_manifest": {
-        "clearance_share_records_csv_sha256": "83b82f6d6788c4cd407229f1772cef0b7f93a825eb5a2aa2d4d770fed757e9a0",
-        "clearance_share_records_sha256": "ba148af70e7279fdcb2c3cb66751a6030d969c596ee65c1c2260d9355656c35c",
-        "generated_at": "2026-09-06T08:14:00+09:00",
+        "clearance_share_records_csv_sha256": "d3ebe47b34a5372765fd9def0cc24107750215863efc018b17f43a7831db3a8e",
+        "clearance_share_records_sha256": "fac777447a728e8e52c7a839e611013889f2ef0560f972cc03f8e121da91a15b",
+        "generated_at": "2026-10-06T22:19:55+09:00",
         "national_clearance_share_schema_version": 2,
-        "run_relpath": "20260906_081400_clearance_share_trend",
-        "summary_sha256": "fab1cefff221ec48b1acdc631d6c3de238ba861c4a1bd9aa1b068828ae9d6980"
+        "run_relpath": "20261006_221955_clearance_share_trend",
+        "summary_sha256": "f8d215d17e261e919dd8af6dbd71f8901ceb1295f5b5f15e0cf090e62d82131f"
       },
       "latest_path": "latest.json",
-      "latest_sha256": "b26ac6e46ee3d9e99985db0866e09a6617224640a192d59aa806d75338f0f786",
-      "record_count": 60,
-      "records_path": "20260906_081400_clearance_share_trend/clearance_share_records.jsonl",
-      "records_sha256": "ba148af70e7279fdcb2c3cb66751a6030d969c596ee65c1c2260d9355656c35c",
+      "latest_sha256": "3e51bef7e8cb6e88de7249374294c99c759716a655f41dae35ee3222cd0564f1",
+      "record_count": 66,
+      "records_path": "20261006_221955_clearance_share_trend/clearance_share_records.jsonl",
+      "records_sha256": "fac777447a728e8e52c7a839e611013889f2ef0560f972cc03f8e121da91a15b",
       "status_counts": {
-        "calculated": 60,
+        "calculated": 66,
         "refused": 0
       },
-      "summary_path": "20260906_081400_clearance_share_trend/summary.json",
-      "summary_sha256": "fab1cefff221ec48b1acdc631d6c3de238ba861c4a1bd9aa1b068828ae9d6980"
+      "summary_path": "20261006_221955_clearance_share_trend/summary.json",
+      "summary_sha256": "f8d215d17e261e919dd8af6dbd71f8901ceb1295f5b5f15e0cf090e62d82131f"
     },
     "nationality_comparison": {
       "latest_manifest": {
@@ -53023,6 +53337,19 @@
       "sha256": "d400d8e2b46d2e6384eb6787ad04568e8bfe2b7a5e89f2d2191d5d079c4f4306",
       "source_period": "2024-12-31 resident-foreigner stock by nationality or region",
       "source_table": "1",
+      "verification_level": "binary_and_primary"
+    },
+    "S21": {
+      "dataset": "2025 criminal-code statistics summary: national clearance totals by foreigner scope",
+      "download_url": "https://www.npa.go.jp/toukei/seianki/R07/r07_3.xlsx",
+      "landing_url": "https://www.npa.go.jp/toukei/seianki/R07/r07.zuhyosakuin.htm",
+      "publisher": "National Police Agency of Japan",
+      "retrieved_at": "2026-09-24T08:29:00+09:00",
+      "revision": "finalized_summary",
+      "series_id": "npa-2025-foreign-clearance-totals",
+      "sha256": "853bf42f0467389afd4e4f532c09c3fb7bb1f7bf4a05a7dc9911f9b6b20d1b1b",
+      "source_period": "2025 annual national clearance totals",
+      "source_table": "3-3-1",
       "verification_level": "binary_and_primary"
     }
   }

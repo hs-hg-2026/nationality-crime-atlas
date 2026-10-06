@@ -1,15 +1,19 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "artifact_pins": {
     "S08": "23ccb60d89c9b4bdaa898105753506a61d8354a0ae87b01598f6c97f4efd6a83",
     "S09": "70d180220c3b53cd5d832acb1c86460b005c47215c0409c7b14ea0f0057a2e30",
-    "S15": "f1c597114874c1a0ba6b87e9a7d7fcbb48041defb7cb16a874c2c9542991d75b"
+    "S15": "f1c597114874c1a0ba6b87e9a7d7fcbb48041defb7cb16a874c2c9542991d75b",
+    "S21": "853bf42f0467389afd4e4f532c09c3fb7bb1f7bf4a05a7dc9911f9b6b20d1b1b"
   },
   "trend": {
     "trend_id": "national_criminal_code_clearance_foreign_share",
     "label_ja": "全国の刑法犯検挙（日本人等を含む）に占める外国人区分の割合",
     "label_en": "Foreign-scope share of nationwide criminal-code clearances including Japanese and others",
-    "years": [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
+    "years": [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
+    "annual_summary_sources": [
+      {"year": 2025, "source_id": "S21", "source_table": "3-3-1"}
+    ],
     "all_person_source_id": "S15",
     "foreign_sources": [
       {

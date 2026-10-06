@@ -1712,6 +1712,19 @@ function validateClearanceShareComponents(
   >,
 ): void {
   const components: unknown = row.source_components;
+  if (row.year === 2025) {
+    const rows: Record<string, number> = { S08: 5, S09: 6, S15: 4 };
+    expected = expected.map(([source, role, metric, value]) => [
+      'S21',
+      role,
+      metric,
+      value,
+      '3-3-1',
+      '3-3-1',
+      rows[source] + (metric === 'cleared_persons' ? 3 : 0),
+      14,
+    ]);
+  }
   if (
     !Array.isArray(components) ||
     components.some((component) => !isObject(component))
@@ -1746,12 +1759,24 @@ function requireClearanceShareRow(
   row: ClearanceShareRow,
   definition: ClearanceShareDefinition,
 ): void {
-  const scopeContract = CLEARANCE_SHARE_SCOPE_CONTRACTS[row.foreign_scope];
+  const originalScopeContract =
+    CLEARANCE_SHARE_SCOPE_CONTRACTS[row.foreign_scope];
+  const scopeContract =
+    row.year === 2025 && originalScopeContract
+      ? {
+          ...originalScopeContract,
+          numeratorSourceId: 'S21',
+          numeratorSourceIds: originalScopeContract.numeratorSourceIds.map(
+            () => 'S21',
+          ),
+        }
+      : originalScopeContract;
+  const denominatorSourceId = row.year === 2025 ? 'S21' : 'S15';
   if (
     !scopeContract ||
     row.foreign_scope_label_ja !== scopeContract.label ||
     row.numerator_source_id !== scopeContract.numeratorSourceId ||
-    row.denominator_source_id !== 'S15' ||
+    row.denominator_source_id !== denominatorSourceId ||
     row.derivation_method !== scopeContract.derivationMethod ||
     row.metric_label_ja !==
       (row.metric === 'cleared_cases' ? '検挙件数' : '検挙人員') ||
@@ -1799,8 +1824,8 @@ function requireClearanceShareRow(
   }
   const expectedFormula =
     row.foreign_scope === 'all_foreign_minus_visiting_foreign'
-      ? `(S08.${row.metric} - S09.${row.metric}) / S15.${row.metric}`
-      : `${scopeContract.numeratorSourceId}.${row.metric} / S15.${row.metric}`;
+      ? `(${scopeContract.numeratorSourceIds[0]}.${row.metric} - ${scopeContract.numeratorSourceIds[1]}.${row.metric}) / ${denominatorSourceId}.${row.metric}`
+      : `${scopeContract.numeratorSourceId}.${row.metric} / ${denominatorSourceId}.${row.metric}`;
   if (row.derivation_formula !== expectedFormula) {
     clearanceShareSemanticError(
       `derivation formula differs for ${row.metric}/${row.foreign_scope}/${row.year}`,

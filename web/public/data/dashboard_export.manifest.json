@@ -1,15 +1,15 @@
 {
   "publication_manifest_schema_version": 1,
   "compact_export_schema_version": 9,
-  "source_run_relpath": "20260908_061100_compact_export",
-  "generated_at": "2026-09-08T06:11:00+09:00",
-  "dashboard_export_sha256": "4219edb5c7ff75e52bae97452f4991f6e5852dd746cfca1d3dc9c4d62bd37f65",
+  "source_run_relpath": "20261006_221955_compact_export",
+  "generated_at": "2026-10-06T22:19:55+09:00",
+  "dashboard_export_sha256": "2beef7efe2b18429e853300cb87849c5cdfe73500287eb7f3f471e1db5c68d25",
   "record_counts": {
     "all_resident_context": 248,
     "nationality_comparison": 26,
     "nationality_indicators": 290,
     "offense_composition": 156,
-    "clearance_share_trends": 60,
+    "clearance_share_trends": 66,
     "clearance_population_trends": 40,
     "nationality_trends": 260
   },
@@ -23,8 +23,8 @@
     "clearance_population_ids": 1,
     "nationality_trend_ids": 1
   },
-  "source_count": 29,
-  "source_pointer_sha256": "bb3dd0de640ddb75981de719b15fb7a5537eea7bd90f2afc4838af3525a38f7a",
-  "source_summary_sha256": "71657ea9f9db0cc160676996a7975f9292392a40c2b4bc3ac1927489f62c4505",
-  "source_run_generated_at": "2026-09-08T06:11:00+09:00"
+  "source_count": 30,
+  "source_pointer_sha256": "097376857d493b6435bfa04d78f151dc9632c3212ae58847b996e4d0aea0f58a",
+  "source_summary_sha256": "74053c291fd9f0fa2a9dee1c379d1715b302ac9ea49cc0badf2543358e729c58",
+  "source_run_generated_at": "2026-10-06T22:19:55+09:00"
 }

@@ -211,6 +211,19 @@ function arraysEqual(actual, expected) {
 }
 
 function validateClearanceShareComponents(record, expected) {
+  if (record.year === 2025) {
+    const rows = { S08: 5, S09: 6, S15: 4 };
+    expected = expected.map(([source, role, metric, value]) => [
+      'S21',
+      role,
+      metric,
+      value,
+      '3-3-1',
+      '3-3-1',
+      rows[source] + (metric === 'cleared_persons' ? 3 : 0),
+      14,
+    ]);
+  }
   if (
     !Array.isArray(record.source_components) ||
     record.source_components.some((component) => !isObject(component))
@@ -968,14 +981,26 @@ function validateRecordLinks(payload) {
     if (!['cleared_cases', 'cleared_persons'].includes(record.metric)) {
       throw new Error(`${label} has an unsupported metric.`);
     }
-    const scopeContract = CLEARANCE_SHARE_SCOPE_CONTRACTS[record.foreign_scope];
+    const originalScopeContract =
+      CLEARANCE_SHARE_SCOPE_CONTRACTS[record.foreign_scope];
+    const scopeContract =
+      record.year === 2025 && originalScopeContract
+        ? {
+            ...originalScopeContract,
+            numeratorSourceId: 'S21',
+            numeratorSourceIds: originalScopeContract.numeratorSourceIds.map(
+              () => 'S21',
+            ),
+          }
+        : originalScopeContract;
+    const denominatorSourceId = record.year === 2025 ? 'S21' : 'S15';
     if (!scopeContract) {
       throw new Error(`${label} has an unsupported foreign_scope.`);
     }
     if (
       record.foreign_scope_label_ja !== scopeContract.label ||
       record.numerator_source_id !== scopeContract.numeratorSourceId ||
-      record.denominator_source_id !== 'S15' ||
+      record.denominator_source_id !== denominatorSourceId ||
       record.derivation_method !== scopeContract.derivationMethod ||
       record.metric_label_ja !==
         (record.metric === 'cleared_cases' ? '検挙件数' : '検挙人員')
@@ -1049,8 +1074,8 @@ function validateRecordLinks(payload) {
     }
     const expectedFormula =
       record.foreign_scope === 'all_foreign_minus_visiting_foreign'
-        ? `(S08.${record.metric} - S09.${record.metric}) / S15.${record.metric}`
-        : `${scopeContract.numeratorSourceId}.${record.metric} / S15.${record.metric}`;
+        ? `(${scopeContract.numeratorSourceIds[0]}.${record.metric} - ${scopeContract.numeratorSourceIds[1]}.${record.metric}) / ${denominatorSourceId}.${record.metric}`
+        : `${scopeContract.numeratorSourceId}.${record.metric} / ${denominatorSourceId}.${record.metric}`;
     if (record.derivation_formula !== expectedFormula) {
       clearanceShareSemanticError(`derivation formula differs at ${label}`);
     }

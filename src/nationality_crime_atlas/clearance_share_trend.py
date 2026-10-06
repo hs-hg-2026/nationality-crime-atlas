@@ -16,11 +16,12 @@ from .errors import IntegrityError, SchemaError
 from .models import NationalClearanceAnnualRecord
 from .npa_all_residents import parse_npa_all_person_annual_clearances
 from .npa_nationality import parse_npa_nationality_annual_clearances
+from .npa_2025_summary import parse_npa_2025_foreign_clearance_totals
 from .provenance import sha256_file
 
 
 CLEARANCE_SHARE_TREND_SCHEMA_VERSION = 2
-CONTRACT_SCHEMA_VERSION = 1
+CONTRACT_SCHEMA_VERSION = 2
 LATEST_SCHEMA_VERSION = 2
 SUPPORTED_METRICS = ("cleared_cases", "cleared_persons")
 SUPPORTED_FOREIGN_SCOPES = ("all_foreign", "visiting_foreign")
@@ -49,6 +50,7 @@ class ClearanceShareTrendContract:
     years: Tuple[int, ...]
     all_person_source_id: str
     foreign_sources: Tuple[ForeignSourceDefinition, ...]
+    annual_summary_sources: Tuple[Tuple[int, str], ...]
     metrics: Tuple[str, ...]
     display_multiplier: int
     display_unit_label_ja: str
@@ -157,7 +159,7 @@ def _load_contract(
     path: Path,
 ) -> Tuple[ClearanceShareTrendContract, Mapping[str, str]]:
     data = _read_json_object(path, "clearance share trend contract")
-    if data.get("schema_version") != CONTRACT_SCHEMA_VERSION:
+    if data.get("schema_version") not in (1, CONTRACT_SCHEMA_VERSION):
         raise SchemaError("Unsupported clearance share trend contract schema_version")
     raw_pins = _require_mapping(data.get("artifact_pins"), "artifact_pins")
     pins = {
@@ -211,9 +213,19 @@ def _load_contract(
     )
     if display_multiplier != 100:
         raise SchemaError("display_multiplier must be 100 for percent")
+    annual_summary_sources = []
+    for raw_source in _require_list(item.get("annual_summary_sources", []), "annual_summary_sources"):
+        source = _require_mapping(raw_source, "annual summary source")
+        year = _require_int(source.get("year"), "annual summary year")
+        source_id = _require_string(source.get("source_id"), "annual summary source_id")
+        if (data.get("schema_version") != 2 or year != 2025 or year not in years
+                or source.get("source_table") != "3-3-1"
+                or source_id != "S21" or annual_summary_sources):
+            raise SchemaError("annual summary binding must be the reviewed 2025 S21 table 3-3-1")
+        annual_summary_sources.append((year, source_id))
     required_sources = {all_person_source_id} | {
         source.source_id for source in foreign_sources
-    }
+    } | {source_id for _, source_id in annual_summary_sources}
     if set(pins) != required_sources:
         raise SchemaError("artifact_pins must exactly match trend sources")
     return (
@@ -224,6 +236,7 @@ def _load_contract(
             years=years,
             all_person_source_id=all_person_source_id,
             foreign_sources=tuple(foreign_sources),
+            annual_summary_sources=tuple(annual_summary_sources),
             metrics=metrics,
             display_multiplier=display_multiplier,
             display_unit_label_ja=_require_string(
@@ -340,7 +353,9 @@ def _component(record: NationalClearanceAnnualRecord, metric: str) -> Mapping[st
         "source_id": record.source_id,
         "source_table": record.source_table,
         "source_sheet": record.source_sheet,
-        "source_row": record.source_row,
+        "source_row": record.source_row + (
+            3 if record.source_table == "3-3-1" and metric == "cleared_persons" else 0
+        ),
         "source_column": (
             record.source_cases_column
             if metric == "cleared_cases"
@@ -579,25 +594,41 @@ def generate_clearance_share_trend(
         )
         for source_id, artifact_pin in artifact_pins.items()
     }
-    all_person = _by_year(
+    historical_years = tuple(year for year in contract.years
+                             if year not in dict(contract.annual_summary_sources))
+    all_person = dict(_by_year(
         parse_npa_all_person_annual_clearances(
             inputs[contract.all_person_source_id].raw_path,
             source_id=contract.all_person_source_id,
         ),
-        expected_years=contract.years,
+        expected_years=historical_years,
         source_id=contract.all_person_source_id,
-    )
+    ))
     foreign = {}
     for source in contract.foreign_sources:
-        foreign[source.foreign_scope] = _by_year(
+        foreign[source.foreign_scope] = dict(_by_year(
             parse_npa_nationality_annual_clearances(
                 inputs[source.source_id].raw_path,
                 table_id=source.source_table,
                 source_id=source.source_id,
             ),
-            expected_years=contract.years,
+            expected_years=historical_years,
             source_id=source.source_id,
+        ))
+    for year, source_id in contract.annual_summary_sources:
+        source = inputs[source_id]
+        if source.catalog_row.get("source_table") != "3-3-1":
+            raise SchemaError("Annual summary catalog table differs from its binding")
+        summary_records = parse_npa_2025_foreign_clearance_totals(
+            source.raw_path, source_id=source_id,
         )
+        scopes = {record.population_scope: record for record in summary_records}
+        if (len(summary_records) != 3 or set(scopes) != {"all_persons", *SUPPORTED_FOREIGN_SCOPES}
+                or any(record.year != year for record in summary_records)):
+            raise SchemaError("Annual summary year/scope grid differs from its binding")
+        all_person[year] = scopes["all_persons"]
+        for scope in SUPPORTED_FOREIGN_SCOPES:
+            foreign[scope][year] = scopes[scope]
     records = _records(contract, all_person=all_person, foreign=foreign)
 
     destination_root = Path(output_root)
