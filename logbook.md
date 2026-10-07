@@ -538,3 +538,10 @@
 - **ユーザー提供の追加情報**: 警察庁一覧が2002年までの犯罪統計資料を掲載していること、e-Stat APIはユーザー登録＋アプリケーションIDが必要でDB形式の表が対象であることを公式URLアクセスで確認した。Excel／CSV公開すべてがAPI対象とは仮定しない。API対応と過去年の表・定義監査は今後の候補として残し、現在の直接ファイル取得を変更しない。
 - **現在地**: ローカル実装・検証まで完了、push／releaseは未実施。次はユーザー確認後の公開。README両言語とworkflowを更新し、旧版を`docs/20261006_235503_README.md`・`.ja.md`・`docs/20261006_235503_workflow.md`へ退避した。
 - **関連パス**: `docs/20261006_235503_2025_regional_population_update.md`、`config/publication/compact_export/20261006_235016_compact_export/`、`web/public/data/dashboard_export.json`。公開copy hash: `491a1f28b0e8de1650ac813417c19ad60b4c8750c461bac079192f22e740f595`。実行ログ: `agent_logs/20261006_235503_2025_regional_population_update/`。
+
+## 2026-10-07 v0.5.0の公開準備
+- **何が／判断／なぜ**: ユーザーのpush・release依頼により、2025年地域別表示と2015〜2025年人口当たり時系列をminor release `v0.5.0`として公開する。国籍等別比較・時系列・犯罪種類構成は2024年までであること、2025年の人口資料変更と不詳除外をrelease notesに明記した。
+- **直前検証**: Python230件・coverage83.05%、Web151件・statement88.20%／branch84.28%。型検査・lint・format・公開データhash・地図再生成のbyte identity・Pages条件buildと公開物検査を再実行して成功。依存関係は変更せずweb package versionのみ更新した。
+- **個人情報点検**: 現行370ファイルと未公開10commitの383 unique blob、commit metadataを検査し、既知の個人名・旧account・secret patternの一致なし。全commitのauthor／committerは公開用GitHub noreplyのみ。メール形式の検出2ファイルは地図素材の公開ライセンスに含まれる第三者作者連絡先であり、利用者の個人メールとは区別して保持した。
+- **公開手順**: mainへ通常push → 対象commitのPages build／deploy成功 → exact commitを対象に正式release作成 → live HTML・JSON・manifestを照合。結果は完了後に追記する。
+- **関連パス**: `docs/20261007_195725_v0.5.0_release_notes.md`、実行ログ`agent_logs/20261007_195725_v0.5.0_release/`。README両言語とworkflowの旧版は同じtimestampのsnapshotへ保存した。
