@@ -545,3 +545,10 @@
 - **個人情報点検**: 現行370ファイルと未公開10commitの383 unique blob、commit metadataを検査し、既知の個人名・旧account・secret patternの一致なし。全commitのauthor／committerは公開用GitHub noreplyのみ。メール形式の検出2ファイルは地図素材の公開ライセンスに含まれる第三者作者連絡先であり、利用者の個人メールとは区別して保持した。
 - **公開手順**: mainへ通常push → 対象commitのPages build／deploy成功 → exact commitを対象に正式release作成 → live HTML・JSON・manifestを照合。結果は完了後に追記する。
 - **関連パス**: `docs/20261007_195725_v0.5.0_release_notes.md`、実行ログ`agent_logs/20261007_195725_v0.5.0_release/`。README両言語とworkflowの旧版は同じtimestampのsnapshotへ保存した。
+
+## 2026-10-07 v0.5.0を公開し、2025年表示の配信を確認
+- **何が／判断／なぜ**: mainを`7db2022463c146efe0b76267e32e8915795cb65e`へ通常pushし、同じ成功commitをtag対象として正式release `v0.5.0`を作成。公開完了は、Actionsのbuild・deploy成功とlive HTML／JSON／manifest照合が揃った時点とした。
+- **検証済み**: Actions `37611438902`成功。公開HTML・JSON・manifestはHTTP200で、両データファイルが公開用copyとbyte-identical。dashboard SHA-256は`491a1f28b0e8de1650ac813417c19ad60b4c8750c461bac079192f22e740f595`。地域200行は2025年、人口時系列44行は2015〜2025年、出典33件。2025年の4組の分子・分母と日本人人口の不詳除外、HTMLの資料変更注意を確認した。
+- **検証時の補正**: 一時的な照合scriptは出典辞書を配列と仮定して初回停止した。実schemaに合わせて辞書key数へ直し、再実行で全検査成功。表示年の検査はReact commentを除いた文字列で確認した。公開データや画面の修正は不要だった。
+- **残る範囲**: 国籍等別比較・時系列・犯罪種類構成は2024年まで。Issue入力テンプレートと出典付き用語集、公式後継表の確認、任意のAPI対応は今後の課題。CIには一部固定ActionのNode20非推奨警告があるが、build・deployは成功。Action更新は別途reviewする。
+- **関連パス**: `docs/20261007_195725_v0.5.0_release_notes.md`、`agent_logs/20261007_195725_v0.5.0_release/live_verification.json`。release: `https://github.com/hs-hg-2026/nationality-crime-atlas/releases/tag/v0.5.0`。公開後のREADME両言語・workflowを更新し、準備中の版を`docs/20261007_200540_README.md`・`.ja.md`・`docs/20261007_200540_workflow.md`へ退避した。
