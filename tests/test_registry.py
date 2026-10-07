@@ -11,6 +11,7 @@ def test_project_registry_declares_all_current_sources():
 
     assert set(registry) == {
         "S02",
+        "S30",
         "S08",
         "S08_2020",
         "S08_2021",

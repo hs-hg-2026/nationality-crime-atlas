@@ -16,6 +16,7 @@ from .npa_all_residents import (
     parse_statistics_bureau_japanese_population,
 )
 from .npa_nationality import parse_npa_nationality_totals
+from .nationality_2025_csv import parse_visiting_offense_csv
 from .npa_2025_summary import (
     parse_npa_2025_foreign_clearance_totals,
     parse_npa_2025_prefecture_crime,
@@ -38,6 +39,7 @@ from .snapshot import RawSnapshot, snapshot_artifact
 
 PIPELINE_SCHEMA_VERSION = 2
 PARSER_CONTRACT_VERSIONS = {
+    "npa-visiting-nationality-offense-csv": 1,
     "population-t1": 1,
     "population-nationality-totals": 1,
     "npa-nationality": 2,
@@ -97,6 +99,8 @@ def _records_for_source(
     source_metadata: Mapping[str, object],
 ) -> Iterable[object]:
     parser = source_metadata.get("parser")
+    if parser == "npa-visiting-nationality-offense-csv":
+        return parse_visiting_offense_csv(artifact, source_id=source_id)
     if parser == "population-t1":
         return parse_population_t1(artifact, source_id=source_id)
     if parser == "population-nationality-totals":

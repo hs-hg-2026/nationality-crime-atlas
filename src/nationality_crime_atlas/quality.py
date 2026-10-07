@@ -316,6 +316,12 @@ class _ErrorCollector:
             self.messages.append(message)
 
 
+RECORD_SPECS["visiting_nationality_offense_group"] = {
+    **RECORD_SPECS["nationality_offense_group"],
+    "key_fields": ("year", "population_scope", "nationality", "row_kind", "offense_id", "source_id", "source_table"),
+}
+
+
 def _validate_profile(profile: Mapping[str, object], label: str) -> None:
     record_type = profile.get("record_type")
     if record_type not in RECORD_SPECS:

@@ -87,8 +87,8 @@ def _validate_edition(
             "Edition %s references unknown series %r" % (edition_id, series_id)
         )
     expected_format = metadata.get("expected_format")
-    if expected_format not in {"xls", "xlsx"}:
-        raise SchemaError("Edition %s expected_format must be xls or xlsx" % edition_id)
+    if expected_format not in {"xls", "xlsx", "csv"}:
+        raise SchemaError("Edition %s expected_format must be xls, xlsx or csv" % edition_id)
     filename = metadata.get("filename")
     if (
         not isinstance(filename, str)

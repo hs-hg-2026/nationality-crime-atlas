@@ -1,6 +1,20 @@
 {
   "schema_version": 1,
   "profiles": {
+    "S30": {
+      "description": "NPA Figure 3-13, two years, six nationality scopes, seven parent groups",
+      "record_type": "visiting_nationality_offense_group",
+      "expected_artifact_sha256": "097bf7096ce5f393645f658a9801b9f83374f07f08bdac9706f1391c8edb28c6",
+      "expected_record_count": 84,
+      "expected_years": [2024, 2025],
+      "allowed_values": {"population_scope": ["visiting_foreign"], "source_table": ["3-13"], "row_kind": ["national_total", "country"]},
+      "expected_distinct_counts": {"offense_id": 7},
+      "expected_sums": {},
+      "anchors": [
+        {"where": {"year": 2025, "nationality": null, "offense_id": "criminal_code_total"}, "expect": {"cleared_cases": 17614, "cleared_persons": 7333}, "expected_matches": 1},
+        {"where": {"year": 2025, "nationality": "ベトナム", "offense_id": "criminal_code_total"}, "expect": {"cleared_cases": 7293, "cleared_persons": 1913}, "expected_matches": 1}
+      ]
+    },
     "S26": {
       "description": "2025 final Census total population, Table 1-1 original",
       "record_type": "prefecture_population",

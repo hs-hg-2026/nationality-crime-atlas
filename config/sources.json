@@ -1,6 +1,15 @@
 {
   "schema_version": 2,
   "series": {
+    "npa-visiting-nationality-offense-csv": {
+      "publisher": "National Police Agency",
+      "dataset": "2025 organized-crime situation Figure 3-13: visiting foreigners by nationality and parent offense group",
+      "parser": "npa-visiting-nationality-offense-csv",
+      "license_url": "https://www.npa.go.jp/about/overview/termsofuse.html",
+      "dimensions": ["year", "nationality", "population_scope", "offense_id"],
+      "definitions": ["Visiting foreigners only; not all foreigners. China excludes Taiwan, Hong Kong and other separately treated categories."],
+      "notes": ["Only five nationalities are tabulated; unlisted nationalities are not zero.", "CP932 CSV; source_row counts logical CSV records, not physical lines. Persons are on source_row + 1."]
+    },
     "census-2025-final-total-population": {
       "publisher": "Statistics Bureau of Japan",
       "dataset": "2025 Population Census final basic tabulation Table 1-1: total population",
@@ -264,6 +273,22 @@
     }
   },
   "editions": {
+    "S30": {
+      "series_id": "npa-visiting-nationality-offense-csv",
+      "source_table": "3-13",
+      "expected_format": "csv",
+      "filename": "r7toukeisotai0313.csv",
+      "landing_url": "https://www.npa.go.jp/publications/statistics/kikakubunseki/",
+      "download_url": "https://www.npa.go.jp/publications/statistics/kikakubunseki/r7toukeisotai0313.csv",
+      "period": "2024-2025 annual visiting-foreigner nationality offense composition",
+      "coverage_periods": ["2024", "2025"],
+      "published_at": null,
+      "revision": "2025_situation_report",
+      "stable_ids": {"npa_figure": "3-13"},
+      "verified_at": "2026-10-08",
+      "verification_level": "binary_and_primary",
+      "expected_sha256": "097bf7096ce5f393645f658a9801b9f83374f07f08bdac9706f1391c8edb28c6"
+    },
     "S26": {
       "series_id": "census-2025-final-total-population",
       "source_table": "1-1",

@@ -1,6 +1,8 @@
 """Artifact-level provenance and integrity helpers."""
 
 import hashlib
+import csv
+import io
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -19,7 +21,7 @@ def sha256_file(path: Path, chunk_size: int = 1024 * 1024) -> str:
 
 
 def detect_file_format(path: Path) -> str:
-    """Detect XLSX and legacy XLS from signatures rather than the suffix."""
+    """Detect spreadsheet signatures or rectangular text CSV, not suffixes."""
 
     with Path(path).open("rb") as handle:
         signature = handle.read(8)
@@ -27,6 +29,16 @@ def detect_file_format(path: Path) -> str:
         return "xlsx"
     if signature == OLE_SIGNATURE:
         return "xls"
+    payload = Path(path).read_bytes()
+    if b"\x00" in payload or payload.lstrip().startswith(b"<"):
+        return "unknown"
+    for encoding in ("utf-8-sig", "cp932"):
+        try:
+            rows = list(csv.reader(io.StringIO(payload.decode(encoding)), strict=True))
+        except (UnicodeDecodeError, csv.Error):
+            continue
+        if len(rows) >= 2 and len(rows[0]) >= 2 and all(len(row) == len(rows[0]) for row in rows):
+            return "csv"
     return "unknown"
 
 
