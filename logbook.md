@@ -559,3 +559,10 @@
 - **重要な不一致**: S22中国は台湾・香港等除外だが、S19_2025中国人口930,428は内数香港14,477を含む。同範囲とは呼ばず、香港等を自動差引きで復元しない。完全互換を必須milestoneとせず、参考比率は組み合わせと範囲差を常設する。掲載集合も件数と人員で異なり、未掲載を0にしない。
 - **現在地**: 調査・取得版の再確認まで。コード・公開JSON・releaseは未変更、対象を変えた補足表示は未実装。問い合わせも未送信。
 - **関連パス**: `docs/20261008_080516_2025_nationality_update_readiness.md`。README両言語とworkflowを更新し、旧版を同じtimestampのsnapshotへ保存した。実行ログ: `agent_logs/20261008_080516_2025_nationality_readiness/`。
+
+## 2026-10-08 対象を分けた2025年国籍比較・来日外国人犯罪構成をローカル実装
+- **何が／判断／なぜ**: ユーザー合意に従い、2024年版を残して2025年の別表示を追加。対象範囲・掲載集合が異なるため既存schema-v9を変更せず、5入力の独立pin付き追加productを作った。30区分×件数／人員×外国人全体／来日外国人の120行（52算出／68未算出）、来日外国人5国籍と総数の6区分構成12算出行＋日本2未算出行。欠落をゼロにしない。2020〜2024年時系列は常時表示し、2025年へ黙って接続しない。
+- **取得・レビュー**: 公式S30 CSVをimmutable取得、CP932原本hash固定。独立レビューで比較154成分・構成72セルの原本座標、6区分合計、日本件数278,138／人員189,309と人口117,405,318、不詳2,105,452の除外を確認。米国・英国の原本表記違いを検出し、「アメリカ→米国」「イギリス→英国」を明示的に修正。中国の香港等scope差と韓国＋朝鮮人口合計は常設注意を残す。
+- **検証済み**: Python249 tests、coverage83.43%。Web159 tests、typecheck・lint・format・静的build・最終Pages artifact35ファイルの検査成功。初回buildはsandboxのlocalhost listen EPERMで停止し、承認済み環境で再実行して成功。ブラウザで2025初期表示、件数／人員、日本人員参考比率1.61、2024切替、2色凡例・積み上げ棒を確認。既存JSONはSHA-256 `491a1f28b0e8de1650ac813417c19ad60b4c8750c461bac079192f22e740f595`のまま。追加JSONは`5f883f3703962286964be9b03c8206730552077975da4db7dad7416d6ac8976b`、公開pin・生成productと一致。私有path非露出も検証。
+- **運用上の気づき**: Git hookのawkがCP932 fixtureのmultibyte変換で停止したため、hookを無効化せずcommit時だけLC_ALL=Cで検査を継続した。
+- **関連パス・現在地**: `docs/20261008_092036_2025_nationality_supplement.md`、`config/nationality_2025_contract.json`、`config/publication/nationality_2025/latest.json`、`web/public/data/nationality_2025.json`。README両言語・workflow旧版を`docs/20261008_092036_*`へ退避して更新。ログ`agent_logs/20261008_092000_nationality_2025/`、画面記録`output/20261008_092036_nationality_2025_ui/visiting_offense_2025.png`。ローカル実装まで、push・tag・releaseは未実施。

@@ -20,6 +20,7 @@ Codex 用の作業指示（この repo 固有の *確定ルール* だけ）。�
 - regenerate all-resident regional context: `.venv/bin/nca-build-all-resident-context`
 - regenerate nationality offense composition: `.venv/bin/nca-build-offense-composition`
 - regenerate nationality clearance reference-ratio trend: `.venv/bin/nca-build-nationality-trend`
+- regenerate separately scoped 2025 nationality supplement: `.venv/bin/nca-build-nationality-2025`
 - regenerate national clearance-share trend: `.venv/bin/nca-build-clearance-share-trend`
 - regenerate national clearance population-reference trend: `.venv/bin/nca-build-clearance-population-trend`
 - regenerate compact dashboard export: `.venv/bin/nca-build-compact-export`
@@ -54,6 +55,7 @@ Codex 用の作業指示（この repo 固有の *確定ルール* だけ）。�
 - `_all_resident_context`では全国＋47都道府県のみをcalculatedとし、警察region／subregion、日本国籍prefecture分子、個別nationality × prefecture分子はrefusalとして保持する。
 - public compact exportはschema v2以降を使い、全rowに`indicator_id`／`context_id`を残す。source fileは同じbytesからparseとhashを行い、summaryとrecordsを照合し、public source metadataをwhitelistしてlocal absolute pathを含めない。
 - `web/public/data/dashboard_export.json`はreview済みcompact exportのstatic publication copyであり、source-of-truthではない。手編集せず、更新時はcompact outputとのbyte identity／SHA-256、row count、private path非露出を検証する。
+- 2025国籍追加表示は`config/nationality_2025_contract.json`のraw／normalized pinsを使う独立product。`web/public/data/nationality_2025.json`は生成copy、`config/publication/nationality_2025/latest.json`はreview済み公開pin。S22の掲載基準・未掲載null・中国の香港等scope差を保持し、S30の来日外国人5国籍を外国人全体や2024年26区分の代替と呼ばない。
 - all-resident UIのraw unit／labelはnumerator semanticsから決める。`cleared_persons`は`人`／`人員`、case metricは`件`／`件数`とし、metricに関係なく`件`へhardcodeしない。
 - `web/assets/maps/deformed-japan-prefecture-map.svg`はpinned CC0 asset。generatorはchecked-in SHA-256不一致時にoutputを書かず停止し、47 code／labelとgenerated moduleのbyte identityをtestする。
 - generated productのroot `latest.json`はsame-directory unique temporary fileへ書き、`flush`／`fsync`後にatomic `replace`する。fixed temporary filenameを使わない。
