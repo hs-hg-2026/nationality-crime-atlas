@@ -20,6 +20,8 @@ export default defineConfig({
       include: [
         'components/crime-atlas-dashboard.tsx',
         'components/prefecture-map.tsx',
+        'components/nationality-2025.tsx',
+        'lib/nationality-2025.mjs',
         'lib/dashboard.ts',
       ],
       reporter: ['text', 'json-summary'],

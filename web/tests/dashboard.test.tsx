@@ -402,11 +402,7 @@ describe('CrimeAtlasDashboard', () => {
       within(section).getByText(/犯罪を行う確率や公的な犯罪率/),
     ).toBeVisible();
 
-    const historicalSource = within(
-      screen.getByTestId('nationality-comparison-section'),
-    )
-      .getByText('S08_2020')
-      .closest('article');
+    const historicalSource = screen.getByText('S08_2020').closest('article');
     expect(historicalSource).not.toBeNull();
     if (!historicalSource) return;
     expect(historicalSource).toHaveTextContent(

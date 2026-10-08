@@ -11,6 +11,7 @@ import {
   assertNoPrivateFilesystemPathsInText,
   verifyPublishedBundle,
 } from './sync-dashboard-export.mjs';
+import { verifyNationality2025 } from './sync-nationality-2025.mjs';
 
 const scriptDirectory = fileURLToPath(new URL('.', import.meta.url));
 const defaultDirectory = resolve(scriptDirectory, '../dist/client');
@@ -19,6 +20,8 @@ const requiredFiles = [
   'index.html',
   'data/dashboard_export.json',
   'data/dashboard_export.manifest.json',
+  'data/nationality_2025.json',
+  'data/nationality_2025.manifest.json',
   'og.png',
   'favicon.svg',
   'sitemap.xml',
@@ -216,6 +219,7 @@ export function verifyPagesArtifact(root, basePathValue, siteUrlValue = '') {
     join(resolvedRoot, 'data/dashboard_export.json'),
     join(resolvedRoot, 'data/dashboard_export.manifest.json'),
   );
+  verifyNationality2025(join(resolvedRoot, 'data'));
   return { basePath, siteUrl, fileCount: files.length, ...data };
 }
 

@@ -43,6 +43,11 @@ import {
   NativeSelectOption,
 } from '@/components/ui/native-select';
 import { NationalityTrend } from '@/components/nationality-trend';
+import {
+  Nationality2025Comparison,
+  VisitingOffense2025,
+} from '@/components/nationality-2025';
+import type { Nationality2025Data } from '@/lib/nationality-2025.mjs';
 import { PrefectureMap } from '@/components/prefecture-map';
 import {
   buildClearancePopulationTrendViewModel,
@@ -1351,9 +1356,14 @@ function OffenseStacked({ view }: { view: OffenseCompositionViewModel }) {
 
 export function CrimeAtlasDashboard({
   dashboard,
+  nationality2025,
 }: {
   dashboard: DashboardData;
+  nationality2025?: Nationality2025Data;
 }) {
+  const [nationalityYear, setNationalityYear] = useState(
+    nationality2025 ? '2025' : '2024',
+  );
   const [metricId, setMetricId] = useState<ContextMetricId>(
     'all_resident_recognized_cases',
   );
@@ -1801,250 +1811,282 @@ export function CrimeAtlasDashboard({
           </aside>
         </div>
 
-        <section
-          id="nationality"
-          className="nationality-section"
-          aria-labelledby="nationality-heading"
-          data-testid="nationality-comparison-section"
-        >
-          <div className="section-heading-row">
-            <div>
-              <p className="section-kicker">国籍等別の全国値</p>
-              <h2 id="nationality-heading">日本を含む国籍等別の全国比較</h2>
-              <p className="intro-copy">
-                分子・対象範囲を切り替え、全国単位の公表値を比較します。高い側だけに絞らず、算出できない行を含む
-                {nationalityView.rows.length}
-                区分すべてを表示します。対応する日本国籍分子がない観点でも日本を消さず、未算出とします。個別国籍
-                ×
-                都道府県の分子は公表されていません。地域別に推計・按分はしません。
-              </p>
-            </div>
-            <Badge variant="outline">{nationalityView.year} / 日本全国</Badge>
-          </div>
-
-          <div className="nationality-controls">
-            <label className="control-field nationality-perspective-control">
-              <span>分子・対象範囲</span>
-              <NativeSelect
-                aria-label="国籍等別の分子・対象範囲"
-                value={nationalityPerspectiveId}
-                onChange={(event) =>
-                  setNationalityPerspectiveId(
-                    event.target.value as NationalityPerspectiveId,
-                  )
-                }
-                className="w-full"
+        {nationality2025 && (
+          <div id="nationality" className="supplement-controls">
+            <label>
+              国籍等別比較の年
+              <select
+                value={nationalityYear}
+                onChange={(event) => setNationalityYear(event.target.value)}
               >
-                {NATIONALITY_PERSPECTIVES.map((perspective) => (
-                  <NativeSelectOption
-                    key={perspective.id}
-                    value={perspective.id}
-                  >
-                    {perspective.label}
-                  </NativeSelectOption>
-                ))}
-              </NativeSelect>
+                <option value="2025">2025年（掲載範囲が限定された資料）</option>
+                <option value="2024">2024年（従来の26区分）</option>
+              </select>
             </label>
-            <div className="definition-strip">
-              <span>現在の対象範囲</span>
-              <strong>{nationalityView.scopeLabel}</strong>
-            </div>
-            <div className="definition-strip">
-              <span>参考比率の式</span>
-              <strong>
-                {nationalityView.numeratorLabel} ÷ 人口 ×{' '}
-                {nationalityView.displayMultiplier}
-              </strong>
-            </div>
+            <p>
+              2025年は資料・人口基準・掲載区分が変わっています。未掲載の区分をゼロにせず、両年の参考比率を連続した時系列にしません。
+            </p>
           </div>
+        )}
+        {nationality2025 && nationalityYear === '2025' ? (
+          <Nationality2025Comparison data={nationality2025} />
+        ) : (
+          <section
+            id={nationality2025 ? 'nationality-2024' : 'nationality'}
+            className="nationality-section"
+            aria-labelledby="nationality-heading"
+            data-testid="nationality-comparison-section"
+          >
+            <div className="section-heading-row">
+              <div>
+                <p className="section-kicker">国籍等別の全国値</p>
+                <h2 id="nationality-heading">日本を含む国籍等別の全国比較</h2>
+                <p className="intro-copy">
+                  分子・対象範囲を切り替え、全国単位の公表値を比較します。高い側だけに絞らず、算出できない行を含む
+                  {nationalityView.rows.length}
+                  区分すべてを表示します。対応する日本国籍分子がない観点でも日本を消さず、未算出とします。個別国籍
+                  ×
+                  都道府県の分子は公表されていません。地域別に推計・按分はしません。
+                </p>
+              </div>
+              <Badge variant="outline">{nationalityView.year} / 日本全国</Badge>
+            </div>
 
-          <Alert className="nationality-alert">
-            <ShieldAlert aria-hidden="true" />
-            <AlertTitle>値は隠さず、属性の評価には使いません</AlertTitle>
-            <AlertDescription>
-              犯罪統計と人口統計は同じ人を追跡したものではなく、対象範囲や基準日が異なる場合があります。参考比率の高い順という並びは数値の大小だけを示し、集団の本質や、個人が犯罪をする可能性の判断ではありません。未算出の行も0とせず残します。分母基準日は
-              {nationalityView.referenceDates.join(' / ')} です。
-            </AlertDescription>
-          </Alert>
-
-          <NationalityOrderedPlot view={nationalityView} />
-
-          <div className="nationality-grid">
-            <Card className="nationality-table-card">
-              <CardHeader>
-                <div>
-                  <CardTitle>全{nationalityView.rows.length}区分</CardTitle>
-                  <CardDescription>
-                    元データの掲載順で、算出値・注意点・未算出の理由・出典を省略せず表示します。
-                  </CardDescription>
-                </div>
-                <Badge variant="secondary">実数と参考比率を併記</Badge>
-              </CardHeader>
-              <CardContent className="table-scroll">
-                <table
-                  className="nationality-table nationality-full-table"
-                  data-testid="nationality-comparison-table"
+            <div className="nationality-controls">
+              <label className="control-field nationality-perspective-control">
+                <span>分子・対象範囲</span>
+                <NativeSelect
+                  aria-label="国籍等別の分子・対象範囲"
+                  value={nationalityPerspectiveId}
+                  onChange={(event) =>
+                    setNationalityPerspectiveId(
+                      event.target.value as NationalityPerspectiveId,
+                    )
+                  }
+                  className="w-full"
                 >
-                  <caption className="sr-only">
-                    {nationalityView.metricLabel}の全
-                    {nationalityView.rows.length}国籍等区分
-                  </caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">国籍等（公表表記）</th>
-                      <th scope="col">{nationalityView.numeratorLabel}</th>
-                      <th scope="col">分母人口</th>
-                      <th scope="col">参考比率</th>
-                      <th scope="col">出典番号</th>
-                      <th scope="col">注記</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {nationalityView.rows.map((row) => (
-                      <tr
-                        key={row.id}
-                        data-testid={
-                          row.isJapaneseReference
-                            ? 'nationality-japanese-reference'
-                            : undefined
-                        }
-                        className={
-                          row.isJapaneseReference
-                            ? 'japanese-reference-row'
-                            : ''
-                        }
-                      >
-                        <td>
-                          <span className="nationality-label">{row.name}</span>
-                          {row.isJapaneseReference ? (
-                            <Badge variant="outline">
-                              {row.calculationStatus === 'calculated'
-                                ? '残差参考値'
-                                : '未算出'}
-                            </Badge>
-                          ) : null}
-                        </td>
-                        <td>{row.numerator?.toLocaleString('ja-JP') ?? '—'}</td>
-                        <td>
-                          {row.denominator?.toLocaleString('ja-JP') ?? '—'}
-                        </td>
-                        <td>
-                          {row.referenceRatio === null ? (
-                            <span className="not-calculated">未算出</span>
-                          ) : (
-                            <>
-                              {formatDashboardValue(
-                                row.referenceRatio,
-                                'ratio',
-                              )}
-                              <span> / 1,000人</span>
-                            </>
-                          )}
-                        </td>
-                        <td>
-                          <code>
-                            {row.numeratorSourceIds.join(' + ') || '—'} /{' '}
-                            {row.denominatorSourceId ?? '—'}
-                          </code>
-                        </td>
-                        <td className="nationality-notes">
-                          {row.calculationStatus === 'refused' ? (
-                            <InterpretationNote
-                              code={row.refusalReason ?? ''}
-                            />
-                          ) : row.warningCodes.length > 0 ? (
-                            row.warningCodes.map((code) => (
-                              <InterpretationNote key={code} code={code} />
-                            ))
-                          ) : row.isJapaneseReference ? (
-                            <span>
-                              全国の全住民値から全外国人値を差し引いた参考値
-                            </span>
-                          ) : (
-                            <span>—</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </CardContent>
-            </Card>
-
-            <aside className="nationality-evidence">
-              <Card className="warning-card">
-                <CardHeader>
-                  <CardTitle>注意が必要な値も表示</CardTitle>
-                  <CardDescription>
-                    人口や犯罪件数・人員が少ない場合も隠さず、注意点を同じ行に表示します。
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <strong>
-                    {
-                      nationalityView.calculatedRows.filter(
-                        (row) => row.warningCodes.length > 0,
-                      ).length
-                    }{' '}
-                    区分に注意表示／算出済み
-                    {nationalityView.calculatedRows.length}区分
-                  </strong>
-                  <ul>
-                    {nationalityView.warningCodes.map((code) => (
-                      <li key={code}>
-                        <InterpretationNote code={code} />
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="refusal-card">
-                <CardHeader>
-                  <CardTitle>作らなかった値</CardTitle>
-                  <CardDescription>
-                    対応する犯罪件数・人員や人口を用意できない区分は推計しません。実数が公表されている場合は左表に残します。
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <strong className="refusal-count">
-                    {nationalityView.refusedCount}区分は未算出
-                  </strong>
-                  <ul>
-                    {nationalityView.refusalReasons.map(({ reason, count }) => (
-                      <li key={reason}>
-                        <span>{refusalLabels[reason] ?? reason}</span>
-                        <Badge variant="secondary">{count}</Badge>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <BookOpen aria-hidden="true" />
-                  <CardTitle>この表示の出典</CardTitle>
-                  <CardDescription>
-                    犯罪分子と人口分母を別々に辿れます。
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <SourceList sources={nationalityView.sources} />
-                </CardContent>
-              </Card>
-            </aside>
-          </div>
-
-          <div className="mismatch-strip" aria-label="定義上の不一致">
-            <span>比較時に残る定義の違い</span>
-            <div>
-              {nationalityView.mismatchCodes.map((code) => (
-                <InterpretationNote key={code} code={code} />
-              ))}
+                  {NATIONALITY_PERSPECTIVES.map((perspective) => (
+                    <NativeSelectOption
+                      key={perspective.id}
+                      value={perspective.id}
+                    >
+                      {perspective.label}
+                    </NativeSelectOption>
+                  ))}
+                </NativeSelect>
+              </label>
+              <div className="definition-strip">
+                <span>現在の対象範囲</span>
+                <strong>{nationalityView.scopeLabel}</strong>
+              </div>
+              <div className="definition-strip">
+                <span>参考比率の式</span>
+                <strong>
+                  {nationalityView.numeratorLabel} ÷ 人口 ×{' '}
+                  {nationalityView.displayMultiplier}
+                </strong>
+              </div>
             </div>
-          </div>
 
+            <Alert className="nationality-alert">
+              <ShieldAlert aria-hidden="true" />
+              <AlertTitle>値は隠さず、属性の評価には使いません</AlertTitle>
+              <AlertDescription>
+                犯罪統計と人口統計は同じ人を追跡したものではなく、対象範囲や基準日が異なる場合があります。参考比率の高い順という並びは数値の大小だけを示し、集団の本質や、個人が犯罪をする可能性の判断ではありません。未算出の行も0とせず残します。分母基準日は
+                {nationalityView.referenceDates.join(' / ')} です。
+              </AlertDescription>
+            </Alert>
+
+            <NationalityOrderedPlot view={nationalityView} />
+
+            <div className="nationality-grid">
+              <Card className="nationality-table-card">
+                <CardHeader>
+                  <div>
+                    <CardTitle>全{nationalityView.rows.length}区分</CardTitle>
+                    <CardDescription>
+                      元データの掲載順で、算出値・注意点・未算出の理由・出典を省略せず表示します。
+                    </CardDescription>
+                  </div>
+                  <Badge variant="secondary">実数と参考比率を併記</Badge>
+                </CardHeader>
+                <CardContent className="table-scroll">
+                  <table
+                    className="nationality-table nationality-full-table"
+                    data-testid="nationality-comparison-table"
+                  >
+                    <caption className="sr-only">
+                      {nationalityView.metricLabel}の全
+                      {nationalityView.rows.length}国籍等区分
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th scope="col">国籍等（公表表記）</th>
+                        <th scope="col">{nationalityView.numeratorLabel}</th>
+                        <th scope="col">分母人口</th>
+                        <th scope="col">参考比率</th>
+                        <th scope="col">出典番号</th>
+                        <th scope="col">注記</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {nationalityView.rows.map((row) => (
+                        <tr
+                          key={row.id}
+                          data-testid={
+                            row.isJapaneseReference
+                              ? 'nationality-japanese-reference'
+                              : undefined
+                          }
+                          className={
+                            row.isJapaneseReference
+                              ? 'japanese-reference-row'
+                              : ''
+                          }
+                        >
+                          <td>
+                            <span className="nationality-label">
+                              {row.name}
+                            </span>
+                            {row.isJapaneseReference ? (
+                              <Badge variant="outline">
+                                {row.calculationStatus === 'calculated'
+                                  ? '残差参考値'
+                                  : '未算出'}
+                              </Badge>
+                            ) : null}
+                          </td>
+                          <td>
+                            {row.numerator?.toLocaleString('ja-JP') ?? '—'}
+                          </td>
+                          <td>
+                            {row.denominator?.toLocaleString('ja-JP') ?? '—'}
+                          </td>
+                          <td>
+                            {row.referenceRatio === null ? (
+                              <span className="not-calculated">未算出</span>
+                            ) : (
+                              <>
+                                {formatDashboardValue(
+                                  row.referenceRatio,
+                                  'ratio',
+                                )}
+                                <span> / 1,000人</span>
+                              </>
+                            )}
+                          </td>
+                          <td>
+                            <code>
+                              {row.numeratorSourceIds.join(' + ') || '—'} /{' '}
+                              {row.denominatorSourceId ?? '—'}
+                            </code>
+                          </td>
+                          <td className="nationality-notes">
+                            {row.calculationStatus === 'refused' ? (
+                              <InterpretationNote
+                                code={row.refusalReason ?? ''}
+                              />
+                            ) : row.warningCodes.length > 0 ? (
+                              row.warningCodes.map((code) => (
+                                <InterpretationNote key={code} code={code} />
+                              ))
+                            ) : row.isJapaneseReference ? (
+                              <span>
+                                全国の全住民値から全外国人値を差し引いた参考値
+                              </span>
+                            ) : (
+                              <span>—</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </CardContent>
+              </Card>
+
+              <aside className="nationality-evidence">
+                <Card className="warning-card">
+                  <CardHeader>
+                    <CardTitle>注意が必要な値も表示</CardTitle>
+                    <CardDescription>
+                      人口や犯罪件数・人員が少ない場合も隠さず、注意点を同じ行に表示します。
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <strong>
+                      {
+                        nationalityView.calculatedRows.filter(
+                          (row) => row.warningCodes.length > 0,
+                        ).length
+                      }{' '}
+                      区分に注意表示／算出済み
+                      {nationalityView.calculatedRows.length}区分
+                    </strong>
+                    <ul>
+                      {nationalityView.warningCodes.map((code) => (
+                        <li key={code}>
+                          <InterpretationNote code={code} />
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                <Card className="refusal-card">
+                  <CardHeader>
+                    <CardTitle>作らなかった値</CardTitle>
+                    <CardDescription>
+                      対応する犯罪件数・人員や人口を用意できない区分は推計しません。実数が公表されている場合は左表に残します。
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <strong className="refusal-count">
+                      {nationalityView.refusedCount}区分は未算出
+                    </strong>
+                    <ul>
+                      {nationalityView.refusalReasons.map(
+                        ({ reason, count }) => (
+                          <li key={reason}>
+                            <span>{refusalLabels[reason] ?? reason}</span>
+                            <Badge variant="secondary">{count}</Badge>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <BookOpen aria-hidden="true" />
+                    <CardTitle>この表示の出典</CardTitle>
+                    <CardDescription>
+                      犯罪分子と人口分母を別々に辿れます。
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <SourceList sources={nationalityView.sources} />
+                  </CardContent>
+                </Card>
+              </aside>
+            </div>
+
+            <div className="mismatch-strip" aria-label="定義上の不一致">
+              <span>比較時に残る定義の違い</span>
+              <div>
+                {nationalityView.mismatchCodes.map((code) => (
+                  <InterpretationNote key={code} code={code} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        <section
+          className="nationality-section"
+          aria-label="2020〜2024年の国籍等別時系列"
+        >
           <NationalityTrend
             selectedMetric={nationalityTrendMetric}
             years={nationalityTrendView.years}
@@ -2086,8 +2128,9 @@ export function CrimeAtlasDashboard({
           onMetricChange={setClearancePopulationMetric}
         />
 
+        {nationality2025 && <VisitingOffense2025 data={nationality2025} />}
         <section
-          id="offense"
+          id={nationality2025 ? 'offense-2024' : 'offense'}
           className="offense-section"
           aria-labelledby="offense-heading"
           data-testid="offense-composition-section"
@@ -2095,7 +2138,10 @@ export function CrimeAtlasDashboard({
           <div className="section-heading-row">
             <div>
               <p className="section-kicker">犯罪の種類</p>
-              <h2 id="offense-heading">日本を含む国籍等別・犯罪類型の構成</h2>
+              <h2 id="offense-heading">
+                日本を含む国籍等別・犯罪類型の構成
+                {nationality2025 ? '（2024年・従来の26区分）' : ''}
+              </h2>
               <p className="intro-copy">
                 各国籍等の刑法犯検挙総数を100%として、相互排他的な上位6区分の内訳を表示します。日本を含む
                 {offenseView.entities.length}
@@ -2302,6 +2348,12 @@ export function CrimeAtlasDashboard({
         <div className="footer-meta">
           <span>公表値をその定義差とともに表示</span>
           <span>表示データ作成日時 {dashboard.generated_at}</span>
+          {nationality2025 && (
+            <span>
+              2025年国籍追加資料の取得日時{' '}
+              {nationality2025.sources.S30.retrieved_at}
+            </span>
+          )}
         </div>
       </footer>
     </div>

@@ -55,6 +55,15 @@ function makeArtifact(indexHtml: string): string {
     join(directory, 'data/dashboard_export.manifest.json'),
     readFileSync(join(webRoot, 'public/data/dashboard_export.manifest.json')),
   );
+  for (const filename of [
+    'nationality_2025.json',
+    'nationality_2025.manifest.json',
+  ]) {
+    writeFileSync(
+      join(directory, 'data', filename),
+      readFileSync(join(webRoot, 'public/data', filename)),
+    );
+  }
   return directory;
 }
 
@@ -95,6 +104,28 @@ describe('GitHub Pages artifact contract', () => {
 
     expect(result.status).not.toBe(0);
     expect(result.stderr).toMatch(/outside configured base path/i);
+  });
+
+  it('requires the separately pinned 2025 supplement in the final artifact', () => {
+    const directory = makeArtifact(validIndexHtml());
+    renameSync(
+      join(directory, 'data/nationality_2025.json'),
+      join(directory, 'data/removed.json'),
+    );
+    const result = verify(directory);
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toMatch(
+      /missing required file: data\/nationality_2025.json/i,
+    );
+  });
+
+  it('rejects a supplement whose bytes no longer match the reviewed pin', () => {
+    const directory = makeArtifact(validIndexHtml());
+    const path = join(directory, 'data/nationality_2025.json');
+    writeFileSync(path, readFileSync(path, 'utf8') + '\n');
+    const result = verify(directory);
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toMatch(/reviewed publication pins/i);
   });
 
   it('rejects an artifact whose publication bundle no longer matches its manifest', () => {

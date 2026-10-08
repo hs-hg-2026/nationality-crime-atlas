@@ -1,0 +1,5469 @@
+{
+  "cluster_orders": {
+    "cleared_cases": [
+      "中国",
+      "ブラジル",
+      "ベトナム",
+      "タイ",
+      "カンボジア"
+    ],
+    "cleared_persons": [
+      "ブラジル",
+      "タイ",
+      "中国",
+      "ベトナム",
+      "カンボジア"
+    ]
+  },
+  "comparison": [
+    {
+      "denominator": 117405318,
+      "denominator_components": [
+        {
+          "column": 31,
+          "role": "published",
+          "row": 11,
+          "sheet": "b49_01",
+          "source_id": "S27",
+          "source_table": "49-1",
+          "value": 117405318
+        }
+      ],
+      "derivation": "national_total_minus_all_foreign",
+      "japanese_reference": true,
+      "label": "日本",
+      "metric": "cleared_cases",
+      "numerator": 278138,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "minuend",
+          "row": 4,
+          "sheet": "3-3-1",
+          "source_id": "S21",
+          "source_table": "3-3-1",
+          "value": 301055
+        },
+        {
+          "column": 14,
+          "role": "subtrahend",
+          "row": 5,
+          "sheet": "3-3-1",
+          "source_id": "S21",
+          "source_table": "3-3-1",
+          "value": 22917
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 2.3690408981303555,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "japanese_residual_reference",
+        "japanese_original_population_unknown_excluded"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 429542,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 485,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 407341
+        },
+        {
+          "column": 5,
+          "role": "published",
+          "row": 525,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 22201
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "韓国・朝鮮",
+      "metric": "cleared_cases",
+      "numerator": 2227,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 6,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 2227
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 5.184591960739579,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "korea_population_aggregation"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 930428,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 925,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 930428
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "中国",
+      "metric": "cleared_cases",
+      "numerator": 3321,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 8,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 3321
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 3.569325084799684,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "china_category_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 4431,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 285,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 4431
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "イラン",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 58999,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 325,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 58999
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "インド",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 266069,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 365,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 266069
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "インドネシア",
+      "metric": "cleared_cases",
+      "numerator": 328,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 26,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 328
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 1.2327629299166756,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 79128,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 805,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 79128
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "スリランカ",
+      "metric": "cleared_cases",
+      "numerator": 498,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 24,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 498
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 6.293600242644828,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 67097,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 845,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 67097
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "タイ",
+      "metric": "cleared_cases",
+      "numerator": 1737,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 20,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 1737
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 25.887893646511767,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 34911,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1165,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 34911
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "パキスタン",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 44938,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1245,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 44938
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "バングラデシュ",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 356579,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1325,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 356579
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "フィリピン",
+      "metric": "cleared_cases",
+      "numerator": 1015,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 14,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 1015
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 2.846494044797927,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 681100,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1445,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 681100
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ベトナム",
+      "metric": "cleared_cases",
+      "numerator": 7447,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 10,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 7447
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 10.933783585376597,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 12266,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1485,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 12266
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "マレーシア",
+      "metric": "cleared_cases",
+      "numerator": 206,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 28,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 206
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 16.794390999510842,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "その他（アジア州の国）",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 22428,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 2165,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 22428
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "イギリス",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 5961,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 2045,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 5961
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "イタリア",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 12187,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 3925,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 12187
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ロシア",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 9417,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 3085,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 9417
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ドイツ",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 17088,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 3285,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 17088
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "フランス",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "その他（ヨーロッパ州の国）",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 69787,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 6965,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 69787
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "アメリカ",
+      "metric": "cleared_cases",
+      "numerator": 356,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 18,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 356
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 5.10123662000086,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 13034,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 6285,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 13034
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "カナダ",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 210014,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 7485,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 210014
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ブラジル",
+      "metric": "cleared_cases",
+      "numerator": 1499,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 12,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 1499
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 7.137619396802117,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "その他（南北アメリカ州の国）",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 450,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 8245,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 450
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "無国籍",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "国籍不明",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 49020,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 7565,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 49020
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ペルー",
+      "metric": "cleared_cases",
+      "numerator": 520,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 16,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 520
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 10.607915136678907,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 300992,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1085,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 300992
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ネパール",
+      "metric": "cleared_cases",
+      "numerator": 381,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 22,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 381
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 1.265814373803955,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 28957,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 565,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 28957
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "カンボジア",
+      "metric": "cleared_cases",
+      "numerator": 715,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 30,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 715
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 24.691784369927824,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 182567,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1525,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 182567
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ミャンマー",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 117405318,
+      "denominator_components": [
+        {
+          "column": 31,
+          "role": "published",
+          "row": 11,
+          "sheet": "b49_01",
+          "source_id": "S27",
+          "source_table": "49-1",
+          "value": 117405318
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": true,
+      "label": "日本",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "japan_not_in_visiting_scope",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "japanese_residual_reference",
+        "japanese_original_population_unknown_excluded"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 429542,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 485,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 407341
+        },
+        {
+          "column": 5,
+          "role": "published",
+          "row": 525,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 22201
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "韓国・朝鮮",
+      "metric": "cleared_cases",
+      "numerator": 315,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 7,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 315
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 0.733339231087996,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population",
+        "korea_population_aggregation"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 930428,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 925,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 930428
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "中国",
+      "metric": "cleared_cases",
+      "numerator": 2225,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 9,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 2225
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 2.391372572622492,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population",
+        "china_category_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 4431,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 285,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 4431
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "イラン",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 58999,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 325,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 58999
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "インド",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 266069,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 365,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 266069
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "インドネシア",
+      "metric": "cleared_cases",
+      "numerator": 308,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 27,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 308
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 1.157594458580293,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 79128,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 805,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 79128
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "スリランカ",
+      "metric": "cleared_cases",
+      "numerator": 466,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 25,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 466
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 5.8891921949246795,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 67097,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 845,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 67097
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "タイ",
+      "metric": "cleared_cases",
+      "numerator": 1687,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 21,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 1687
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 25.142703846669747,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 34911,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1165,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 34911
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "パキスタン",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 44938,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1245,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 44938
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "バングラデシュ",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 356579,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1325,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 356579
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "フィリピン",
+      "metric": "cleared_cases",
+      "numerator": 589,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 15,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 589
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 1.6518078742719005,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 681100,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1445,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 681100
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ベトナム",
+      "metric": "cleared_cases",
+      "numerator": 7293,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 11,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 7293
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 10.70767875495522,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 12266,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1485,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 12266
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "マレーシア",
+      "metric": "cleared_cases",
+      "numerator": 198,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 29,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 198
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 16.14218164030654,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "その他（アジア州の国）",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 22428,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 2165,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 22428
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "イギリス",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 5961,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 2045,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 5961
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "イタリア",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 12187,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 3925,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 12187
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ロシア",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 9417,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 3085,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 9417
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ドイツ",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 17088,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 3285,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 17088
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "フランス",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "その他（ヨーロッパ州の国）",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 69787,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 6965,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 69787
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "アメリカ",
+      "metric": "cleared_cases",
+      "numerator": 173,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 19,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 173
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 2.478971728258845,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 13034,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 6285,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 13034
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "カナダ",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 210014,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 7485,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 210014
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ブラジル",
+      "metric": "cleared_cases",
+      "numerator": 857,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 13,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 857
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 4.080680335596674,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "その他（南北アメリカ州の国）",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 450,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 8245,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 450
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "無国籍",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "国籍不明",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 49020,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 7565,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 49020
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ペルー",
+      "metric": "cleared_cases",
+      "numerator": 293,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 17,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 293
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 5.977152182782538,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 300992,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1085,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 300992
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ネパール",
+      "metric": "cleared_cases",
+      "numerator": 367,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 23,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 367
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 1.2193015096746758,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 28957,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 565,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 28957
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "カンボジア",
+      "metric": "cleared_cases",
+      "numerator": 708,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 31,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 708
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 24.450046620851605,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 182567,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1525,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 182567
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ミャンマー",
+      "metric": "cleared_cases",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 117405318,
+      "denominator_components": [
+        {
+          "column": 31,
+          "role": "published",
+          "row": 11,
+          "sheet": "b49_01",
+          "source_id": "S27",
+          "source_table": "49-1",
+          "value": 117405318
+        }
+      ],
+      "derivation": "national_total_minus_all_foreign",
+      "japanese_reference": true,
+      "label": "日本",
+      "metric": "cleared_persons",
+      "numerator": 189309,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "minuend",
+          "row": 7,
+          "sheet": "3-3-1",
+          "source_id": "S21",
+          "source_table": "3-3-1",
+          "value": 200663
+        },
+        {
+          "column": 14,
+          "role": "subtrahend",
+          "row": 8,
+          "sheet": "3-3-1",
+          "source_id": "S21",
+          "source_table": "3-3-1",
+          "value": 11354
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 1.6124397363328977,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "japanese_residual_reference",
+        "japanese_original_population_unknown_excluded"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 429542,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 485,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 407341
+        },
+        {
+          "column": 5,
+          "role": "published",
+          "row": 525,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 22201
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "韓国・朝鮮",
+      "metric": "cleared_persons",
+      "numerator": 1722,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 34,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 1722
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 4.008921129947712,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "korea_population_aggregation"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 930428,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 925,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 930428
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "中国",
+      "metric": "cleared_persons",
+      "numerator": 2343,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 36,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 2343
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 2.51819592703573,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "china_category_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 4431,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 285,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 4431
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "イラン",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 58999,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 325,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 58999
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "インド",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 266069,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 365,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 266069
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "インドネシア",
+      "metric": "cleared_persons",
+      "numerator": 218,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 54,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 218
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 0.8193363375665711,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 79128,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 805,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 79128
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "スリランカ",
+      "metric": "cleared_persons",
+      "numerator": 280,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 50,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 280
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 3.538570417551309,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 67097,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 845,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 67097
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "タイ",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 34911,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1165,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 34911
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "パキスタン",
+      "metric": "cleared_persons",
+      "numerator": 166,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 52,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 166
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 4.754948297098336,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 44938,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1245,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 44938
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "バングラデシュ",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 356579,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1325,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 356579
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "フィリピン",
+      "metric": "cleared_persons",
+      "numerator": 821,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 40,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 821
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 2.3024350845114268,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 681100,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1445,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 681100
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ベトナム",
+      "metric": "cleared_persons",
+      "numerator": 2025,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 38,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 2025
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 2.9731316987226544,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 12266,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1485,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 12266
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "マレーシア",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "その他（アジア州の国）",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 22428,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 2165,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 22428
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "イギリス",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 5961,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 2045,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 5961
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "イタリア",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 12187,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 3925,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 12187
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ロシア",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 9417,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 3085,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 9417
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ドイツ",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 17088,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 3285,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 17088
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "フランス",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "その他（ヨーロッパ州の国）",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 69787,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 6965,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 69787
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "アメリカ",
+      "metric": "cleared_persons",
+      "numerator": 321,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 46,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 321
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 4.599710547809764,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 13034,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 6285,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 13034
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "カナダ",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 210014,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 7485,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 210014
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ブラジル",
+      "metric": "cleared_persons",
+      "numerator": 717,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 42,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 717
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 3.4140581104116867,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "その他（南北アメリカ州の国）",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 450,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 8245,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 450
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "無国籍",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "国籍不明",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 49020,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 7565,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 49020
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ペルー",
+      "metric": "cleared_persons",
+      "numerator": 282,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 44,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 282
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 5.752753977968176,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 300992,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1085,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 300992
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ネパール",
+      "metric": "cleared_persons",
+      "numerator": 369,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 48,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 369
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 1.225946204550287,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 28957,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 565,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 28957
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "カンボジア",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "all_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 182567,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1525,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 182567
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ミャンマー",
+      "metric": "cleared_persons",
+      "numerator": 171,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 56,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 171
+        }
+      ],
+      "reason": null,
+      "scope": "all_foreign",
+      "status": "calculated",
+      "value": 0.9366424381186085,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 117405318,
+      "denominator_components": [
+        {
+          "column": 31,
+          "role": "published",
+          "row": 11,
+          "sheet": "b49_01",
+          "source_id": "S27",
+          "source_table": "49-1",
+          "value": 117405318
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": true,
+      "label": "日本",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "japan_not_in_visiting_scope",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "japanese_residual_reference",
+        "japanese_original_population_unknown_excluded"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 429542,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 485,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 407341
+        },
+        {
+          "column": 5,
+          "role": "published",
+          "row": 525,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 22201
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "韓国・朝鮮",
+      "metric": "cleared_persons",
+      "numerator": 289,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 35,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 289
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 0.672809643760098,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population",
+        "korea_population_aggregation"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 930428,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 925,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 930428
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "中国",
+      "metric": "cleared_persons",
+      "numerator": 1449,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 37,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 1449
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 1.5573478012269624,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population",
+        "china_category_scope_mismatch"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 4431,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 285,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 4431
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "イラン",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 58999,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 325,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 58999
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "インド",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 266069,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 365,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 266069
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "インドネシア",
+      "metric": "cleared_persons",
+      "numerator": 201,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 55,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 201
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 0.7554431369306458,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 79128,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 805,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 79128
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "スリランカ",
+      "metric": "cleared_persons",
+      "numerator": 252,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 51,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 252
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 3.1847133757961785,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 67097,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 845,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 67097
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "タイ",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 34911,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1165,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 34911
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "パキスタン",
+      "metric": "cleared_persons",
+      "numerator": 127,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 53,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 127
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 3.637821889948727,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 44938,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1245,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 44938
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "バングラデシュ",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 356579,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1325,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 356579
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "フィリピン",
+      "metric": "cleared_persons",
+      "numerator": 454,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 41,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 454
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 1.2732101441756245,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 681100,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1445,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 681100
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ベトナム",
+      "metric": "cleared_persons",
+      "numerator": 1913,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 39,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 1913
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 2.808691822052562,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 12266,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1485,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 12266
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "マレーシア",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "その他（アジア州の国）",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 22428,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 2165,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 22428
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "イギリス",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 5961,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 2045,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 5961
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "イタリア",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 12187,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 3925,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 12187
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ロシア",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 9417,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 3085,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 9417
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ドイツ",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 17088,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 3285,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 17088
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "フランス",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "その他（ヨーロッパ州の国）",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 69787,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 6965,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 69787
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "アメリカ",
+      "metric": "cleared_persons",
+      "numerator": 162,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 47,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 162
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 2.3213492484273575,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 13034,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 6285,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 13034
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "カナダ",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 210014,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 7485,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 210014
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ブラジル",
+      "metric": "cleared_persons",
+      "numerator": 362,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 43,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 362
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 1.723694610835468,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "その他（南北アメリカ州の国）",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 450,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 8245,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 450
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "無国籍",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": null,
+      "denominator_components": [],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "国籍不明",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 49020,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 7565,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 49020
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ペルー",
+      "metric": "cleared_persons",
+      "numerator": 127,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 45,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 127
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 2.59077927376581,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 300992,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1085,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 300992
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ネパール",
+      "metric": "cleared_persons",
+      "numerator": 354,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 49,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 354
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 1.176110992983202,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 28957,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 565,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 28957
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "カンボジア",
+      "metric": "cleared_persons",
+      "numerator": null,
+      "numerator_components": [],
+      "reason": "numerator_not_published",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "value": null,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    },
+    {
+      "denominator": 182567,
+      "denominator_components": [
+        {
+          "column": 5,
+          "role": "published",
+          "row": 1525,
+          "sheet": "25-12-01m",
+          "source_id": "S19_2025",
+          "source_table": "1",
+          "value": 182567
+        }
+      ],
+      "derivation": null,
+      "japanese_reference": false,
+      "label": "ミャンマー",
+      "metric": "cleared_persons",
+      "numerator": 163,
+      "numerator_components": [
+        {
+          "column": 14,
+          "role": "published",
+          "row": 57,
+          "sheet": "3-3-3",
+          "source_id": "S22",
+          "source_table": "3-3-3",
+          "value": 163
+        }
+      ],
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "value": 0.8928229088499017,
+      "warnings": [
+        "annual_flow_vs_population_stock",
+        "different_population_reference_dates",
+        "residency_scope_mismatch",
+        "visiting_scope_vs_all_resident_foreign_population"
+      ],
+      "year": 2025
+    }
+  ],
+  "composition": [
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": 295,
+          "share": 1.6748041330759622,
+          "source": {
+            "column": 7,
+            "role": "published",
+            "row": 8,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 295
+          }
+        },
+        {
+          "category_id": "assaultive",
+          "count": 1566,
+          "share": 8.89065516066765,
+          "source": {
+            "column": 7,
+            "role": "published",
+            "row": 18,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 1566
+          }
+        },
+        {
+          "category_id": "theft",
+          "count": 12226,
+          "share": 69.4106960372431,
+          "source": {
+            "column": 7,
+            "role": "published",
+            "row": 20,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 12226
+          }
+        },
+        {
+          "category_id": "intellectual",
+          "count": 1368,
+          "share": 7.7665493357556485,
+          "source": {
+            "column": 7,
+            "role": "published",
+            "row": 34,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 1368
+          }
+        },
+        {
+          "category_id": "morals",
+          "count": 335,
+          "share": 1.9018962189167705,
+          "source": {
+            "column": 7,
+            "role": "published",
+            "row": 36,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 335
+          }
+        },
+        {
+          "category_id": "other",
+          "count": 1824,
+          "share": 10.355399114340866,
+          "source": {
+            "column": 7,
+            "role": "published",
+            "row": 38,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 1824
+          }
+        }
+      ],
+      "label": "来日外国人総数",
+      "metric": "cleared_cases",
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "total": 17614
+    },
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": 57,
+          "share": 0.781571369806664,
+          "source": {
+            "column": 10,
+            "role": "published",
+            "row": 8,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 57
+          }
+        },
+        {
+          "category_id": "assaultive",
+          "count": 206,
+          "share": 2.8246263540381187,
+          "source": {
+            "column": 10,
+            "role": "published",
+            "row": 18,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 206
+          }
+        },
+        {
+          "category_id": "theft",
+          "count": 5993,
+          "share": 82.174688057041,
+          "source": {
+            "column": 10,
+            "role": "published",
+            "row": 20,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 5993
+          }
+        },
+        {
+          "category_id": "intellectual",
+          "count": 437,
+          "share": 5.992047168517757,
+          "source": {
+            "column": 10,
+            "role": "published",
+            "row": 34,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 437
+          }
+        },
+        {
+          "category_id": "morals",
+          "count": 28,
+          "share": 0.3839297956945016,
+          "source": {
+            "column": 10,
+            "role": "published",
+            "row": 36,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 28
+          }
+        },
+        {
+          "category_id": "other",
+          "count": 572,
+          "share": 7.8431372549019605,
+          "source": {
+            "column": 10,
+            "role": "published",
+            "row": 38,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 572
+          }
+        }
+      ],
+      "label": "ベトナム",
+      "metric": "cleared_cases",
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "total": 7293
+    },
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": 42,
+          "share": 1.887640449438202,
+          "source": {
+            "column": 13,
+            "role": "published",
+            "row": 8,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 42
+          }
+        },
+        {
+          "category_id": "assaultive",
+          "count": 335,
+          "share": 15.056179775280897,
+          "source": {
+            "column": 13,
+            "role": "published",
+            "row": 18,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 335
+          }
+        },
+        {
+          "category_id": "theft",
+          "count": 1018,
+          "share": 45.752808988764045,
+          "source": {
+            "column": 13,
+            "role": "published",
+            "row": 20,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 1018
+          }
+        },
+        {
+          "category_id": "intellectual",
+          "count": 465,
+          "share": 20.89887640449438,
+          "source": {
+            "column": 13,
+            "role": "published",
+            "row": 34,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 465
+          }
+        },
+        {
+          "category_id": "morals",
+          "count": 45,
+          "share": 2.0224719101123596,
+          "source": {
+            "column": 13,
+            "role": "published",
+            "row": 36,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 45
+          }
+        },
+        {
+          "category_id": "other",
+          "count": 320,
+          "share": 14.382022471910114,
+          "source": {
+            "column": 13,
+            "role": "published",
+            "row": 38,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 320
+          }
+        }
+      ],
+      "label": "中国",
+      "metric": "cleared_cases",
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "total": 2225
+    },
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": 4,
+          "share": 0.23710729104919975,
+          "source": {
+            "column": 16,
+            "role": "published",
+            "row": 8,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 4
+          }
+        },
+        {
+          "category_id": "assaultive",
+          "count": 21,
+          "share": 1.2448132780082988,
+          "source": {
+            "column": 16,
+            "role": "published",
+            "row": 18,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 21
+          }
+        },
+        {
+          "category_id": "theft",
+          "count": 1604,
+          "share": 95.0800237107291,
+          "source": {
+            "column": 16,
+            "role": "published",
+            "row": 20,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 1604
+          }
+        },
+        {
+          "category_id": "intellectual",
+          "count": 10,
+          "share": 0.5927682276229994,
+          "source": {
+            "column": 16,
+            "role": "published",
+            "row": 34,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 10
+          }
+        },
+        {
+          "category_id": "morals",
+          "count": 8,
+          "share": 0.4742145820983995,
+          "source": {
+            "column": 16,
+            "role": "published",
+            "row": 36,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 8
+          }
+        },
+        {
+          "category_id": "other",
+          "count": 40,
+          "share": 2.3710729104919976,
+          "source": {
+            "column": 16,
+            "role": "published",
+            "row": 38,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 40
+          }
+        }
+      ],
+      "label": "タイ",
+      "metric": "cleared_cases",
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "total": 1687
+    },
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": 22,
+          "share": 2.5670945157526255,
+          "source": {
+            "column": 19,
+            "role": "published",
+            "row": 8,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 22
+          }
+        },
+        {
+          "category_id": "assaultive",
+          "count": 113,
+          "share": 13.185530921820304,
+          "source": {
+            "column": 19,
+            "role": "published",
+            "row": 18,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 113
+          }
+        },
+        {
+          "category_id": "theft",
+          "count": 630,
+          "share": 73.51225204200699,
+          "source": {
+            "column": 19,
+            "role": "published",
+            "row": 20,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 630
+          }
+        },
+        {
+          "category_id": "intellectual",
+          "count": 14,
+          "share": 1.633605600933489,
+          "source": {
+            "column": 19,
+            "role": "published",
+            "row": 34,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 14
+          }
+        },
+        {
+          "category_id": "morals",
+          "count": 11,
+          "share": 1.2835472578763127,
+          "source": {
+            "column": 19,
+            "role": "published",
+            "row": 36,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 11
+          }
+        },
+        {
+          "category_id": "other",
+          "count": 67,
+          "share": 7.8179696616102685,
+          "source": {
+            "column": 19,
+            "role": "published",
+            "row": 38,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 67
+          }
+        }
+      ],
+      "label": "ブラジル",
+      "metric": "cleared_cases",
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "total": 857
+    },
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": 4,
+          "share": 0.5649717514124294,
+          "source": {
+            "column": 22,
+            "role": "published",
+            "row": 8,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 4
+          }
+        },
+        {
+          "category_id": "assaultive",
+          "count": 5,
+          "share": 0.7062146892655368,
+          "source": {
+            "column": 22,
+            "role": "published",
+            "row": 18,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 5
+          }
+        },
+        {
+          "category_id": "theft",
+          "count": 674,
+          "share": 95.19774011299435,
+          "source": {
+            "column": 22,
+            "role": "published",
+            "row": 20,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 674
+          }
+        },
+        {
+          "category_id": "intellectual",
+          "count": 1,
+          "share": 0.14124293785310735,
+          "source": {
+            "column": 22,
+            "role": "published",
+            "row": 34,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 1
+          }
+        },
+        {
+          "category_id": "morals",
+          "count": 0,
+          "share": 0.0,
+          "source": {
+            "column": 22,
+            "role": "published",
+            "row": 36,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 0
+          }
+        },
+        {
+          "category_id": "other",
+          "count": 24,
+          "share": 3.389830508474576,
+          "source": {
+            "column": 22,
+            "role": "published",
+            "row": 38,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 24
+          }
+        }
+      ],
+      "label": "カンボジア",
+      "metric": "cleared_cases",
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "total": 708
+    },
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": null,
+          "share": null,
+          "source": null
+        },
+        {
+          "category_id": "assaultive",
+          "count": null,
+          "share": null,
+          "source": null
+        },
+        {
+          "category_id": "theft",
+          "count": null,
+          "share": null,
+          "source": null
+        },
+        {
+          "category_id": "intellectual",
+          "count": null,
+          "share": null,
+          "source": null
+        },
+        {
+          "category_id": "morals",
+          "count": null,
+          "share": null,
+          "source": null
+        },
+        {
+          "category_id": "other",
+          "count": null,
+          "share": null,
+          "source": null
+        }
+      ],
+      "label": "日本",
+      "metric": "cleared_cases",
+      "reason": "japan_not_in_visiting_scope",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "total": null
+    },
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": 341,
+          "share": 4.650211373244238,
+          "source": {
+            "column": 7,
+            "role": "published",
+            "row": 9,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 341
+          }
+        },
+        {
+          "category_id": "assaultive",
+          "count": 1690,
+          "share": 23.04650211373244,
+          "source": {
+            "column": 7,
+            "role": "published",
+            "row": 19,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 1690
+          }
+        },
+        {
+          "category_id": "theft",
+          "count": 3030,
+          "share": 41.3200600027274,
+          "source": {
+            "column": 7,
+            "role": "published",
+            "row": 21,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 3030
+          }
+        },
+        {
+          "category_id": "intellectual",
+          "count": 683,
+          "share": 9.314059729987727,
+          "source": {
+            "column": 7,
+            "role": "published",
+            "row": 35,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 683
+          }
+        },
+        {
+          "category_id": "morals",
+          "count": 283,
+          "share": 3.85926633028774,
+          "source": {
+            "column": 7,
+            "role": "published",
+            "row": 37,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 283
+          }
+        },
+        {
+          "category_id": "other",
+          "count": 1306,
+          "share": 17.809900450020454,
+          "source": {
+            "column": 7,
+            "role": "published",
+            "row": 39,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 1306
+          }
+        }
+      ],
+      "label": "来日外国人総数",
+      "metric": "cleared_persons",
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "total": 7333
+    },
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": 76,
+          "share": 3.972817564035546,
+          "source": {
+            "column": 10,
+            "role": "published",
+            "row": 9,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 76
+          }
+        },
+        {
+          "category_id": "assaultive",
+          "count": 219,
+          "share": 11.447987454260323,
+          "source": {
+            "column": 10,
+            "role": "published",
+            "row": 19,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 219
+          }
+        },
+        {
+          "category_id": "theft",
+          "count": 993,
+          "share": 51.90799790904339,
+          "source": {
+            "column": 10,
+            "role": "published",
+            "row": 21,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 993
+          }
+        },
+        {
+          "category_id": "intellectual",
+          "count": 260,
+          "share": 13.591217982226869,
+          "source": {
+            "column": 10,
+            "role": "published",
+            "row": 35,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 260
+          }
+        },
+        {
+          "category_id": "morals",
+          "count": 25,
+          "share": 1.3068478829064296,
+          "source": {
+            "column": 10,
+            "role": "published",
+            "row": 37,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 25
+          }
+        },
+        {
+          "category_id": "other",
+          "count": 340,
+          "share": 17.77313120752744,
+          "source": {
+            "column": 10,
+            "role": "published",
+            "row": 39,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 340
+          }
+        }
+      ],
+      "label": "ベトナム",
+      "metric": "cleared_persons",
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "total": 1913
+    },
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": 44,
+          "share": 3.036576949620428,
+          "source": {
+            "column": 13,
+            "role": "published",
+            "row": 9,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 44
+          }
+        },
+        {
+          "category_id": "assaultive",
+          "count": 384,
+          "share": 26.501035196687372,
+          "source": {
+            "column": 13,
+            "role": "published",
+            "row": 19,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 384
+          }
+        },
+        {
+          "category_id": "theft",
+          "count": 566,
+          "share": 39.061421670117326,
+          "source": {
+            "column": 13,
+            "role": "published",
+            "row": 21,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 566
+          }
+        },
+        {
+          "category_id": "intellectual",
+          "count": 178,
+          "share": 12.284334023464458,
+          "source": {
+            "column": 13,
+            "role": "published",
+            "row": 35,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 178
+          }
+        },
+        {
+          "category_id": "morals",
+          "count": 46,
+          "share": 3.1746031746031744,
+          "source": {
+            "column": 13,
+            "role": "published",
+            "row": 37,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 46
+          }
+        },
+        {
+          "category_id": "other",
+          "count": 231,
+          "share": 15.942028985507244,
+          "source": {
+            "column": 13,
+            "role": "published",
+            "row": 39,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 231
+          }
+        }
+      ],
+      "label": "中国",
+      "metric": "cleared_persons",
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "total": 1449
+    },
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": 7,
+          "share": 6.796116504854369,
+          "source": {
+            "column": 16,
+            "role": "published",
+            "row": 9,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 7
+          }
+        },
+        {
+          "category_id": "assaultive",
+          "count": 29,
+          "share": 28.155339805825243,
+          "source": {
+            "column": 16,
+            "role": "published",
+            "row": 19,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 29
+          }
+        },
+        {
+          "category_id": "theft",
+          "count": 44,
+          "share": 42.71844660194174,
+          "source": {
+            "column": 16,
+            "role": "published",
+            "row": 21,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 44
+          }
+        },
+        {
+          "category_id": "intellectual",
+          "count": 5,
+          "share": 4.854368932038835,
+          "source": {
+            "column": 16,
+            "role": "published",
+            "row": 35,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 5
+          }
+        },
+        {
+          "category_id": "morals",
+          "count": 6,
+          "share": 5.825242718446602,
+          "source": {
+            "column": 16,
+            "role": "published",
+            "row": 37,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 6
+          }
+        },
+        {
+          "category_id": "other",
+          "count": 12,
+          "share": 11.650485436893204,
+          "source": {
+            "column": 16,
+            "role": "published",
+            "row": 39,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 12
+          }
+        }
+      ],
+      "label": "タイ",
+      "metric": "cleared_persons",
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "total": 103
+    },
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": 21,
+          "share": 5.801104972375691,
+          "source": {
+            "column": 19,
+            "role": "published",
+            "row": 9,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 21
+          }
+        },
+        {
+          "category_id": "assaultive",
+          "count": 118,
+          "share": 32.59668508287293,
+          "source": {
+            "column": 19,
+            "role": "published",
+            "row": 19,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 118
+          }
+        },
+        {
+          "category_id": "theft",
+          "count": 162,
+          "share": 44.751381215469614,
+          "source": {
+            "column": 19,
+            "role": "published",
+            "row": 21,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 162
+          }
+        },
+        {
+          "category_id": "intellectual",
+          "count": 8,
+          "share": 2.209944751381215,
+          "source": {
+            "column": 19,
+            "role": "published",
+            "row": 35,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 8
+          }
+        },
+        {
+          "category_id": "morals",
+          "count": 10,
+          "share": 2.7624309392265194,
+          "source": {
+            "column": 19,
+            "role": "published",
+            "row": 37,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 10
+          }
+        },
+        {
+          "category_id": "other",
+          "count": 43,
+          "share": 11.878453038674033,
+          "source": {
+            "column": 19,
+            "role": "published",
+            "row": 39,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 43
+          }
+        }
+      ],
+      "label": "ブラジル",
+      "metric": "cleared_persons",
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "total": 362
+    },
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": 4,
+          "share": 6.0606060606060606,
+          "source": {
+            "column": 22,
+            "role": "published",
+            "row": 9,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 4
+          }
+        },
+        {
+          "category_id": "assaultive",
+          "count": 4,
+          "share": 6.0606060606060606,
+          "source": {
+            "column": 22,
+            "role": "published",
+            "row": 19,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 4
+          }
+        },
+        {
+          "category_id": "theft",
+          "count": 42,
+          "share": 63.63636363636363,
+          "source": {
+            "column": 22,
+            "role": "published",
+            "row": 21,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 42
+          }
+        },
+        {
+          "category_id": "intellectual",
+          "count": 1,
+          "share": 1.5151515151515151,
+          "source": {
+            "column": 22,
+            "role": "published",
+            "row": 35,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 1
+          }
+        },
+        {
+          "category_id": "morals",
+          "count": 0,
+          "share": 0.0,
+          "source": {
+            "column": 22,
+            "role": "published",
+            "row": 37,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 0
+          }
+        },
+        {
+          "category_id": "other",
+          "count": 15,
+          "share": 22.727272727272727,
+          "source": {
+            "column": 22,
+            "role": "published",
+            "row": 39,
+            "sheet": "CSV logical rows",
+            "source_id": "S30",
+            "source_table": "3-13",
+            "value": 15
+          }
+        }
+      ],
+      "label": "カンボジア",
+      "metric": "cleared_persons",
+      "reason": null,
+      "scope": "visiting_foreign",
+      "status": "calculated",
+      "total": 66
+    },
+    {
+      "cells": [
+        {
+          "category_id": "heinous",
+          "count": null,
+          "share": null,
+          "source": null
+        },
+        {
+          "category_id": "assaultive",
+          "count": null,
+          "share": null,
+          "source": null
+        },
+        {
+          "category_id": "theft",
+          "count": null,
+          "share": null,
+          "source": null
+        },
+        {
+          "category_id": "intellectual",
+          "count": null,
+          "share": null,
+          "source": null
+        },
+        {
+          "category_id": "morals",
+          "count": null,
+          "share": null,
+          "source": null
+        },
+        {
+          "category_id": "other",
+          "count": null,
+          "share": null,
+          "source": null
+        }
+      ],
+      "label": "日本",
+      "metric": "cleared_persons",
+      "reason": "japan_not_in_visiting_scope",
+      "scope": "visiting_foreign",
+      "status": "refused",
+      "total": null
+    }
+  ],
+  "contract_sha256": "e4113f05df322c110c4c08d0068493dbf8f2b77c0b89292368d6671d82edabca",
+  "definitions": {
+    "categories": [
+      {
+        "id": "heinous",
+        "label": "凶悪犯"
+      },
+      {
+        "id": "assaultive",
+        "label": "粗暴犯"
+      },
+      {
+        "id": "theft",
+        "label": "窃盗犯"
+      },
+      {
+        "id": "intellectual",
+        "label": "知能犯"
+      },
+      {
+        "id": "morals",
+        "label": "風俗犯"
+      },
+      {
+        "id": "other",
+        "label": "その他の刑法犯"
+      }
+    ],
+    "clustering": "Jensen-Shannon distance / average linkage; five countries only",
+    "entities": [
+      "日本",
+      "韓国・朝鮮",
+      "中国",
+      "イラン",
+      "インド",
+      "インドネシア",
+      "スリランカ",
+      "タイ",
+      "パキスタン",
+      "バングラデシュ",
+      "フィリピン",
+      "ベトナム",
+      "マレーシア",
+      "その他（アジア州の国）",
+      "イギリス",
+      "イタリア",
+      "ロシア",
+      "ドイツ",
+      "フランス",
+      "その他（ヨーロッパ州の国）",
+      "アメリカ",
+      "カナダ",
+      "ブラジル",
+      "その他（南北アメリカ州の国）",
+      "無国籍",
+      "国籍不明",
+      "ペルー",
+      "ネパール",
+      "カンボジア",
+      "ミャンマー"
+    ],
+    "notes": [
+      "2024年の26区分を残し、2025年の新掲載4区分を追加する。公表されていない分子はゼロ・推計値にしない。",
+      "S22の件数は2016～2025年のいずれかで300件以上、人員は同期間のいずれかで150人以上の国籍等のみ。高い側に偏る公表範囲であり、全国籍の順位ではない。",
+      "S22・S19_2025のラベル対応は計算のための明示的crosswalkであり、統計的な対象範囲の一致を保証しない。中国は香港等の扱いが異なり、韓国・朝鮮の分母は人口2区分の合計。",
+      "S30は来日外国人5国籍の内訳のみ。日本・外国人全体・2024年版26区分の犯罪構成を置換しない。"
+    ],
+    "reason_labels": {
+      "japan_not_in_visiting_scope": "日本は来日外国人の対象外。全国−来日外国人では他の外国人が残るため算出しません。",
+      "numerator_not_published": "この資料に対応する分子の掲載なし（ゼロではありません）",
+      "population_not_available": "対応する人口分母を取得できないため未算出"
+    },
+    "warning_labels": {
+      "annual_flow_vs_population_stock": "1年間の検挙と時点人口の割り算です。犯罪を行う確率ではありません。",
+      "china_category_scope_mismatch": "中国の分子は台湾・香港等を除外しますが、在留人口の中国は香港を内数に含みます。",
+      "different_population_reference_dates": "日本の人口は10月1日、外国人の人口は12月31日で基準日が異なります。",
+      "japanese_original_population_unknown_excluded": "日本の分母は2025年10月1日の国勢調査原数値。不詳2,105,452人は除外しています。2024年の人口推計とは資料・定義が異なります。",
+      "japanese_residual_reference": "日本は全国総数−外国人全体の算術残差による参考値で、直接公表された日本国籍値ではありません。",
+      "korea_population_aggregation": "韓国・朝鮮の人口は公表人口の韓国＋朝鮮の合計です。対象区分の厳密な一致は保証しません。",
+      "residency_scope_mismatch": "検挙対象には分母の在留外国人数に含まれない人が含まれ得ます。",
+      "visiting_scope_vs_all_resident_foreign_population": "来日外国人の検挙を在留外国人全体の人口で割っています。対象範囲は一致しません。"
+    }
+  },
+  "scale": 1000,
+  "schema_version": 1,
+  "sources": {
+    "S19_2025": {
+      "dataset": "Resident-foreigner statistics Table 1: nationality and region totals",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040472260&fileKind=0",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000040472260",
+      "normalized_sha256": "34807dcdb53f2997a36cda4ee1ad3c5d8af2d664dca6d58947c08e60d213e58d",
+      "publisher": "Immigration Services Agency of Japan",
+      "retrieved_at": "2026-09-05T22:08:12+09:00",
+      "revision": "e_stat_published_edition",
+      "sha256": "cef9a02be7b4c289017e763579fdab4e347e9830aebaeee73be91743ef00d62c",
+      "source_table": "1"
+    },
+    "S21": {
+      "dataset": "2025 criminal-code statistics summary: national clearance totals by foreigner scope",
+      "download_url": "https://www.npa.go.jp/toukei/seianki/R07/r07_3.xlsx",
+      "landing_url": "https://www.npa.go.jp/toukei/seianki/R07/r07.zuhyosakuin.htm",
+      "normalized_sha256": "afd188ab2ce51da66fadc12b7d00cebb0538d49b87772298957740c607667846",
+      "publisher": "National Police Agency of Japan",
+      "retrieved_at": "2026-09-24T08:29:00+09:00",
+      "revision": "finalized_summary",
+      "sha256": "853bf42f0467389afd4e4f532c09c3fb7bb1f7bf4a05a7dc9911f9b6b20d1b1b",
+      "source_table": "3-3-1"
+    },
+    "S22": {
+      "dataset": "2025 criminal-code statistics summary: selected nationality clearance metrics",
+      "download_url": "https://www.npa.go.jp/toukei/seianki/R07/r07_3.xlsx",
+      "landing_url": "https://www.npa.go.jp/toukei/seianki/R07/r07.zuhyosakuin.htm",
+      "normalized_sha256": "40397b3b578230cbfbb12db78009a1819b1ac8a63faa5a8bad75234e7ed8e16b",
+      "publisher": "National Police Agency of Japan",
+      "retrieved_at": "2026-09-24T08:29:01+09:00",
+      "revision": "finalized_summary",
+      "sha256": "853bf42f0467389afd4e4f532c09c3fb7bb1f7bf4a05a7dc9911f9b6b20d1b1b",
+      "source_table": "3-3-3"
+    },
+    "S27": {
+      "dataset": "2025 Population Census final basic tabulation Table 49-1: original nationality population",
+      "download_url": "https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040506619&fileKind=0",
+      "landing_url": "https://www.e-stat.go.jp/stat-search/files?stat_infid=000040506619",
+      "normalized_sha256": "5a27b67ce91fe2b3da75134e7b039c4f8762dc7794f5fa6883f7074c138b9e31",
+      "publisher": "Statistics Bureau of Japan",
+      "retrieved_at": "2026-10-05T21:57:00+09:00",
+      "revision": "final_basic_tabulation_original",
+      "sha256": "87da0fb8898840e16d7f48820f7bb59eeb30abf8e7eddac93312443315d8b9b5",
+      "source_table": "49-1"
+    },
+    "S30": {
+      "dataset": "2025 organized-crime situation Figure 3-13: visiting foreigners by nationality and parent offense group",
+      "download_url": "https://www.npa.go.jp/publications/statistics/kikakubunseki/r7toukeisotai0313.csv",
+      "landing_url": "https://www.npa.go.jp/publications/statistics/kikakubunseki/",
+      "normalized_sha256": "d74452bf85fab216603702228fbcb50bdd453c632d423e563534818853874b7c",
+      "publisher": "National Police Agency",
+      "retrieved_at": "2026-10-08T08:34:57+09:00",
+      "revision": "2025_situation_report",
+      "sha256": "097bf7096ce5f393645f658a9801b9f83374f07f08bdac9706f1391c8edb28c6",
+      "source_table": "3-13"
+    }
+  },
+  "year": 2025
+}
