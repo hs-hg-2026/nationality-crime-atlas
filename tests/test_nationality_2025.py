@@ -78,3 +78,66 @@ def test_composition_total_must_agree_with_independent_national_series():
     records["S21"][2]["cleared_cases"] += 1
     with pytest.raises(SchemaError, match="S21"):
         derive_supplement(records)
+
+
+def product_root(tmp_path):
+    import hashlib
+
+    contract = json.loads(Path("config/nationality_2025_contract.json").read_text())
+    catalog = []
+    for source_id, records in inputs().items():
+        raw = tmp_path / "data/raw" / source_id / "fixture.csv"
+        processed = tmp_path / "data/processed" / source_id
+        raw.parent.mkdir(parents=True)
+        processed.mkdir(parents=True)
+        raw.write_bytes(("synthetic fixture " + source_id).encode())
+        normalized = processed / "normalized.jsonl"
+        normalized.write_text("".join(json.dumps(row) + "\n" for row in records))
+        raw_hash = hashlib.sha256(raw.read_bytes()).hexdigest()
+        normalized_hash = hashlib.sha256(normalized.read_bytes()).hexdigest()
+        contract["input_pins"][source_id] = {"artifact_sha256": raw_hash, "normalized_sha256": normalized_hash}
+        (processed / "run.json").write_text(json.dumps({"source_id": source_id, "quality_passed": True, "raw_artifact_sha256": raw_hash, "normalized_sha256": normalized_hash}))
+        catalog.append({"source_id": source_id, "sha256": raw_hash, "raw_relpath": str(raw.relative_to(tmp_path / "data/raw")), "processed_relpath": source_id,
+                        "publisher": "test", "dataset": "synthetic", "source_table": "test", "landing_url": "https://example.test", "download_url": "https://example.test/file", "retrieved_at": "2026-10-08T00:00:00+09:00", "revision": "fixture"})
+    directory = tmp_path / "data/processed/_catalog"
+    directory.mkdir()
+    (directory / "artifacts.jsonl").write_text("".join(json.dumps(row) + "\n" for row in catalog))
+    (tmp_path / "config").mkdir()
+    (tmp_path / "config/nationality_2025_contract.json").write_text(json.dumps(contract))
+    return tmp_path
+
+
+def test_build_pins_sources_and_atomic_latest_pointer(tmp_path, capsys):
+    from nationality_crime_atlas.nationality_2025 import build_supplement, main
+
+    root = product_root(tmp_path)
+    data = build_supplement(root)
+    assert set(data["sources"]) == {"S21", "S22", "S27", "S30", "S19_2025"}
+    assert str(tmp_path) not in json.dumps(data)
+    assert main(["--root", str(root)]) == 0
+    pointer = json.loads((root / "output/nationality_2025/latest.json").read_text())
+    assert pointer["comparison_count"] == 120
+    assert json.loads((root / pointer["product_path"]).read_text())["comparison"] == data["comparison"]
+
+
+@pytest.mark.parametrize("target", ["raw", "normalized", "run", "contract"])
+def test_any_input_integrity_change_stops_generation(tmp_path, target):
+    from nationality_crime_atlas.nationality_2025 import build_supplement
+    from nationality_crime_atlas.errors import IntegrityError
+
+    root = product_root(tmp_path)
+    if target == "raw":
+        (root / "data/raw/S22/fixture.csv").write_bytes(b"changed")
+    elif target == "normalized":
+        with (root / "data/processed/S22/normalized.jsonl").open("a") as handle:
+            handle.write("{}\n")
+    else:
+        path = root / ("data/processed/S22/run.json" if target == "run" else "config/nationality_2025_contract.json")
+        data = json.loads(path.read_text())
+        if target == "run":
+            data["quality_passed"] = False
+        else:
+            data["input_pins"]["S22"]["normalized_sha256"] = "0" * 64
+        path.write_text(json.dumps(data))
+    with pytest.raises((IntegrityError, SchemaError)):
+        build_supplement(root)
