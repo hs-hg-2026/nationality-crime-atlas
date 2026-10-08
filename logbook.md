@@ -572,3 +572,9 @@
 - **検証済み**: Python249件（coverage83.43%）、Web159件（statement90.06%／branch87.08%）、型検査・lint・format、地図再生成の不変性、静的build、Pages公開物35ファイルの検査成功。未公開8commitの410 unique blobと現行399ファイルを検査し、既知の私有名・旧account・secret patternの一致なし。author／committerは公開用noreplyのみ。
 - **点検時の補正**: 最初の広いpath検査は既存review文書の検出pattern自体と擬似`/Users/example` fixtureを拾った。私有pathではないことを確認し、既知私有identifierとsecretの履歴検査・公開物専用path検査へ分離した。コード・元データの修正は不要。
 - **公開手順／関連パス**: mainへ通常pushし、同じcommitのActions build／deploy成功後に正式v0.6.0を作成、配信HTMLと新旧JSON／manifestを照合する。`docs/20261008_200748_v0.6.0_release_notes.md`、実行ログ`agent_logs/20261008_200748_v0.6.0_release/`。README両言語とworkflow旧版は同timestampのsnapshotへ退避した。
+
+## 2026-10-08 v0.6.0を公開し、2025年の追加表示を確認
+- **何が／判断／なぜ**: mainを`54e0ea13e71f8675dd9084773a3d7727012a482b`へ通常push。Actions `37768333081`のbuild・deploy成功を確認し、同じexact commitを対象に正式release `v0.6.0`を作成した。draft／prereleaseではなく、tagがこのcommitを直接指すことをGitHub APIで確認した。
+- **検証済み**: 公開HTMLで2025年国籍比較の初期表示と2025年来日外国人犯罪構成の見出しを確認。既存・追加JSONと両manifestの4ファイルがローカル公開物と完全一致。追加比較120行（52算出／68未算出）、構成14行（12算出／日本2未算出）、日本残差の件数278,138／人員189,309と人口117,405,318、構成6区分合計を配信データでも確認した。
+- **運用上の残課題**: Actionsは成功したが、一部固定ActionのNode20非推奨とubuntu-latest移行予定の警告がある。更新は別途reviewする。Issue入力テンプレート、出典付き用語集、同範囲の2025年全26区分犯罪構成、国籍別時系列の2025年接続は今回の公開範囲外。
+- **関連パス**: `docs/20261008_200748_v0.6.0_release_notes.md`、`agent_logs/20261008_200748_v0.6.0_release/live_verification.json`。release: `https://github.com/hs-hg-2026/nationality-crime-atlas/releases/tag/v0.6.0`。README両言語・workflowの準備中版を`docs/20261008_201247_*`へ退避して公開完了へ更新した。
