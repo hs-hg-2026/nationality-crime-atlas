@@ -566,3 +566,9 @@
 - **検証済み**: Python249 tests、coverage83.43%。Web159 tests、typecheck・lint・format・静的build・最終Pages artifact35ファイルの検査成功。初回buildはsandboxのlocalhost listen EPERMで停止し、承認済み環境で再実行して成功。ブラウザで2025初期表示、件数／人員、日本人員参考比率1.61、2024切替、2色凡例・積み上げ棒を確認。既存JSONはSHA-256 `491a1f28b0e8de1650ac813417c19ad60b4c8750c461bac079192f22e740f595`のまま。追加JSONは`5f883f3703962286964be9b03c8206730552077975da4db7dad7416d6ac8976b`、公開pin・生成productと一致。私有path非露出も検証。
 - **運用上の気づき**: Git hookのawkがCP932 fixtureのmultibyte変換で停止したため、hookを無効化せずcommit時だけLC_ALL=Cで検査を継続した。
 - **関連パス・現在地**: `docs/20261008_092036_2025_nationality_supplement.md`、`config/nationality_2025_contract.json`、`config/publication/nationality_2025/latest.json`、`web/public/data/nationality_2025.json`。README両言語・workflow旧版を`docs/20261008_092036_*`へ退避して更新。ログ`agent_logs/20261008_092000_nationality_2025/`、画面記録`output/20261008_092036_nationality_2025_ui/visiting_offense_2025.png`。ローカル実装まで、push・tag・releaseは未実施。
+
+## 2026-10-08 v0.6.0の公開準備と最終検証
+- **何が／判断／なぜ**: ユーザーのpush・release依頼に従い、機能追加としてweb versionを0.5.0から0.6.0へ更新。依存関係と既存公開JSONは変更せず、別2025表示の範囲・未算出・2024保持をrelease notesに明記した。
+- **検証済み**: Python249件（coverage83.43%）、Web159件（statement90.06%／branch87.08%）、型検査・lint・format、地図再生成の不変性、静的build、Pages公開物35ファイルの検査成功。未公開8commitの410 unique blobと現行399ファイルを検査し、既知の私有名・旧account・secret patternの一致なし。author／committerは公開用noreplyのみ。
+- **点検時の補正**: 最初の広いpath検査は既存review文書の検出pattern自体と擬似`/Users/example` fixtureを拾った。私有pathではないことを確認し、既知私有identifierとsecretの履歴検査・公開物専用path検査へ分離した。コード・元データの修正は不要。
+- **公開手順／関連パス**: mainへ通常pushし、同じcommitのActions build／deploy成功後に正式v0.6.0を作成、配信HTMLと新旧JSON／manifestを照合する。`docs/20261008_200748_v0.6.0_release_notes.md`、実行ログ`agent_logs/20261008_200748_v0.6.0_release/`。README両言語とworkflow旧版は同timestampのsnapshotへ退避した。
